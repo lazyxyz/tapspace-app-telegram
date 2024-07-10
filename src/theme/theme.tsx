@@ -1,5 +1,87 @@
-import React from "react";
+import {
+  ComponentStyleConfig,
+  background,
+  extendTheme,
+  useColorModeValue,
+} from "@chakra-ui/react";
+import { StyleFunctionProps } from "@chakra-ui/theme-tools";
+// import "@fontsource/chakra-petch";
 
-export default function theme() {
-  return <div></div>;
-}
+// const fonts = {
+//   heading: `'Roboto Mono Variable',sans-serif`,
+//   body: `'Roboto Mono Variable',sans-serif`,
+// };
+
+const breakpoints = {
+  sm: "40em",
+  md: "64em",
+  lg: "80em",
+  xl: "90em",
+};
+const colors = {
+  primary: {
+    DEFAULT: "#30417a",
+    "100": "#30417a",
+  },
+  lightPink: "#fff0f0",
+  pink: "#ffe9e9",
+  darkPink: "#f9c4d2",
+  pinkBorder: "#b18597",
+  pinkShadow: "#ffe3e2",
+
+  box: {
+    "50": "rgba(39, 39, 42, 0.45)",
+    "65": "rgba(63, 63, 70, 0.65)",
+    "100": "#52525B",
+    "150": "#27272A",
+    "200": "#272727",
+  },
+  text: {
+    "100": "#D4D4D8",
+  },
+};
+const styles = {};
+
+const Button: ComponentStyleConfig = {
+  variants: {
+    link: {
+      color: "primary.50",
+    },
+  },
+};
+
+const components = {
+  Link: {
+    baseStyle: {
+      _focus: {
+        boxShadow: "none",
+      },
+      _hover: {
+        textDecoration: "none",
+      },
+    },
+  },
+  Button,
+};
+const theme = extendTheme({
+  config: {
+    initialColorMode: "dark",
+    useSystemColorMode: true,
+  },
+
+  styles,
+  // fonts,
+  breakpoints,
+  components,
+  shadows: {
+    outline: "none",
+  },
+  colors,
+  sizes: {
+    container: {
+      ...breakpoints,
+    },
+  },
+});
+
+export default theme;

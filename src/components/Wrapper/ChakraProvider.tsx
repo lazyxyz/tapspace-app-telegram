@@ -8,7 +8,7 @@ const ChakraProviderWrapper = ({ children }: { children: React.ReactNode }) => {
     <ChakraProvider theme={theme}>
       <ColorModeProvider
         options={{
-          initialColorMode: "dark",
+          initialColorMode: "light",
           useSystemColorMode: true,
         }}
       >
