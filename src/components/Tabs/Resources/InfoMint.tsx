@@ -12,20 +12,11 @@ type MintItemType = {
 };
 
 const InfoMint = () => {
-  const [listData, setListData] = useState<MintItemType[]>(
-    () =>
-      JSON.parse(localStorage.getItem("listData") || "null") ||
-      DataMint.map((item) => ({
-        ...item,
-        calculatedValue: item.allocation,
-      }))
-  );
+  const [listData, setListData] = useState<MintItemType[]>([]);
   const [accumulatedValues, setAccumulatedValues] = useState<{
     [key: string]: number;
   }>({});
-
   const [totalItems, setTotalItems] = useState<number>(0);
-
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const updateListData = useCallback(() => {
@@ -55,23 +46,47 @@ const InfoMint = () => {
   }, []);
 
   useEffect(() => {
-    const savedValues = JSON.parse(
-      localStorage.getItem("accumulatedValues") || "{}"
-    );
-    setAccumulatedValues(savedValues);
+    const initLocalStorageData = () => {
+      const savedListData = JSON.parse(
+        localStorage.getItem("listData") || "null"
+      );
+      if (savedListData) {
+        setListData(savedListData);
+      } else {
+        const initialData = DataMint.map((item) => ({
+          ...item,
+          calculatedValue: item.allocation,
+        }));
+        setListData(initialData);
+        localStorage.setItem("listData", JSON.stringify(initialData));
+      }
 
-    const savedTotalItems = Number(localStorage.getItem("totalItems")) || 0;
-    setTotalItems(savedTotalItems);
+      const savedValues = JSON.parse(
+        localStorage.getItem("accumulatedValues") || "{}"
+      );
+      setAccumulatedValues(savedValues);
 
-    updateListData();
+      const savedTotalItems = Number(localStorage.getItem("totalItems")) || 0;
+      setTotalItems(savedTotalItems);
+
+      updateListData();
+    };
+
+    if (typeof window !== "undefined") {
+      initLocalStorageData();
+    }
   }, [updateListData]);
 
   useEffect(() => {
-    localStorage.setItem("listData", JSON.stringify(listData));
+    if (typeof window !== "undefined") {
+      localStorage.setItem("listData", JSON.stringify(listData));
+    }
   }, [listData]);
 
   useEffect(() => {
-    localStorage.setItem("totalItems", totalItems.toString());
+    if (typeof window !== "undefined") {
+      localStorage.setItem("totalItems", totalItems.toString());
+    }
   }, [totalItems]);
 
   const resetTimer = useCallback(() => {
@@ -118,10 +133,12 @@ const InfoMint = () => {
     });
 
     setAccumulatedValues(updatedAccumulatedValues);
-    localStorage.setItem(
-      "accumulatedValues",
-      JSON.stringify(updatedAccumulatedValues)
-    );
+    if (typeof window !== "undefined") {
+      localStorage.setItem(
+        "accumulatedValues",
+        JSON.stringify(updatedAccumulatedValues)
+      );
+    }
   }, [accumulatedValues, listData]);
 
   useEffect(() => {
