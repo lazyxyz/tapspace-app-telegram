@@ -1,5 +1,5 @@
 import { HStack, Image, Stack, Text, VStack } from "@chakra-ui/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 declare global {
   interface Window {
@@ -7,19 +7,22 @@ declare global {
   }
 }
 export default function Minting() {
+  const [user, setUser] = useState("default");
   useEffect(() => {
     const initTelegramWebApp = async () => {
       if (typeof window.Telegram !== "undefined" && window.Telegram.WebApp) {
         window.Telegram.WebApp.ready();
 
         const user = window.Telegram.WebApp.initDataUnsafe.user;
-
-        console.log(user);
+        setUser(user);
       }
     };
 
     initTelegramWebApp();
-  }, []);
+  }, [user]);
+
+  console.log("User", user);
+
   return (
     <VStack w={"full"} px={2}>
       <HStack
@@ -34,6 +37,7 @@ export default function Minting() {
         <HStack>
           <Image src="/bitcoin.svg" />
           <Stack spacing={0}>
+            <Text>{user}</Text>
             <Text fontSize={"xl"} fontWeight={"bold"}>
               Bitcoin
             </Text>
