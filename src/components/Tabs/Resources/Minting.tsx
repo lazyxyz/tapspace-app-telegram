@@ -1,29 +1,68 @@
-import { Box, HStack, Image, Stack, Text, VStack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+import { motion, animate, useMotionValue, useTransform } from "framer-motion";
+import { Box, Button, HStack, Image, Text, VStack } from "@chakra-ui/react";
 
-declare global {
-  interface Window {
-    Telegram: any;
-  }
-}
-export default function Minting() {
-  const [user, setUser] = useState<any>(null);
+const Minting = () => {
+  const [bitcoinValue, setBitcoinValue] = useState(() => {
+    const savedValue = localStorage.getItem("bitcoinValue");
+    return savedValue ? parseFloat(savedValue) : 0;
+  });
+  const [totalCoin, setTotalCoin] = useState(() => {
+    const savedTotal = localStorage.getItem("totalCoin");
+    return savedTotal ? parseFloat(savedTotal) : 0;
+  });
+
+  const bitcoinValueMotion = useMotionValue(bitcoinValue);
+  const animatedValue = useTransform(bitcoinValueMotion, (value) =>
+    value.toFixed(4)
+  );
 
   useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://telegram.org/js/telegram-web-app.js";
-    script.async = true;
-    script.onload = () => {
-      if (window.Telegram) {
-        window.Telegram.WebApp.ready();
-        const userData = window.Telegram.WebApp.initDataUnsafe?.user;
-      }
-    };
-    document.body.appendChild(script);
-  }, []);
+    const interval = setInterval(() => {
+      setBitcoinValue((prevValue) => {
+        const newValue = prevValue + 0.015;
+        animate(bitcoinValueMotion, newValue, {
+          duration: 0.5,
+          ease: "linear",
+        });
+        localStorage.setItem("bitcoinValue", newValue.toString());
+        return newValue;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [bitcoinValueMotion]);
+
+  const handleClaim = () => {
+    const currentTime = new Date().toLocaleString();
+    const claimValue = bitcoinValue.toFixed(4);
+
+    setTotalCoin((prevTotal) => prevTotal + parseFloat(claimValue));
+
+    setBitcoinValue(0);
+    localStorage.setItem("bitcoinValue", "0");
+
+    localStorage.setItem("totalCoin", totalCoin.toString());
+  };
 
   return (
-    <VStack w={"full"} px={2}>
+    <VStack w={"full"} px={2} align="center">
+      <HStack justifyContent={"space-between"} w={"full"} py={2}>
+        <Text fontSize={"lg"}>
+          Total Coin:{" "}
+          <Box
+            as={"span"}
+            textColor={"primary.100"}
+            fontWeight={"bold"}
+            fontSize={"xl"}
+          >
+            {totalCoin}
+          </Box>
+        </Text>
+        <Box>
+          <Button onClick={handleClaim}>Claim Bitcoin</Button>
+        </Box>
+      </HStack>
       <HStack
         w={"full"}
         borderWidth={1}
@@ -33,28 +72,24 @@ export default function Minting() {
         rounded={"xl"}
         justifyContent={"space-between"}
       >
-        <HStack>
+        <HStack spacing={4}>
           <Image src="/bitcoin.svg" />
-          <Stack spacing={0}>
-            {user ? (
-              <Box>
-                <Text>ID: {user.id}</Text>
-                <Text>First Name: {user.first_name}</Text>
-                <Text>Last Name: {user.last_name}</Text>
-                <Text>Username: {user.username}</Text>
-              </Box>
-            ) : (
-              <Text>Loading user information...</Text>
-            )}
+          <VStack align="start">
             <Text fontSize={"xl"} fontWeight={"bold"}>
               Bitcoin
             </Text>
-            <Text>0.0015/Sec</Text>
-          </Stack>
+            <Text>0.015/Sec</Text>
+          </VStack>
         </HStack>
-        <Text fontSize={"28px"} fontWeight={"bold"} textColor={"primary.100"}>
-          0.0167
-        </Text>
+        <motion.div
+          style={{
+            fontSize: "28px",
+            fontWeight: "bold",
+            color: "#3182ce",
+          }}
+        >
+          <motion.span>{animatedValue}</motion.span>
+        </motion.div>
       </HStack>
       <HStack
         w={"full"}
@@ -67,11 +102,12 @@ export default function Minting() {
         justifyContent={"start"}
       >
         <Image src="/north.svg" />
-
         <Text fontSize={"xl"} fontWeight={"600"}>
           Earth Resources
         </Text>
       </HStack>
     </VStack>
   );
-}
+};
+
+export default Minting;

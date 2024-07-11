@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Box, HStack, Image, Stack, Text, VStack } from "@chakra-ui/react";
+import { motion, animate, useMotionValue, useTransform } from "framer-motion";
 import { DataMint } from "@/lib/data";
 import ThreeDButton from "./ButtonMint";
 
@@ -12,7 +13,22 @@ type MintItemType = {
 };
 
 const InfoMint = () => {
-  const [listData, setListData] = useState<MintItemType[]>([]);
+  const [listData, setListData] = useState<MintItemType[]>(() => {
+    if (typeof window !== "undefined") {
+      const savedListData = localStorage.getItem("listData");
+      if (savedListData) {
+        return JSON.parse(savedListData);
+      }
+      const initialData = DataMint.map((item) => ({
+        ...item,
+        calculatedValue: item.allocation,
+      }));
+      localStorage.setItem("listData", JSON.stringify(initialData));
+      return initialData;
+    }
+    return [];
+  });
+
   const [accumulatedValues, setAccumulatedValues] = useState<{
     [key: string]: number;
   }>({});
@@ -20,16 +36,10 @@ const InfoMint = () => {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const updateListData = useCallback(() => {
-    const currentTime = Date.now();
-    const lastUpdateTime =
-      Number(localStorage.getItem("lastUpdateTime")) || currentTime;
-    const elapsedSeconds = Math.floor((currentTime - lastUpdateTime) / 1000);
-
     setListData((prevListData) => {
       const updatedList = prevListData.map((item) => {
         if (item.calculatedValue < item.allocation) {
-          const updatedValue =
-            item.calculatedValue + item.second * elapsedSeconds;
+          const updatedValue = item.calculatedValue + item.second;
           return {
             ...item,
             calculatedValue: Math.min(updatedValue, item.allocation),
@@ -41,26 +51,10 @@ const InfoMint = () => {
       localStorage.setItem("listData", JSON.stringify(updatedList));
       return updatedList;
     });
-
-    localStorage.setItem("lastUpdateTime", currentTime.toString());
   }, []);
 
   useEffect(() => {
     const initLocalStorageData = () => {
-      const savedListData = JSON.parse(
-        localStorage.getItem("listData") || "null"
-      );
-      if (savedListData) {
-        setListData(savedListData);
-      } else {
-        const initialData = DataMint.map((item) => ({
-          ...item,
-          calculatedValue: item.allocation,
-        }));
-        setListData(initialData);
-        localStorage.setItem("listData", JSON.stringify(initialData));
-      }
-
       const savedValues = JSON.parse(
         localStorage.getItem("accumulatedValues") || "{}"
       );
@@ -161,42 +155,68 @@ const InfoMint = () => {
   );
 };
 
-const MintItem = ({ item }: { item: MintItemType }) => (
-  <HStack
-    w={"full"}
-    borderWidth={3}
-    bg={"#e6effc"}
-    borderColor={"#92A8D0"}
-    p={4}
-    rounded={"xl"}
-    justifyContent={"space-between"}
-    opacity={item.calculatedValue > 0 ? "100%" : "50%"}
-  >
-    <HStack>
-      <Box
-        bg={item.calculatedValue > 0 ? "white" : "#657BAE"}
-        p={2}
-        rounded={"xl"}
-      >
-        <Image src={item.image} />
-      </Box>
+const MintItem = ({ item }: { item: MintItemType }) => {
+  const calculatedValueMotion = useMotionValue(item.calculatedValue);
+  const animatedValue = useTransform(calculatedValueMotion, (value) =>
+    value.toFixed(0)
+  );
 
-      <Text color={"primary.100"} fontSize={"lg"} fontWeight={"bold"}>
-        {item.name}
-      </Text>
+  useEffect(() => {
+    animate(calculatedValueMotion, item.calculatedValue, {
+      duration: 0.2,
+      ease: "linear",
+    });
+  }, [item.calculatedValue, calculatedValueMotion]);
+
+  const MotionText = motion(Text);
+
+  return (
+    <HStack
+      w={"full"}
+      borderWidth={3}
+      bg={"#e6effc"}
+      borderColor={"#92A8D0"}
+      p={4}
+      rounded={"xl"}
+      justifyContent={"space-between"}
+      opacity={item.calculatedValue > 0 ? "100%" : "50%"}
+    >
+      <HStack>
+        <Box
+          bg={item.calculatedValue > 0 ? "white" : "#657BAE"}
+          p={2}
+          rounded={"xl"}
+        >
+          <Image src={item.image} />
+        </Box>
+
+        <Text color={"primary.100"} fontSize={"lg"} fontWeight={"bold"}>
+          {item.name}
+        </Text>
+      </HStack>
+
+      <HStack w={"50%"} justifyContent={"space-between"}>
+        <Text color={"primary.100"} fontWeight={"600"} fontSize={"lg"}>
+          {item.second}/Sec
+        </Text>
+
+        <HStack spacing={0}>
+          <MotionText
+            fontSize={"lg"}
+            fontWeight={"bold"}
+            textColor={"primary.100"}
+          >
+            <motion.span>{animatedValue}</motion.span>
+          </MotionText>
+
+          <Text color={"primary.100"} fontWeight={"bold"} fontSize={"lg"}>
+            /{item.allocation}
+          </Text>
+        </HStack>
+      </HStack>
     </HStack>
-
-    <HStack w={"50%"} justifyContent={"space-between"}>
-      <Text color={"primary.100"} fontWeight={"600"} fontSize={"lg"}>
-        {item.second}/Sec
-      </Text>
-
-      <Text color={"primary.100"} fontWeight={"bold"} fontSize={"lg"}>
-        {item.calculatedValue}/{item.allocation}
-      </Text>
-    </HStack>
-  </HStack>
-);
+  );
+};
 
 const MemoizedMintItem = React.memo(MintItem);
 
