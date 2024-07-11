@@ -4,12 +4,18 @@ import { Box, Button, HStack, Image, Text, VStack } from "@chakra-ui/react";
 
 const Minting = () => {
   const [bitcoinValue, setBitcoinValue] = useState(() => {
-    const savedValue = localStorage.getItem("bitcoinValue");
-    return savedValue ? parseFloat(savedValue) : 0;
+    if (typeof window !== "undefined") {
+      const savedValue = localStorage.getItem("bitcoinValue");
+      return savedValue ? parseFloat(savedValue) : 0;
+    }
+    return 0;
   });
   const [totalCoin, setTotalCoin] = useState(() => {
-    const savedTotal = localStorage.getItem("totalCoin");
-    return savedTotal ? parseFloat(savedTotal) : 0;
+    if (typeof window !== "undefined") {
+      const savedTotal = localStorage.getItem("totalCoin");
+      return savedTotal ? parseFloat(savedTotal) : 0;
+    }
+    return 0;
   });
 
   const bitcoinValueMotion = useMotionValue(bitcoinValue);
