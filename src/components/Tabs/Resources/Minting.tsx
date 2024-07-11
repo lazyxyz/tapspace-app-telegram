@@ -7,19 +7,19 @@ declare global {
   }
 }
 export default function Minting() {
-  useEffect(() => {
-    const initTelegramWebApp = async () => {
-      if (typeof window.Telegram !== "undefined" && window.Telegram.WebApp) {
-        window.Telegram.WebApp.ready();
+  // useEffect(() => {
+  //   const initTelegramWebApp = async () => {
+  //     if (typeof window.Telegram !== "undefined" && window.Telegram.WebApp) {
+  //       window.Telegram.WebApp.ready();
 
-        const user = window.Telegram.WebApp.initDataUnsafe.user;
+  //       const user = window.Telegram.WebApp.initDataUnsafe.user;
 
-        console.log(user);
-      }
-    };
+  //       console.log(user);
+  //     }
+  //   };
 
-    initTelegramWebApp();
-  }, []);
+  //   initTelegramWebApp();
+  // }, []);
   return (
     <VStack w={"full"} px={2}>
       <HStack

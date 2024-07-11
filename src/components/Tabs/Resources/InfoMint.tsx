@@ -124,13 +124,6 @@ const InfoMint = () => {
     );
   }, [accumulatedValues, listData]);
 
-  const getTotalAccumulatedValues = () => {
-    return Object.values(accumulatedValues).reduce(
-      (total, value) => total + value,
-      0
-    );
-  };
-
   useEffect(() => {
     resetTimer();
     return () => {
