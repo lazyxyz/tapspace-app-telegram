@@ -1,4 +1,4 @@
-import { HStack, Image, Stack, Text, VStack } from "@chakra-ui/react";
+import { Box, HStack, Image, Stack, Text, VStack } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
 declare global {
@@ -7,21 +7,20 @@ declare global {
   }
 }
 export default function Minting() {
-  const [user, setUser] = useState("default");
-  useEffect(() => {
-    const initTelegramWebApp = async () => {
-      if (typeof window.Telegram !== "undefined" && window.Telegram.WebApp) {
-        window.Telegram.WebApp.ready();
+  const [user, setUser] = useState<any>(null);
 
-        const user = window.Telegram.WebApp.initDataUnsafe.user;
-        setUser(user);
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://telegram.org/js/telegram-web-app.js";
+    script.async = true;
+    script.onload = () => {
+      if (window.Telegram) {
+        window.Telegram.WebApp.ready();
+        const userData = window.Telegram.WebApp.initDataUnsafe?.user;
       }
     };
-
-    initTelegramWebApp();
-  }, [user]);
-
-  console.log("User", user);
+    document.body.appendChild(script);
+  }, []);
 
   return (
     <VStack w={"full"} px={2}>
@@ -37,7 +36,16 @@ export default function Minting() {
         <HStack>
           <Image src="/bitcoin.svg" />
           <Stack spacing={0}>
-            <Text>{user}</Text>
+            {user ? (
+              <Box>
+                <Text>ID: {user.id}</Text>
+                <Text>First Name: {user.first_name}</Text>
+                <Text>Last Name: {user.last_name}</Text>
+                <Text>Username: {user.username}</Text>
+              </Box>
+            ) : (
+              <Text>Loading user information...</Text>
+            )}
             <Text fontSize={"xl"} fontWeight={"bold"}>
               Bitcoin
             </Text>
