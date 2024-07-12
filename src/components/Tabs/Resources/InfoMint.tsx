@@ -14,8 +14,6 @@ type MintItemType = {
 };
 
 const InfoMint = () => {
-  const { user, webApp } = useTelegram();
-
   const [listData, setListData] = useState<MintItemType[]>(() => {
     if (typeof window !== "undefined") {
       const savedListData = localStorage.getItem("listData");
@@ -147,18 +145,6 @@ const InfoMint = () => {
 
   return (
     <VStack w={"full"} px={2}>
-      {user ? (
-        <div>
-          <h1>Welcome {user?.username}</h1>
-          User data:
-          <pre>{JSON.stringify(user, null, 2)}</pre>
-          Eniter Web App data:
-          <pre>{JSON.stringify(webApp, null, 2)}</pre>
-        </div>
-      ) : (
-        <div>Make sure web app is opened from telegram client</div>
-      )}
-
       <Stack pb={3} w={"full"} align={"end"}>
         <ThreeDButton onClick={handleClick}>Mining</ThreeDButton>
       </Stack>

@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import { motion, animate, useMotionValue, useTransform } from "framer-motion";
 import { Box, Button, HStack, Image, Text, VStack } from "@chakra-ui/react";
+import { useTelegram } from "@/lib/TelegramProvider";
 
 const Minting = () => {
+  const { user, webApp } = useTelegram();
+
   const [bitcoinValue, setBitcoinValue] = useState(() => {
     if (typeof window !== "undefined") {
       const savedValue = localStorage.getItem("bitcoinValue");
@@ -53,6 +56,10 @@ const Minting = () => {
 
   return (
     <VStack w={"full"} px={2} align="center">
+      <VStack alignItems={"start"} w={"full"}>
+        <Text>Username: {user?.username}</Text>
+        <Text>TelegramId: {user?.id}</Text>
+      </VStack>
       <HStack justifyContent={"space-between"} w={"full"} py={2}>
         <Text fontSize={"lg"}>
           Total Coin:{" "}
