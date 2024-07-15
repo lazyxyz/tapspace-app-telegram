@@ -45,8 +45,8 @@ export default function TabPage({ children, ...rest }: StackProps) {
               bg={"#eff5ff"}
               _selected={{ color: "white", bg: "#6C8BC3" }}
               rounded={"xl"}
-              py={5}
-              fontSize={"sm"}
+              py={[4, 5]}
+              fontSize={["10px", "xl"]}
               key={index}
             >
               {tab.title}

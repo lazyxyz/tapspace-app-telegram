@@ -1,9 +1,8 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
-import { Box, HStack, Image, Stack, Text, VStack } from "@chakra-ui/react";
-import { motion, animate, useMotionValue, useTransform } from "framer-motion";
 import { DataMint } from "@/lib/data";
+import { Box, HStack, Image, Stack, Text, VStack } from "@chakra-ui/react";
+import { animate, motion, useMotionValue, useTransform } from "framer-motion";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import ThreeDButton from "./ButtonMint";
-import { useTelegram } from "@/lib/TelegramProvider";
 
 type MintItemType = {
   name: string;
@@ -11,6 +10,7 @@ type MintItemType = {
   allocation: number;
   image: string;
   calculatedValue: number;
+  floatingText?: any;
 };
 
 const InfoMint = () => {
@@ -44,6 +44,7 @@ const InfoMint = () => {
           return {
             ...item,
             calculatedValue: Math.min(updatedValue, item.allocation),
+            floatingText: null, // Clear floating text when updating by timer
           };
         }
         return item;
@@ -105,6 +106,7 @@ const InfoMint = () => {
           return {
             ...item,
             calculatedValue: Math.max(updatedValue, 0),
+            floatingText: `+${item.second}`, // Add floating text value
           };
         }
         return item;
@@ -156,18 +158,40 @@ const InfoMint = () => {
   );
 };
 
+const FloatingText = ({ text }: any) => (
+  <motion.div
+    initial={{ opacity: 1, y: 0 }}
+    animate={{ opacity: 0, y: -50 }}
+    transition={{ duration: 1 }}
+    style={{ position: "absolute", bottom: "0", left: "0", zIndex: 10 }}
+  >
+    <Text fontSize="sm" fontWeight="bold" color="green.500">
+      {text}
+    </Text>
+  </motion.div>
+);
+
 const MintItem = ({ item }: { item: MintItemType }) => {
   const calculatedValueMotion = useMotionValue(item.calculatedValue);
   const animatedValue = useTransform(calculatedValueMotion, (value) =>
     value.toFixed(0)
   );
 
+  const [floatingTexts, setFloatingTexts] = useState<string[]>([]);
+
   useEffect(() => {
     animate(calculatedValueMotion, item.calculatedValue, {
       duration: 0.2,
       ease: "linear",
     });
-  }, [item.calculatedValue, calculatedValueMotion]);
+
+    if (item.floatingText) {
+      setFloatingTexts((prevTexts) => [...prevTexts, item.floatingText]);
+      setTimeout(() => {
+        setFloatingTexts((prevTexts) => prevTexts.slice(1));
+      }, 1000); // Hide each floating text after 1 second
+    }
+  }, [item.calculatedValue, calculatedValueMotion, item.floatingText]);
 
   const MotionText = motion(Text);
 
@@ -180,11 +204,12 @@ const MintItem = ({ item }: { item: MintItemType }) => {
       p={4}
       rounded={"xl"}
       justifyContent={"space-between"}
-      opacity={item.calculatedValue > 0 ? "100%" : "50%"}
+      opacity={item.allocation > 0 ? "100%" : "50%"}
+      position="relative" // Add position relative for floating text
     >
       <HStack>
         <Box
-          bg={item.calculatedValue > 0 ? "white" : "#657BAE"}
+          bg={item.allocation > 0 ? "white" : "#657BAE"}
           p={2}
           rounded={"xl"}
         >
@@ -215,6 +240,10 @@ const MintItem = ({ item }: { item: MintItemType }) => {
           </Text>
         </HStack>
       </HStack>
+
+      {floatingTexts.map((text, index) => (
+        <FloatingText key={index} text={text} />
+      ))}
     </HStack>
   );
 };

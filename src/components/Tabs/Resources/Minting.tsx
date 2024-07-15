@@ -21,6 +21,9 @@ const Minting = () => {
     return 0;
   });
 
+  const [claiming, setClaiming] = useState(false);
+  const [claimAmount, setClaimAmount] = useState(0);
+
   const bitcoinValueMotion = useMotionValue(bitcoinValue);
   const animatedValue = useTransform(bitcoinValueMotion, (value) =>
     value.toFixed(4)
@@ -43,23 +46,38 @@ const Minting = () => {
   }, [bitcoinValueMotion]);
 
   const handleClaim = () => {
-    const currentTime = new Date().toLocaleString();
-    const claimValue = bitcoinValue.toFixed(4);
+    const claimValue = parseFloat(bitcoinValue.toFixed(4));
+    setClaimAmount(claimValue);
+    setClaiming(true);
 
-    setTotalCoin((prevTotal) => prevTotal + parseFloat(claimValue));
+    setTotalCoin((prevTotal) => {
+      const newTotal = prevTotal + claimValue;
+      localStorage.setItem("totalCoin", newTotal.toString());
+      return newTotal;
+    });
 
     setBitcoinValue(0);
     localStorage.setItem("bitcoinValue", "0");
-
-    localStorage.setItem("totalCoin", totalCoin.toString());
   };
+
+  useEffect(() => {
+    if (claiming) {
+      const timer = setTimeout(() => {
+        setClaiming(false);
+        setClaimAmount(0);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [claiming]);
 
   return (
     <VStack w={"full"} px={2} align="center">
-      <VStack alignItems={"start"} w={"full"}>
-        <Text>Username: {user?.username}</Text>
-        <Text>TelegramId: {user?.id}</Text>
-      </VStack>
+      {user && (
+        <VStack alignItems={"start"} w={"full"}>
+          <Text>Username: {user?.username}</Text>
+          <Text>TelegramId: {user?.id}</Text>
+        </VStack>
+      )}
       <HStack justifyContent={"space-between"} w={"full"} py={2}>
         <Text fontSize={"lg"}>
           Total Coin:{" "}
@@ -84,6 +102,7 @@ const Minting = () => {
         p={4}
         rounded={"xl"}
         justifyContent={"space-between"}
+        position="relative" // Add position relative for floating text
       >
         <HStack spacing={4}>
           <Image src="/bitcoin.svg" />
@@ -103,6 +122,18 @@ const Minting = () => {
         >
           <motion.span>{animatedValue}</motion.span>
         </motion.div>
+        {claiming && (
+          <motion.div
+            initial={{ opacity: 1, y: 0 }}
+            animate={{ opacity: 0, y: -50 }}
+            transition={{ duration: 1 }}
+            style={{ position: "absolute", top: 0, right: 0 }}
+          >
+            <Text fontSize="lg" fontWeight="bold" color="green.500">
+              +{claimAmount.toFixed(4)}
+            </Text>
+          </motion.div>
+        )}
       </HStack>
       <HStack
         w={"full"}
