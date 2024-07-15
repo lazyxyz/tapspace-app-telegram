@@ -1,10 +1,54 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, memo } from "react";
 import { motion, animate, useMotionValue, useTransform } from "framer-motion";
-import { Box, Button, HStack, Image, Text, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  HStack,
+  Image,
+  Text,
+  useToast,
+  VStack,
+} from "@chakra-ui/react";
 import { useTelegram } from "@/lib/TelegramProvider";
+import { CheckLevel, checkLevel } from "@/utils/utils";
+
+const BitcoinDisplay = memo(
+  ({ levelBot, animatedValue }: { levelBot: number; animatedValue: any }) => (
+    <HStack
+      w={"full"}
+      borderWidth={1}
+      bg={"#eff5ff"}
+      borderColor={"#92A8D0"}
+      p={4}
+      rounded={"xl"}
+      justifyContent={"space-between"}
+      position="relative"
+    >
+      <HStack spacing={4}>
+        <Image src="/bitcoin.svg" alt="Bitcoin Icon" />
+        <VStack align="start" whiteSpace={"pre"}>
+          <Text fontSize={"xl"} fontWeight={"bold"}>
+            Bitcoin (lv{levelBot})
+          </Text>
+          <Text>{(0.015 * levelBot).toFixed(3)}/Sec</Text>
+        </VStack>
+      </HStack>
+      <motion.div
+        style={{
+          fontSize: "28px",
+          fontWeight: "bold",
+          color: "#3182ce",
+        }}
+      >
+        <motion.span>{animatedValue}</motion.span>
+      </motion.div>
+    </HStack>
+  )
+);
+BitcoinDisplay.displayName = "BitcoinDisplay";
 
 const Minting = () => {
-  const { user, webApp } = useTelegram();
+  const { user } = useTelegram();
 
   const [bitcoinValue, setBitcoinValue] = useState(() => {
     if (typeof window !== "undefined") {
@@ -13,6 +57,7 @@ const Minting = () => {
     }
     return 0;
   });
+
   const [totalCoin, setTotalCoin] = useState(() => {
     if (typeof window !== "undefined") {
       const savedTotal = localStorage.getItem("totalCoin");
@@ -24,15 +69,35 @@ const Minting = () => {
   const [claiming, setClaiming] = useState(false);
   const [claimAmount, setClaimAmount] = useState(0);
 
+  const [levelBot, setLevelBot] = useState(() => {
+    if (typeof window !== "undefined") {
+      const savedValue = localStorage.getItem("levelBot");
+      return Number(savedValue) || 1;
+    }
+    return 1;
+  });
+
   const bitcoinValueMotion = useMotionValue(bitcoinValue);
   const animatedValue = useTransform(bitcoinValueMotion, (value) =>
     value.toFixed(4)
   );
 
+  const [materials, setMaterials] = useState<{ [key: string]: number }>({});
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedValue = localStorage.getItem("accumulatedValues");
+      if (savedValue) {
+        setMaterials(JSON.parse(savedValue));
+      }
+    }
+  }, [bitcoinValue]);
+
+  const toast = useToast();
+
   useEffect(() => {
     const interval = setInterval(() => {
       setBitcoinValue((prevValue) => {
-        const newValue = prevValue + 0.015;
+        const newValue = prevValue + 0.015 * levelBot;
         animate(bitcoinValueMotion, newValue, {
           duration: 0.5,
           ease: "linear",
@@ -43,9 +108,9 @@ const Minting = () => {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [bitcoinValueMotion]);
+  }, [bitcoinValueMotion, levelBot]);
 
-  const handleClaim = () => {
+  const handleClaim = useCallback(() => {
     const claimValue = parseFloat(bitcoinValue.toFixed(4));
     setClaimAmount(claimValue);
     setClaiming(true);
@@ -58,7 +123,66 @@ const Minting = () => {
 
     setBitcoinValue(0);
     localStorage.setItem("bitcoinValue", "0");
-  };
+  }, [bitcoinValue]);
+
+  const canUpgrade = useCallback(
+    (currentLevel: number): boolean => {
+      const levelKey = `lv${currentLevel}` as keyof CheckLevel;
+      const requirements = checkLevel[levelKey];
+      return (
+        materials.Steel >= requirements.Steel &&
+        materials.Aluminum >= requirements.Aluminum &&
+        materials.Copper >= requirements.Copper &&
+        materials.Fiber >= requirements.Fiber &&
+        materials.Titanium >= requirements.Titanium
+      );
+    },
+    [materials]
+  );
+
+  const upgradeLevel = useCallback(() => {
+    if (canUpgrade(levelBot)) {
+      const levelKey = `lv${levelBot}` as keyof CheckLevel;
+      const requirements = checkLevel[levelKey];
+
+      setMaterials((prevMaterials: any) => {
+        const newMaterials = {
+          ...prevMaterials,
+          Steel: prevMaterials.Steel - requirements.Steel,
+          Aluminum: prevMaterials.Aluminum - requirements.Aluminum,
+          Copper: prevMaterials.Copper - requirements.Copper,
+          Fiber: prevMaterials.Fiber - requirements.Fiber,
+          Titanium: prevMaterials.Titanium - requirements.Titanium,
+        };
+        localStorage.setItem("materials", JSON.stringify(newMaterials));
+        return newMaterials;
+      });
+
+      setLevelBot((prevLevel) => {
+        const newLevel = prevLevel + 1;
+        localStorage.setItem("levelBot", newLevel.toString());
+        return newLevel;
+      });
+
+      toast({
+        status: "success",
+        title: "Upgrade complete",
+        description: `You can upgrade to level${levelBot + 1}`,
+        position: "top-right",
+        isClosable: true,
+        duration: 3000,
+      });
+    } else {
+      toast({
+        status: "warning",
+        title: "",
+        description: "You must mine enough materials to upgrade",
+        position: "top-right",
+        isClosable: true,
+        duration: 3000,
+      });
+    }
+  }, [levelBot, materials, canUpgrade, toast]); // Include toast in the dependencies
 
   useEffect(() => {
     if (claiming) {
@@ -90,51 +214,16 @@ const Minting = () => {
             {totalCoin}
           </Box>
         </Text>
+      </HStack>
+      <HStack justifyContent={"start"} w={"full"}>
         <Box>
           <Button onClick={handleClaim}>Claim Bitcoin</Button>
         </Box>
+        <Button onClick={upgradeLevel} bg={"primary.100"} textColor={"white"}>
+          Upgrade bot
+        </Button>
       </HStack>
-      <HStack
-        w={"full"}
-        borderWidth={1}
-        bg={"#eff5ff"}
-        borderColor={"#92A8D0"}
-        p={4}
-        rounded={"xl"}
-        justifyContent={"space-between"}
-        position="relative" // Add position relative for floating text
-      >
-        <HStack spacing={4}>
-          <Image src="/bitcoin.svg" />
-          <VStack align="start">
-            <Text fontSize={"xl"} fontWeight={"bold"}>
-              Bitcoin
-            </Text>
-            <Text>0.015/Sec</Text>
-          </VStack>
-        </HStack>
-        <motion.div
-          style={{
-            fontSize: "28px",
-            fontWeight: "bold",
-            color: "#3182ce",
-          }}
-        >
-          <motion.span>{animatedValue}</motion.span>
-        </motion.div>
-        {claiming && (
-          <motion.div
-            initial={{ opacity: 1, y: 0 }}
-            animate={{ opacity: 0, y: -50 }}
-            transition={{ duration: 1 }}
-            style={{ position: "absolute", top: 0, right: 0 }}
-          >
-            <Text fontSize="lg" fontWeight="bold" color="green.500">
-              +{claimAmount.toFixed(4)}
-            </Text>
-          </motion.div>
-        )}
-      </HStack>
+      <BitcoinDisplay levelBot={levelBot} animatedValue={animatedValue} />
       <HStack
         w={"full"}
         borderWidth={1}
@@ -145,7 +234,7 @@ const Minting = () => {
         rounded={"xl"}
         justifyContent={"start"}
       >
-        <Image src="/north.svg" />
+        <Image src="/north.svg" alt="Earth Resources Icon" />
         <Text fontSize={"xl"} fontWeight={"600"}>
           Earth Resources
         </Text>

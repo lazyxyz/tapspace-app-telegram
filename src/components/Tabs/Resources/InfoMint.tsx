@@ -1,8 +1,8 @@
-import { DataMint } from "@/lib/data";
+import React, { useEffect, useState, useCallback, useRef } from "react";
+import { motion, animate, useMotionValue, useTransform } from "framer-motion";
 import { Box, HStack, Image, Stack, Text, VStack } from "@chakra-ui/react";
-import { animate, motion, useMotionValue, useTransform } from "framer-motion";
-import React, { useCallback, useEffect, useRef, useState } from "react";
 import ThreeDButton from "./ButtonMint";
+import { DataMint } from "@/lib/data";
 
 type MintItemType = {
   name: string;
@@ -10,7 +10,7 @@ type MintItemType = {
   allocation: number;
   image: string;
   calculatedValue: number;
-  floatingText?: any;
+  floatingText?: string;
 };
 
 const InfoMint = () => {
@@ -18,72 +18,87 @@ const InfoMint = () => {
     if (typeof window !== "undefined") {
       const savedListData = localStorage.getItem("listData");
       if (savedListData) {
-        return JSON.parse(savedListData);
+        return JSON.parse(savedListData) as MintItemType[];
+      } else {
+        const initialData = DataMint.map((item) => ({
+          ...item,
+          calculatedValue: item.allocation,
+        }));
+        localStorage.setItem("listData", JSON.stringify(initialData));
+        return initialData;
       }
-      const initialData = DataMint.map((item) => ({
-        ...item,
-        calculatedValue: item.allocation,
-      }));
-      localStorage.setItem("listData", JSON.stringify(initialData));
-      return initialData;
     }
     return [];
   });
 
   const [accumulatedValues, setAccumulatedValues] = useState<{
     [key: string]: number;
-  }>({});
-  const [totalItems, setTotalItems] = useState<number>(0);
+  }>(() => {
+    if (typeof window !== "undefined") {
+      const savedValues = JSON.parse(
+        localStorage.getItem("accumulatedValues") || "{}"
+      );
+      return savedValues;
+    }
+
+    return "{}";
+  });
+
+  const [levelBot, setLevelBot] = useState<number>(() => {
+    if (typeof window !== "undefined") {
+      const storedLevelBot = localStorage.getItem("levelBot");
+      return storedLevelBot ? parseInt(storedLevelBot) : 1;
+    }
+    return 1;
+  });
+
+  const [totalItems, setTotalItems] = useState<number>(() => {
+    if (typeof window !== "undefined") {
+      const savedTotalItems = Number(localStorage.getItem("totalItems")) || 0;
+      return savedTotalItems;
+    }
+    return 0;
+  });
+
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const updateListData = useCallback(() => {
-    setListData((prevListData) => {
-      const updatedList = prevListData.map((item) => {
+    setListData((prevListData: any) => {
+      const updatedList = prevListData.map((item: any) => {
         if (item.calculatedValue < item.allocation) {
-          const updatedValue = item.calculatedValue + item.second;
+          const updatedValue =
+            item.calculatedValue +
+            calculateNewItemSecond(item.second, levelBot);
           return {
             ...item,
             calculatedValue: Math.min(updatedValue, item.allocation),
-            floatingText: null, // Clear floating text when updating by timer
+            floatingText: null,
           };
         }
         return item;
       });
 
-      localStorage.setItem("listData", JSON.stringify(updatedList));
       return updatedList;
     });
-  }, []);
+  }, [levelBot]);
 
-  useEffect(() => {
-    const initLocalStorageData = () => {
-      const savedValues = JSON.parse(
-        localStorage.getItem("accumulatedValues") || "{}"
-      );
-      setAccumulatedValues(savedValues);
+  const addToAccumulatedValues = useCallback(() => {
+    const updatedAccumulatedValues = { ...accumulatedValues };
 
-      const savedTotalItems = Number(localStorage.getItem("totalItems")) || 0;
-      setTotalItems(savedTotalItems);
+    listData.forEach((item) => {
+      if (!updatedAccumulatedValues[item.name]) {
+        updatedAccumulatedValues[item.name] = 0;
+      }
+      if (item.calculatedValue > 0 && item.calculatedValue < item.allocation) {
+        updatedAccumulatedValues[item.name] += calculateNewItemSecond(
+          item.second,
+          levelBot
+        );
+      }
+    });
 
-      updateListData();
-    };
-
-    if (typeof window !== "undefined") {
-      initLocalStorageData();
-    }
-  }, [updateListData]);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("listData", JSON.stringify(listData));
-    }
-  }, [listData]);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("totalItems", totalItems.toString());
-    }
-  }, [totalItems]);
+    setAccumulatedValues(updatedAccumulatedValues);
+  }, [accumulatedValues, listData, levelBot]);
 
   const resetTimer = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current);
@@ -96,17 +111,23 @@ const InfoMint = () => {
     timerRef.current = setInterval(() => {
       updateListData();
     }, 1000);
+
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
   }, [listData, updateListData]);
 
   const handleClick = useCallback(() => {
     setListData((prevListData) =>
       prevListData.map((item) => {
         if (item.calculatedValue > 0) {
-          const updatedValue = item.calculatedValue - item.second;
+          const updatedValue =
+            item.calculatedValue -
+            calculateNewItemSecond(item.second, levelBot);
           return {
             ...item,
             calculatedValue: Math.max(updatedValue, 0),
-            floatingText: `+${item.second}`, // Add floating text value
+            floatingText: `+${calculateNewItemSecond(item.second, levelBot)}`,
           };
         }
         return item;
@@ -115,28 +136,22 @@ const InfoMint = () => {
     addToAccumulatedValues();
     setTotalItems((prevTotal) => prevTotal + 1);
     resetTimer();
-  }, [resetTimer]);
+  }, [levelBot, resetTimer]);
 
-  const addToAccumulatedValues = useCallback(() => {
-    const updatedAccumulatedValues = { ...accumulatedValues };
+  useEffect(() => {
+    localStorage.setItem("listData", JSON.stringify(listData));
+  }, [listData]);
 
-    listData.forEach((item) => {
-      if (!updatedAccumulatedValues[item.name]) {
-        updatedAccumulatedValues[item.name] = 0;
-      }
-      if (item.calculatedValue > 0 && item.calculatedValue < item.allocation) {
-        updatedAccumulatedValues[item.name] += item.second;
-      }
-    });
+  useEffect(() => {
+    localStorage.setItem(
+      "accumulatedValues",
+      JSON.stringify(accumulatedValues)
+    );
+  }, [accumulatedValues]);
 
-    setAccumulatedValues(updatedAccumulatedValues);
-    if (typeof window !== "undefined") {
-      localStorage.setItem(
-        "accumulatedValues",
-        JSON.stringify(updatedAccumulatedValues)
-      );
-    }
-  }, [accumulatedValues, listData]);
+  useEffect(() => {
+    localStorage.setItem("totalItems", totalItems.toString());
+  }, [totalItems]);
 
   useEffect(() => {
     resetTimer();
@@ -158,7 +173,7 @@ const InfoMint = () => {
   );
 };
 
-const FloatingText = ({ text }: any) => (
+const FloatingText = ({ text }: { text: string }) => (
   <motion.div
     initial={{ opacity: 1, y: 0 }}
     animate={{ opacity: 0, y: -50 }}
@@ -186,14 +201,13 @@ const MintItem = ({ item }: { item: MintItemType }) => {
     });
 
     if (item.floatingText) {
+      //@ts-ignore
       setFloatingTexts((prevTexts) => [...prevTexts, item.floatingText]);
       setTimeout(() => {
         setFloatingTexts((prevTexts) => prevTexts.slice(1));
-      }, 1000); // Hide each floating text after 1 second
+      }, 1000);
     }
   }, [item.calculatedValue, calculatedValueMotion, item.floatingText]);
-
-  const MotionText = motion(Text);
 
   return (
     <HStack
@@ -205,7 +219,7 @@ const MintItem = ({ item }: { item: MintItemType }) => {
       rounded={"xl"}
       justifyContent={"space-between"}
       opacity={item.allocation > 0 ? "100%" : "50%"}
-      position="relative" // Add position relative for floating text
+      position="relative"
     >
       <HStack>
         <Box
@@ -227,13 +241,15 @@ const MintItem = ({ item }: { item: MintItemType }) => {
         </Text>
 
         <HStack spacing={0}>
-          <MotionText
+          <Text
+            as={motion.span}
             fontSize={"lg"}
             fontWeight={"bold"}
             textColor={"primary.100"}
           >
-            <motion.span>{animatedValue}</motion.span>
-          </MotionText>
+            {/* @ts-ignore */}
+            {animatedValue}
+          </Text>
 
           <Text color={"primary.100"} fontWeight={"bold"} fontSize={"lg"}>
             /{item.allocation}
@@ -251,3 +267,14 @@ const MintItem = ({ item }: { item: MintItemType }) => {
 const MemoizedMintItem = React.memo(MintItem);
 
 export default InfoMint;
+
+export const calculateNewItemSecond = (
+  currentItemSecond: any,
+  levelBot: any
+) => {
+  let newItemSecond = currentItemSecond;
+  for (let i = 1; i < levelBot; i++) {
+    newItemSecond = newItemSecond + newItemSecond * 0.05;
+  }
+  return parseFloat(newItemSecond.toFixed(2));
+};

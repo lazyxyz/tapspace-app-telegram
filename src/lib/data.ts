@@ -1,32 +1,32 @@
 export const DataMint = [
   {
-    name: "Stell",
+    name: "Steel",
     second: 8,
-    allocation: 144,
+    allocation: 14400,
     image: "/assets/steel.png",
   },
   {
     name: "Aluminum",
     second: 5,
-    allocation: 90,
+    allocation: 9000,
     image: "/assets/2.png",
   },
   {
     name: "Copper",
     second: 3,
-    allocation: 54,
+    allocation: 5400,
     image: "/assets/copper.png",
   },
   {
     name: "Fiber",
     second: 2,
-    allocation: 36,
+    allocation: 3600,
     image: "/assets/fiber.png",
   },
   {
     name: "Titanium",
     second: 1,
-    allocation: 18,
+    allocation: 1800,
     image: "/assets/titatinum.png",
   },
 
