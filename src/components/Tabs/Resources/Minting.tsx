@@ -105,6 +105,31 @@ const Minting = () => {
         localStorage.setItem("bitcoinValue", newValue.toString());
         return newValue;
       });
+
+      const storedMaterials = localStorage.getItem("accumulatedValues");
+      let newMaterials = {};
+
+      if (storedMaterials) {
+        try {
+          newMaterials = JSON.parse(storedMaterials);
+        } catch (error) {
+          console.error(
+            "Error parsing accumulatedValues from localStorage:",
+            error
+          );
+        }
+      }
+
+      for (const key in newMaterials) {
+        if (newMaterials.hasOwnProperty(key)) {
+          //@ts-ignore
+          newMaterials[key] = (newMaterials[key] || 0) + 1;
+        }
+      }
+
+      localStorage.setItem("accumulatedValues", JSON.stringify(newMaterials));
+
+      setMaterials(newMaterials);
     }, 1000);
 
     return () => clearInterval(interval);
@@ -182,7 +207,7 @@ const Minting = () => {
         duration: 3000,
       });
     }
-  }, [levelBot, materials, canUpgrade, toast]); // Include toast in the dependencies
+  }, [levelBot, materials, canUpgrade, toast]);
 
   useEffect(() => {
     if (claiming) {
@@ -193,6 +218,20 @@ const Minting = () => {
       return () => clearTimeout(timer);
     }
   }, [claiming]);
+
+  // useEffect(() => {
+  //   const materialInterval = setInterval(() => {
+  //     setMaterials((prevMaterials) => {
+  //       const newMaterials = { ...prevMaterials };
+  //       for (const key in newMaterials) {
+  //         newMaterials[key] += 1;
+  //       }
+  //       localStorage.setItem("accumulatedValues", JSON.stringify(newMaterials));
+  //       return newMaterials;
+  //     });
+  //   }, 1000);
+  //   return () => clearInterval(materialInterval);
+  // }, []);
 
   return (
     <VStack w={"full"} px={2} align="center">
@@ -238,6 +277,53 @@ const Minting = () => {
         <Text fontSize={"xl"} fontWeight={"600"}>
           Earth Resources
         </Text>
+      </HStack>
+
+      <Text textColor={"primary.100"} fontSize={"sm"} fontWeight={"bold"}>
+        Total resource
+      </Text>
+      <HStack>
+        {Object.entries(materials)
+          .slice(0, 5)
+          .map(([key, value]) => (
+            <Text
+              borderWidth={1}
+              p={1}
+              rounded={"xl"}
+              textAlign={"center"}
+              key={key}
+              fontSize={"sm"}
+            >
+              {key} {value.toFixed(0)}
+            </Text>
+          ))}
+      </HStack>
+      <Text
+        textColor={"primary.100"}
+        fontSize={"sm"}
+        fontWeight={"bold"}
+        pt={2}
+      >
+        Level {levelBot + 1} needed
+      </Text>
+      <HStack>
+        {/* @ts-ignore */}
+        {Object.entries(checkLevel["lv" + levelBot])
+          .slice(0, 5)
+          .map(([key, value]) => (
+            <Text
+              borderWidth={1}
+              p={1}
+              rounded={"xl"}
+              textAlign={"center"}
+              textColor={"primary.100"}
+              key={key}
+              fontSize={"sm"}
+            >
+              {/* @ts-ignore */}
+              {key} {value}
+            </Text>
+          ))}
       </HStack>
     </VStack>
   );

@@ -1,8 +1,24 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
-import { motion, animate, useMotionValue, useTransform } from "framer-motion";
-import { Box, HStack, Image, Stack, Text, VStack } from "@chakra-ui/react";
+import {
+  motion,
+  animate,
+  useMotionValue,
+  useTransform,
+  AnimatePresence,
+} from "framer-motion";
+import {
+  Box,
+  HStack,
+  Icon,
+  Image,
+  Stack,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import ThreeDButton from "./ButtonMint";
 import { DataMint } from "@/lib/data";
+import { FaBitcoinSign } from "react-icons/fa6";
+import { PiHandCoins } from "react-icons/pi";
 
 type MintItemType = {
   name: string;
@@ -209,6 +225,15 @@ const MintItem = ({ item }: { item: MintItemType }) => {
     }
   }, [item.calculatedValue, calculatedValueMotion, item.floatingText]);
 
+  const [show, setShow] = useState(true);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setShow((prevShow) => !prevShow);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [show]);
   return (
     <HStack
       w={"full"}
@@ -229,21 +254,45 @@ const MintItem = ({ item }: { item: MintItemType }) => {
         >
           <Image src={item.image} />
         </Box>
-
-        <Text color={"primary.100"} fontSize={"lg"} fontWeight={"bold"}>
-          {item.name}
-        </Text>
+        <VStack align={"start"}>
+          <Text color={"primary.100"} fontSize={"md"} fontWeight={"bold"}>
+            {item.name}
+          </Text>
+          <HStack position={"relative"}>
+            <Icon as={PiHandCoins} fontSize={"sm"} color={"yellow.500"} />
+            <AnimatePresence>
+              {show && (
+                <motion.div
+                  initial={{ opacity: 0, y: 0 }}
+                  animate={{ opacity: 1, y: -10 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  transition={{ duration: 1 }}
+                  key="animatedText"
+                  style={{ position: "absolute", left: "20px" }}
+                >
+                  <Text
+                    fontSize={"xs"}
+                    textColor={"green"}
+                    fontWeight={"semibold"}
+                  >
+                    +1
+                  </Text>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </HStack>
+        </VStack>
       </HStack>
 
       <HStack w={"50%"} justifyContent={"space-between"}>
-        <Text color={"primary.100"} fontWeight={"600"} fontSize={"lg"}>
+        <Text color={"primary.100"} fontWeight={"600"} fontSize={"md"}>
           {item.second}/Sec
         </Text>
 
-        <HStack spacing={0}>
+        <HStack spacing={0} justifyContent={"end"}>
           <Text
             as={motion.span}
-            fontSize={"lg"}
+            fontSize={"md"}
             fontWeight={"bold"}
             textColor={"primary.100"}
           >
@@ -251,7 +300,7 @@ const MintItem = ({ item }: { item: MintItemType }) => {
             {animatedValue}
           </Text>
 
-          <Text color={"primary.100"} fontWeight={"bold"} fontSize={"lg"}>
+          <Text color={"primary.100"} fontWeight={"bold"} fontSize={"md"}>
             /{item.allocation}
           </Text>
         </HStack>
