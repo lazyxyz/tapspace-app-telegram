@@ -177,14 +177,16 @@ const InfoMint = () => {
   }, [resetTimer]);
 
   return (
-    <VStack w={"full"} px={2}>
-      <Stack pb={3} w={"full"} align={"end"}>
-        <ThreeDButton onClick={handleClick}>Mining</ThreeDButton>
+    <VStack w={"full"}>
+      <HStack w={"full"}>
+        {listData.map((item) => (
+          <MemoizedMintItem key={item.name} item={item} />
+        ))}
+      </HStack>
+      <Stack py={3} w={"full"} align={"center"}>
+        {/* <ThreeDButton onClick={handleClick}>Mining</ThreeDButton> */}
+        <Image onClick={handleClick} src="/assets/centerClick.png" />
       </Stack>
-
-      {listData.map((item) => (
-        <MemoizedMintItem key={item.name} item={item} />
-      ))}
     </VStack>
   );
 };
@@ -235,30 +237,31 @@ const MintItem = ({ item }: { item: MintItemType }) => {
     return () => clearInterval(interval);
   }, [show]);
   return (
-    <HStack
-      w={"full"}
-      borderWidth={3}
-      bg={"#e6effc"}
-      borderColor={"#92A8D0"}
-      p={4}
+    <VStack
+      w={"64px"}
+      bg={"#333649"}
+      px={1}
+      borderWidth={1}
+      borderBottomWidth={3}
+      borderColor={"#545978"}
       rounded={"xl"}
       justifyContent={"space-between"}
-      opacity={item.allocation > 0 ? "100%" : "50%"}
       position="relative"
     >
-      <HStack>
-        <Box
-          bg={item.allocation > 0 ? "white" : "#657BAE"}
-          p={2}
-          rounded={"xl"}
-        >
+      <VStack spacing={0}>
+        <Box p={2} rounded={"xl"}>
           <Image src={item.image} />
         </Box>
-        <VStack align={"start"}>
-          <Text color={"primary.100"} fontSize={"md"} fontWeight={"bold"}>
+        <VStack align={"center"} w={"full"}>
+          <Text
+            align={"center"}
+            color={"#C5C5C5"}
+            fontSize={"10px"}
+            fontWeight={"bold"}
+          >
             {item.name}
           </Text>
-          <HStack position={"relative"}>
+          <HStack position={"relative"} align={"start"} w={"full"} px={1}>
             <Icon as={PiHandCoins} fontSize={"sm"} color={"yellow.500"} />
             <AnimatePresence>
               {show && (
@@ -282,34 +285,12 @@ const MintItem = ({ item }: { item: MintItemType }) => {
             </AnimatePresence>
           </HStack>
         </VStack>
-      </HStack>
-
-      <HStack w={"50%"} justifyContent={"space-between"}>
-        <Text color={"primary.100"} fontWeight={"600"} fontSize={"md"}>
-          {item.second}/Sec
-        </Text>
-
-        <HStack spacing={0} justifyContent={"end"}>
-          <Text
-            as={motion.span}
-            fontSize={"md"}
-            fontWeight={"bold"}
-            textColor={"primary.100"}
-          >
-            {/* @ts-ignore */}
-            {animatedValue}
-          </Text>
-
-          <Text color={"primary.100"} fontWeight={"bold"} fontSize={"md"}>
-            /{item.allocation}
-          </Text>
-        </HStack>
-      </HStack>
+      </VStack>
 
       {floatingTexts.map((text, index) => (
         <FloatingText key={index} text={text} />
       ))}
-    </HStack>
+    </VStack>
   );
 };
 
