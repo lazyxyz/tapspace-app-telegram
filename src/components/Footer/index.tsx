@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Button,
   Drawer,
   DrawerBody,
   DrawerContent,
@@ -15,6 +16,11 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import ResourcesDrawer from "./Menu/Resource";
+import Swap from "./Menu/Resource/Swap";
+import { useRouter } from "next/navigation";
+import { BiArrowBack } from "react-icons/bi";
+import { BsArrowLeft } from "react-icons/bs";
+import { FaAngleLeft, FaChevronLeft } from "react-icons/fa";
 
 export default function Footer() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -43,6 +49,9 @@ export default function Footer() {
     setSelectedMenuItem(index);
     onOpen();
   };
+
+  const [tab, setTab] = useState(false);
+
   return (
     <HStack
       position={"sticky"}
@@ -83,7 +92,7 @@ export default function Footer() {
         <DrawerOverlay />
 
         <DrawerContent
-          minH={"80vh"}
+          h={"82vh"}
           px={"0 !"}
           mx={"0 !"}
           bgGradient="linear(to-b, #333649 0%, #1F212E 100%)"
@@ -92,10 +101,23 @@ export default function Footer() {
           roundedTop={"xl"}
         >
           <DrawerHeader borderBottomWidth="1px" border={0}>
-            {listMenu[selectedMenuItem]?.label}
+            <HStack w={"full"} justifyContent={"space-between"}>
+              {!tab && <Text> {listMenu[selectedMenuItem]?.label}</Text>}
+              <Button
+                fontSize={"xl"}
+                variant={"unstyled"}
+                textColor={"#D5FE4B"}
+                onClick={() => setTab(!tab)}
+              >
+                <HStack>
+                  {tab && <FaChevronLeft />}
+                  <Text>Swap</Text>
+                </HStack>
+              </Button>
+            </HStack>
           </DrawerHeader>
           <DrawerBody px={3}>
-            {listMenu[selectedMenuItem]?.drawerContent}
+            {tab ? <Swap /> : listMenu[selectedMenuItem]?.drawerContent}
           </DrawerBody>
           <DrawerFooter p={0} position={"sticky"} bottom={0}>
             {listMenu.map((item, idx) => (
@@ -104,8 +126,12 @@ export default function Footer() {
                 w={"full"}
                 borderWidth={1}
                 borderTopWidth={"3px"}
-                bgGradient="linear(to-b, #333649 0%, #1F212E 100%)"
-                borderColor={"#545978"}
+                bgGradient={
+                  selectedMenuItem === idx
+                    ? "linear(to-b, #0DD63E 0%, #00A65B 100%)"
+                    : "linear(to-b, #333649 0%, #1F212E 100%)"
+                }
+                borderColor={selectedMenuItem === idx ? "#7CEE22" : "#545978"}
                 py={1}
                 roundedTop={"2xl"}
                 position={"relative"}
@@ -113,7 +139,6 @@ export default function Footer() {
                 justifyContent={"end"}
                 onClick={() => handleMenuClick(idx)}
                 cursor="pointer"
-                zIndex={1100}
               >
                 <Image
                   src={`/assets/menu/${item.image}`}

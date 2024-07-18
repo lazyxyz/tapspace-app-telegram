@@ -1,8 +1,8 @@
 export const DataMint = [
   {
     name: "Fiber",
-    second: 2,
-    allocation: 360,
+    second: 8,
+    allocation: 1440,
     image: "/assets/resources/Fiber.png",
   },
   {
@@ -13,15 +13,15 @@ export const DataMint = [
   },
   {
     name: "Steel",
-    second: 8,
-    allocation: 1440,
+    second: 3,
+    allocation: 540,
     image: "/assets/resources/Steel.png",
   },
 
   {
     name: "Copper",
-    second: 3,
-    allocation: 540,
+    second: 2,
+    allocation: 360,
     image: "/assets/resources/Copper.png",
   },
 

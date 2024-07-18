@@ -11,8 +11,6 @@ const BitcoinDisplay = ({ levelBot }: { levelBot: number }) => {
     return 0;
   });
 
-  console.log(12);
-
   const bitcoinValueMotion = useMotionValue(bitcoinValue);
 
   const animatedValue = useTransform(bitcoinValueMotion, (value) =>

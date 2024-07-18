@@ -1,4 +1,4 @@
-import { Stack, VStack } from "@chakra-ui/react";
+import { Box, Stack, VStack } from "@chakra-ui/react";
 import React from "react";
 import Header from "../Header/Header";
 import Footer from "../Footer";
@@ -9,15 +9,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       overflowY="auto"
       overflowX="hidden"
       w="100vw"
-      minH="100vh"
       bgImage={"/background.png"}
+      bgRepeat={"no-repeat"}
+      bgSize={"cover"}
       justifyContent={"space-between"}
     >
-      <Stack p={0} w={"full"} align={"center"}>
+      <Box w={"full"}>
         <Header />
-        {children}
-      </Stack>
-
+      </Box>
+      {children}
       <Footer />
     </VStack>
   );

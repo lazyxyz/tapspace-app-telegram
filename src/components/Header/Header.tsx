@@ -39,13 +39,19 @@ export default function Header() {
           <BarMenu />
         </Button>
         <HStack>
-          <Box bg={"white"} w={"36px"} h={"36px"} rounded={"full"} />
+          <Box
+            bg={"white"}
+            opacity={"10%"}
+            w={"36px"}
+            h={"36px"}
+            rounded={"full"}
+          />
           <Stack spacing={0}>
             <Text fontSize={"sm"} textColor={"white"} fontWeight={"800"}>
-              Alex Pham
+              {user?.username || "Unnamed"}
             </Text>
-            <Text fontSize={"xs"} textColor={"white"}>
-              {user?.username}
+            <Text fontSize={"10px"} fontWeight={800} textColor={"white"}>
+              ID:{user?.id}
             </Text>
           </Stack>
         </HStack>

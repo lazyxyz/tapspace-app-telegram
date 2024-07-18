@@ -103,8 +103,6 @@ const InfoMint = () => {
     });
   }, [levelBot]);
 
-  console.log(1);
-
   // Add to accumulatedValues state based on the current listData
   const addToAccumulatedValues = useCallback(() => {
     const updatedAccumulatedValues = { ...accumulatedValues };
@@ -186,7 +184,11 @@ const InfoMint = () => {
   }, [resetTimer]);
 
   return (
-    <VStack w={"full"}>
+    <VStack
+      w={"full"}
+      justifyContent={"space-between"}
+      minH="calc(100vh - 158px)"
+    >
       <HStack w={"full"}>
         {listData.map((item) => (
           <MemoizedMintItem
@@ -199,6 +201,8 @@ const InfoMint = () => {
       <Stack py={3} w={"full"} align={"center"}>
         <Image onClick={handleClick} src="/assets/centerClick.png" />
       </Stack>
+      <Box />
+      <Box />
     </VStack>
   );
 };

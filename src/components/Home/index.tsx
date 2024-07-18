@@ -1,15 +1,17 @@
 "use client";
 
-import { Box } from "@chakra-ui/react";
+import { Box, VStack } from "@chakra-ui/react";
 import InfoMint from "../Tabs/Resources/TotalResource/InfoMint";
 import { BitcoinProvider } from "../Wrapper/BitcoinProvider";
+import PopupDailyRewards from "../PopupDailyRewards";
 
 export default function HomePage() {
   return (
-    <Box h={"full"}>
-      <BitcoinProvider>
+    <BitcoinProvider>
+      <VStack h={"full"}>
         <InfoMint />
-      </BitcoinProvider>
-    </Box>
+      </VStack>
+      <PopupDailyRewards />
+    </BitcoinProvider>
   );
 }
