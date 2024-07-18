@@ -1,26 +1,19 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
-import {
-  motion,
-  animate,
-  useMotionValue,
-  useTransform,
-  AnimatePresence,
-} from "framer-motion";
+import { DataMint } from "@/lib/data";
 import {
   Box,
   HStack,
-  Icon,
   Image,
+  Progress,
   Stack,
   Text,
   VStack,
 } from "@chakra-ui/react";
-import ThreeDButton from "./ButtonMint";
-import { DataMint } from "@/lib/data";
-import { FaBitcoinSign } from "react-icons/fa6";
-import { PiHandCoins } from "react-icons/pi";
+import { animate, motion, useMotionValue, useTransform } from "framer-motion";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { MemoizedMintItem } from "./MintItem";
 
-type MintItemType = {
+// Define the MintItemType type
+export type MintItemType = {
   name: string;
   second: number;
   allocation: number;
@@ -29,7 +22,20 @@ type MintItemType = {
   floatingText?: string;
 };
 
+// Function to calculate new item second based on bot level
+const calculateNewItemSecond = (
+  currentItemSecond: number,
+  levelBot: number
+) => {
+  let newItemSecond = currentItemSecond;
+  for (let i = 1; i < levelBot; i++) {
+    newItemSecond += newItemSecond * 0.05;
+  }
+  return parseFloat(newItemSecond.toFixed(2));
+};
+
 const InfoMint = () => {
+  // Initialize listData state with data from localStorage or initial DataMint
   const [listData, setListData] = useState<MintItemType[]>(() => {
     if (typeof window !== "undefined") {
       const savedListData = localStorage.getItem("listData");
@@ -47,19 +53,18 @@ const InfoMint = () => {
     return [];
   });
 
+  // Initialize accumulatedValues state with data from localStorage
   const [accumulatedValues, setAccumulatedValues] = useState<{
     [key: string]: number;
   }>(() => {
     if (typeof window !== "undefined") {
-      const savedValues = JSON.parse(
-        localStorage.getItem("accumulatedValues") || "{}"
-      );
-      return savedValues;
+      const savedValues = localStorage.getItem("accumulatedValues");
+      return savedValues ? JSON.parse(savedValues) : {};
     }
-
-    return "{}";
+    return {};
   });
 
+  // Initialize levelBot state with data from localStorage
   const [levelBot, setLevelBot] = useState<number>(() => {
     if (typeof window !== "undefined") {
       const storedLevelBot = localStorage.getItem("levelBot");
@@ -68,6 +73,7 @@ const InfoMint = () => {
     return 1;
   });
 
+  // Initialize totalItems state with data from localStorage
   const [totalItems, setTotalItems] = useState<number>(() => {
     if (typeof window !== "undefined") {
       const savedTotalItems = Number(localStorage.getItem("totalItems")) || 0;
@@ -78,9 +84,10 @@ const InfoMint = () => {
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Update listData state based on the current bot level
   const updateListData = useCallback(() => {
     setListData((prevListData: any) => {
-      const updatedList = prevListData.map((item: any) => {
+      return prevListData.map((item: any) => {
         if (item.calculatedValue < item.allocation) {
           const updatedValue =
             item.calculatedValue +
@@ -93,14 +100,14 @@ const InfoMint = () => {
         }
         return item;
       });
-
-      return updatedList;
     });
   }, [levelBot]);
 
+  console.log(1);
+
+  // Add to accumulatedValues state based on the current listData
   const addToAccumulatedValues = useCallback(() => {
     const updatedAccumulatedValues = { ...accumulatedValues };
-
     listData.forEach((item) => {
       if (!updatedAccumulatedValues[item.name]) {
         updatedAccumulatedValues[item.name] = 0;
@@ -112,27 +119,25 @@ const InfoMint = () => {
         );
       }
     });
-
     setAccumulatedValues(updatedAccumulatedValues);
   }, [accumulatedValues, listData, levelBot]);
 
+  // Reset the timer for updating listData
   const resetTimer = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current);
-
     const allFull = listData.every(
       (item) => item.calculatedValue >= item.allocation
     );
     if (allFull) return;
-
     timerRef.current = setInterval(() => {
       updateListData();
     }, 1000);
-
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
   }, [listData, updateListData]);
 
+  // Handle click event to update listData and accumulatedValues
   const handleClick = useCallback(() => {
     setListData((prevListData) =>
       prevListData.map((item) => {
@@ -152,12 +157,14 @@ const InfoMint = () => {
     addToAccumulatedValues();
     setTotalItems((prevTotal) => prevTotal + 1);
     resetTimer();
-  }, [levelBot, resetTimer]);
+  }, [levelBot, addToAccumulatedValues, resetTimer]);
 
+  // Update localStorage when listData changes
   useEffect(() => {
     localStorage.setItem("listData", JSON.stringify(listData));
   }, [listData]);
 
+  // Update localStorage when accumulatedValues changes
   useEffect(() => {
     localStorage.setItem(
       "accumulatedValues",
@@ -165,10 +172,12 @@ const InfoMint = () => {
     );
   }, [accumulatedValues]);
 
+  // Update localStorage when totalItems changes
   useEffect(() => {
     localStorage.setItem("totalItems", totalItems.toString());
   }, [totalItems]);
 
+  // Start the timer when the component mounts and reset it when necessary
   useEffect(() => {
     resetTimer();
     return () => {
@@ -180,131 +189,18 @@ const InfoMint = () => {
     <VStack w={"full"}>
       <HStack w={"full"}>
         {listData.map((item) => (
-          <MemoizedMintItem key={item.name} item={item} />
+          <MemoizedMintItem
+            key={item.name}
+            item={item}
+            accumulatedValues={accumulatedValues}
+          />
         ))}
       </HStack>
       <Stack py={3} w={"full"} align={"center"}>
-        {/* <ThreeDButton onClick={handleClick}>Mining</ThreeDButton> */}
         <Image onClick={handleClick} src="/assets/centerClick.png" />
       </Stack>
     </VStack>
   );
 };
 
-const FloatingText = ({ text }: { text: string }) => (
-  <motion.div
-    initial={{ opacity: 1, y: 0 }}
-    animate={{ opacity: 0, y: -50 }}
-    transition={{ duration: 1 }}
-    style={{ position: "absolute", bottom: "0", left: "0", zIndex: 10 }}
-  >
-    <Text fontSize="sm" fontWeight="bold" color="green.500">
-      {text}
-    </Text>
-  </motion.div>
-);
-
-const MintItem = ({ item }: { item: MintItemType }) => {
-  const calculatedValueMotion = useMotionValue(item.calculatedValue);
-  const animatedValue = useTransform(calculatedValueMotion, (value) =>
-    value.toFixed(0)
-  );
-
-  const [floatingTexts, setFloatingTexts] = useState<string[]>([]);
-
-  useEffect(() => {
-    animate(calculatedValueMotion, item.calculatedValue, {
-      duration: 0.2,
-      ease: "linear",
-    });
-
-    if (item.floatingText) {
-      //@ts-ignore
-      setFloatingTexts((prevTexts) => [...prevTexts, item.floatingText]);
-      setTimeout(() => {
-        setFloatingTexts((prevTexts) => prevTexts.slice(1));
-      }, 1000);
-    }
-  }, [item.calculatedValue, calculatedValueMotion, item.floatingText]);
-
-  const [show, setShow] = useState(true);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setShow((prevShow) => !prevShow);
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [show]);
-  return (
-    <VStack
-      w={"64px"}
-      bg={"#333649"}
-      px={1}
-      borderWidth={1}
-      borderBottomWidth={3}
-      borderColor={"#545978"}
-      rounded={"xl"}
-      justifyContent={"space-between"}
-      position="relative"
-    >
-      <VStack spacing={0}>
-        <Box p={2} rounded={"xl"}>
-          <Image src={item.image} />
-        </Box>
-        <VStack align={"center"} w={"full"}>
-          <Text
-            align={"center"}
-            color={"#C5C5C5"}
-            fontSize={"10px"}
-            fontWeight={"bold"}
-          >
-            {item.name}
-          </Text>
-          <HStack position={"relative"} align={"start"} w={"full"} px={1}>
-            <Icon as={PiHandCoins} fontSize={"sm"} color={"yellow.500"} />
-            <AnimatePresence>
-              {show && (
-                <motion.div
-                  initial={{ opacity: 0, y: 0 }}
-                  animate={{ opacity: 1, y: -10 }}
-                  exit={{ opacity: 0, y: 20 }}
-                  transition={{ duration: 1 }}
-                  key="animatedText"
-                  style={{ position: "absolute", left: "20px" }}
-                >
-                  <Text
-                    fontSize={"xs"}
-                    textColor={"green"}
-                    fontWeight={"semibold"}
-                  >
-                    +1
-                  </Text>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </HStack>
-        </VStack>
-      </VStack>
-
-      {floatingTexts.map((text, index) => (
-        <FloatingText key={index} text={text} />
-      ))}
-    </VStack>
-  );
-};
-
-const MemoizedMintItem = React.memo(MintItem);
-
 export default InfoMint;
-
-export const calculateNewItemSecond = (
-  currentItemSecond: any,
-  levelBot: any
-) => {
-  let newItemSecond = currentItemSecond;
-  for (let i = 1; i < levelBot; i++) {
-    newItemSecond = newItemSecond + newItemSecond * 0.05;
-  }
-  return parseFloat(newItemSecond.toFixed(2));
-};

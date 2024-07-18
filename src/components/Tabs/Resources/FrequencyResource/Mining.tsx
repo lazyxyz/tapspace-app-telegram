@@ -94,47 +94,6 @@ const Minting = () => {
 
   const toast = useToast();
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setBitcoinValue((prevValue) => {
-        const newValue = prevValue + 0.015 * levelBot;
-        animate(bitcoinValueMotion, newValue, {
-          duration: 0.5,
-          ease: "linear",
-        });
-        localStorage.setItem("bitcoinValue", newValue.toString());
-        return newValue;
-      });
-
-      const storedMaterials = localStorage.getItem("accumulatedValues");
-      let newMaterials = {};
-
-      if (storedMaterials) {
-        try {
-          newMaterials = JSON.parse(storedMaterials);
-        } catch (error) {
-          console.error(
-            "Error parsing accumulatedValues from localStorage:",
-            error
-          );
-        }
-      }
-
-      for (const key in newMaterials) {
-        if (newMaterials.hasOwnProperty(key)) {
-          //@ts-ignore
-          newMaterials[key] = (newMaterials[key] || 0) + 1;
-        }
-      }
-
-      localStorage.setItem("accumulatedValues", JSON.stringify(newMaterials));
-
-      setMaterials(newMaterials);
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [bitcoinValueMotion, levelBot]);
-
   const handleClaim = useCallback(() => {
     const claimValue = parseFloat(bitcoinValue.toFixed(4));
     setClaimAmount(claimValue);

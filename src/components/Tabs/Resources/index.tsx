@@ -1,7 +1,7 @@
 import { Divider, Text, VStack } from "@chakra-ui/react";
 import React from "react";
-import Minting from "./Minting";
-import InfoMint from "./InfoMint";
+import Minting from "./FrequencyResource/Mining";
+import InfoMint from "./TotalResource/InfoMint";
 
 export default function Resources() {
   return (

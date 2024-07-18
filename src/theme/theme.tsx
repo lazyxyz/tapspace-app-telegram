@@ -1,16 +1,10 @@
-import {
-  ComponentStyleConfig,
-  background,
-  extendTheme,
-  useColorModeValue,
-} from "@chakra-ui/react";
-import { StyleFunctionProps } from "@chakra-ui/theme-tools";
-// import "@fontsource/chakra-petch";
+import { ComponentStyleConfig, extendTheme } from "@chakra-ui/react";
+import "@fontsource/nunito";
 
-// const fonts = {
-//   heading: `'Roboto Mono Variable',sans-serif`,
-//   body: `'Roboto Mono Variable',sans-serif`,
-// };
+const fonts = {
+  heading: `'Nunito Variable',sans-serif`,
+  body: `'Nunito Variable',sans-serif`,
+};
 
 const breakpoints = {
   sm: "40em",
@@ -23,11 +17,10 @@ const colors = {
     DEFAULT: "#30417a",
     "100": "#30417a",
   },
-  lightPink: "#fff0f0",
-  pink: "#ffe9e9",
-  darkPink: "#f9c4d2",
-  pinkBorder: "#b18597",
-  pinkShadow: "#ffe3e2",
+
+  gray: {
+    100: "#545978",
+  },
 
   box: {
     "50": "rgba(39, 39, 42, 0.45)",
@@ -70,7 +63,7 @@ const theme = extendTheme({
   },
 
   styles,
-  // fonts,
+  fonts,
   breakpoints,
   components,
   shadows: {

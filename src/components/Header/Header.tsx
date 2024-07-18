@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Box,
   Button,
@@ -8,8 +10,12 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import React from "react";
+import { useBitcoin } from "../Wrapper/BitcoinProvider";
+import { useTelegram } from "@/lib/TelegramProvider";
 
 export default function Header() {
+  const bitcoinValue = useBitcoin();
+  const { user } = useTelegram();
   return (
     <HStack
       w={"full"}
@@ -39,7 +45,7 @@ export default function Header() {
               Alex Pham
             </Text>
             <Text fontSize={"xs"} textColor={"white"}>
-              @duongtuan24
+              {user?.username}
             </Text>
           </Stack>
         </HStack>
@@ -54,8 +60,7 @@ export default function Header() {
         bg={"#13161F"}
       >
         <Text fontWeight={900} textColor={"white"}>
-          {" "}
-          550.22M
+          {bitcoinValue}
         </Text>
         <Image
           src="/bitcoin.svg"
