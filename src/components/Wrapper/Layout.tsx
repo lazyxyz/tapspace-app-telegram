@@ -1,7 +1,10 @@
+"use client";
+
 import { Box, Stack, VStack } from "@chakra-ui/react";
 import React from "react";
 import Header from "../Header/Header";
 import Footer from "../Footer";
+import { BitcoinProvider } from "./BitcoinProvider";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -14,9 +17,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       bgSize={"cover"}
       justifyContent={"space-between"}
     >
-      <Box w={"full"}>
-        <Header />
-      </Box>
+      <Header />
       {children}
       <Footer />
     </VStack>

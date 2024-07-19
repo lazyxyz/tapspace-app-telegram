@@ -10,42 +10,42 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useTelegram } from "@/lib/TelegramProvider";
-import { CheckLevel, checkLevel } from "@/utils/utils";
+// import { CheckLevel, checkLevel } from "@/utils/utils";
 
-const BitcoinDisplay = memo(
-  ({ levelBot, animatedValue }: { levelBot: number; animatedValue: any }) => (
-    <HStack
-      w={"full"}
-      borderWidth={1}
-      bg={"#eff5ff"}
-      borderColor={"#92A8D0"}
-      p={4}
-      rounded={"xl"}
-      justifyContent={"space-between"}
-      position="relative"
-    >
-      <HStack spacing={4}>
-        <Image src="/bitcoin.svg" alt="Bitcoin Icon" />
-        <VStack align="start" whiteSpace={"pre"}>
-          <Text fontSize={"xl"} fontWeight={"bold"}>
-            Bitcoin (lv{levelBot})
-          </Text>
-          <Text>{(0.015 * levelBot).toFixed(3)}/Sec</Text>
-        </VStack>
-      </HStack>
-      <motion.div
-        style={{
-          fontSize: "28px",
-          fontWeight: "bold",
-          color: "#3182ce",
-        }}
-      >
-        <motion.span>{animatedValue}</motion.span>
-      </motion.div>
-    </HStack>
-  )
-);
-BitcoinDisplay.displayName = "BitcoinDisplay";
+// const BitcoinDisplay = memo(
+//   ({ levelBot, animatedValue }: { levelBot: number; animatedValue: any }) => (
+//     <HStack
+//       w={"full"}
+//       borderWidth={1}
+//       bg={"#eff5ff"}
+//       borderColor={"#92A8D0"}
+//       p={4}
+//       rounded={"xl"}
+//       justifyContent={"space-between"}
+//       position="relative"
+//     >
+//       <HStack spacing={4}>
+//         <Image src="/bitcoin.svg" alt="Bitcoin Icon" />
+//         <VStack align="start" whiteSpace={"pre"}>
+//           <Text fontSize={"xl"} fontWeight={"bold"}>
+//             Bitcoin (lv{levelBot})
+//           </Text>
+//           <Text>{(0.015 * levelBot).toFixed(3)}/Sec</Text>
+//         </VStack>
+//       </HStack>
+//       <motion.div
+//         style={{
+//           fontSize: "28px",
+//           fontWeight: "bold",
+//           color: "#3182ce",
+//         }}
+//       >
+//         <motion.span>{animatedValue}</motion.span>
+//       </motion.div>
+//     </HStack>
+//   )
+// );
+// BitcoinDisplay.displayName = "BitcoinDisplay";
 
 const Minting = () => {
   const { user } = useTelegram();
@@ -109,64 +109,64 @@ const Minting = () => {
     localStorage.setItem("bitcoinValue", "0");
   }, [bitcoinValue]);
 
-  const canUpgrade = useCallback(
-    (currentLevel: number): boolean => {
-      const levelKey = `lv${currentLevel}` as keyof CheckLevel;
-      const requirements = checkLevel[levelKey];
-      return (
-        materials.Steel >= requirements.Steel &&
-        materials.Aluminum >= requirements.Aluminum &&
-        materials.Copper >= requirements.Copper &&
-        materials.Fiber >= requirements.Fiber &&
-        materials.Titanium >= requirements.Titanium
-      );
-    },
-    [materials]
-  );
+  // const canUpgrade = useCallback(
+  //   (currentLevel: number): boolean => {
+  //     const levelKey = `lv${currentLevel}` as keyof CheckLevel;
+  //     const requirements = checkLevel[levelKey];
+  //     return (
+  //       materials.Steel >= requirements.Steel &&
+  //       materials.Aluminum >= requirements.Aluminum &&
+  //       materials.Copper >= requirements.Copper &&
+  //       materials.Fiber >= requirements.Fiber &&
+  //       materials.Titanium >= requirements.Titanium
+  //     );
+  //   },
+  //   [materials]
+  // );
 
-  const upgradeLevel = useCallback(() => {
-    if (canUpgrade(levelBot)) {
-      const levelKey = `lv${levelBot}` as keyof CheckLevel;
-      const requirements = checkLevel[levelKey];
+  // const upgradeLevel = useCallback(() => {
+  //   if (canUpgrade(levelBot)) {
+  //     const levelKey = `lv${levelBot}` as keyof CheckLevel;
+  //     const requirements = checkLevel[levelKey];
 
-      setMaterials((prevMaterials: any) => {
-        const newMaterials = {
-          ...prevMaterials,
-          Steel: prevMaterials.Steel - requirements.Steel,
-          Aluminum: prevMaterials.Aluminum - requirements.Aluminum,
-          Copper: prevMaterials.Copper - requirements.Copper,
-          Fiber: prevMaterials.Fiber - requirements.Fiber,
-          Titanium: prevMaterials.Titanium - requirements.Titanium,
-        };
-        localStorage.setItem("materials", JSON.stringify(newMaterials));
-        return newMaterials;
-      });
+  //     setMaterials((prevMaterials: any) => {
+  //       const newMaterials = {
+  //         ...prevMaterials,
+  //         Steel: prevMaterials.Steel - requirements.Steel,
+  //         Aluminum: prevMaterials.Aluminum - requirements.Aluminum,
+  //         Copper: prevMaterials.Copper - requirements.Copper,
+  //         Fiber: prevMaterials.Fiber - requirements.Fiber,
+  //         Titanium: prevMaterials.Titanium - requirements.Titanium,
+  //       };
+  //       localStorage.setItem("materials", JSON.stringify(newMaterials));
+  //       return newMaterials;
+  //     });
 
-      setLevelBot((prevLevel) => {
-        const newLevel = prevLevel + 1;
-        localStorage.setItem("levelBot", newLevel.toString());
-        return newLevel;
-      });
+  //     setLevelBot((prevLevel) => {
+  //       const newLevel = prevLevel + 1;
+  //       localStorage.setItem("levelBot", newLevel.toString());
+  //       return newLevel;
+  //     });
 
-      toast({
-        status: "success",
-        title: "Upgrade complete",
-        description: `You can upgrade to level${levelBot + 1}`,
-        position: "top-right",
-        isClosable: true,
-        duration: 3000,
-      });
-    } else {
-      toast({
-        status: "warning",
-        title: "",
-        description: "You must mine enough materials to upgrade",
-        position: "top-right",
-        isClosable: true,
-        duration: 3000,
-      });
-    }
-  }, [levelBot, materials, canUpgrade, toast]);
+  //     toast({
+  //       status: "success",
+  //       title: "Upgrade complete",
+  //       description: `You can upgrade to level${levelBot + 1}`,
+  //       position: "top-right",
+  //       isClosable: true,
+  //       duration: 3000,
+  //     });
+  //   } else {
+  //     toast({
+  //       status: "warning",
+  //       title: "",
+  //       description: "You must mine enough materials to upgrade",
+  //       position: "top-right",
+  //       isClosable: true,
+  //       duration: 3000,
+  //     });
+  //   }
+  // }, [levelBot, materials, canUpgrade, toast]);
 
   useEffect(() => {
     if (claiming) {
@@ -213,7 +213,7 @@ const Minting = () => {
           </Box>
         </Text>
       </HStack>
-      <HStack justifyContent={"start"} w={"full"}>
+      {/* <HStack justifyContent={"start"} w={"full"}>
         <Box>
           <Button onClick={handleClaim}>Claim Bitcoin</Button>
         </Box>
@@ -221,7 +221,7 @@ const Minting = () => {
           Upgrade bot
         </Button>
       </HStack>
-      <BitcoinDisplay levelBot={levelBot} animatedValue={animatedValue} />
+      <BitcoinDisplay levelBot={levelBot} animatedValue={animatedValue} /> */}
       <HStack
         w={"full"}
         borderWidth={1}

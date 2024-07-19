@@ -1,28 +1,27 @@
 import { DataMint } from "@/lib/data";
-import {
-  Box,
-  HStack,
-  Image,
-  Progress,
-  Stack,
-  Text,
-  VStack,
-} from "@chakra-ui/react";
-import { animate, motion, useMotionValue, useTransform } from "framer-motion";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Box, HStack, Image, Stack, VStack } from "@chakra-ui/react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { MemoizedMintItem } from "./MintItem";
+import { useQuery } from "@tanstack/react-query";
+import systemService from "@/services/system.service";
+import {
+  animate,
+  motion,
+  useAnimation,
+  useMotionValue,
+  useTransform,
+} from "framer-motion";
 
-// Define the MintItemType type
 export type MintItemType = {
-  name: string;
-  second: number;
-  allocation: number;
-  image: string;
+  capacity: number;
+  resource_name: string;
   calculatedValue: number;
   floatingText?: string;
+  frequency_mining: number;
+  image?: string;
+  mining: number;
 };
 
-// Function to calculate new item second based on bot level
 const calculateNewItemSecond = (
   currentItemSecond: number,
   levelBot: number
@@ -34,67 +33,75 @@ const calculateNewItemSecond = (
   return parseFloat(newItemSecond.toFixed(2));
 };
 
+const postDataToApi = async (data: any) => {
+  alert(`Posting data: ${JSON.stringify(data)}`);
+};
+
 const InfoMint = () => {
-  // Initialize listData state with data from localStorage or initial DataMint
-  const [listData, setListData] = useState<MintItemType[]>(() => {
-    if (typeof window !== "undefined") {
-      const savedListData = localStorage.getItem("listData");
-      if (savedListData) {
-        return JSON.parse(savedListData) as MintItemType[];
-      } else {
-        const initialData = DataMint.map((item) => ({
-          ...item,
-          calculatedValue: item.allocation,
-        }));
-        localStorage.setItem("listData", JSON.stringify(initialData));
-        return initialData;
-      }
-    }
-    return [];
+  const { data, error, isLoading, refetch } = useQuery({
+    queryKey: ["infoUser"],
+    queryFn: async () => {
+      const rs = await systemService.getUserInfo({
+        telegram_id: "1341419583",
+        planets: "Earth",
+      });
+      return rs.data[0];
+    },
+    staleTime: Infinity,
+    enabled: true,
   });
 
-  // Initialize accumulatedValues state with data from localStorage
+  const [listData, setListData] = useState<MintItemType[]>([]);
   const [accumulatedValues, setAccumulatedValues] = useState<{
     [key: string]: number;
-  }>(() => {
-    if (typeof window !== "undefined") {
-      const savedValues = localStorage.getItem("accumulatedValues");
-      return savedValues ? JSON.parse(savedValues) : {};
-    }
-    return {};
-  });
+  }>({});
+  const [levelBot, setLevelBot] = useState<number>(1);
+  const [totalItems, setTotalItems] = useState<number>(0);
 
-  // Initialize levelBot state with data from localStorage
-  const [levelBot, setLevelBot] = useState<number>(() => {
-    if (typeof window !== "undefined") {
-      const storedLevelBot = localStorage.getItem("levelBot");
-      return storedLevelBot ? parseInt(storedLevelBot) : 1;
-    }
-    return 1;
-  });
+  const totalItemsRef = useRef(totalItems);
 
-  // Initialize totalItems state with data from localStorage
-  const [totalItems, setTotalItems] = useState<number>(() => {
-    if (typeof window !== "undefined") {
-      const savedTotalItems = Number(localStorage.getItem("totalItems")) || 0;
-      return savedTotalItems;
+  useEffect(() => {
+    if (data && typeof window !== "undefined") {
+      const initialData = data?.resources?.map((item: any) => ({
+        ...item,
+        calculatedValue: item.capacity,
+      }));
+      setListData(initialData);
+      localStorage.setItem("listData", JSON.stringify(initialData));
     }
-    return 0;
-  });
+  }, [data]);
+
+  useEffect(() => {
+    const savedValues = localStorage.getItem("accumulatedValues");
+    if (savedValues) {
+      setAccumulatedValues(JSON.parse(savedValues));
+    }
+
+    const storedLevelBot = localStorage.getItem("levelBot");
+    if (storedLevelBot) {
+      setLevelBot(parseInt(storedLevelBot));
+    }
+
+    const savedTotalItems = Number(localStorage.getItem("totalItems")) || 0;
+    setTotalItems(savedTotalItems);
+  }, []);
+
+  useEffect(() => {
+    totalItemsRef.current = totalItems;
+  }, [totalItems]);
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Update listData state based on the current bot level
   const updateListData = useCallback(() => {
     setListData((prevListData: any) => {
       return prevListData.map((item: any) => {
-        if (item.calculatedValue < item.allocation) {
+        if (item.calculatedValue < item?.capacity) {
           const updatedValue =
             item.calculatedValue +
-            calculateNewItemSecond(item.second, levelBot);
+            calculateNewItemSecond(item.frequency_mining, levelBot);
           return {
             ...item,
-            calculatedValue: Math.min(updatedValue, item.allocation),
+            calculatedValue: Math.min(updatedValue, item?.capacity),
             floatingText: null,
           };
         }
@@ -103,16 +110,15 @@ const InfoMint = () => {
     });
   }, [levelBot]);
 
-  // Add to accumulatedValues state based on the current listData
   const addToAccumulatedValues = useCallback(() => {
     const updatedAccumulatedValues = { ...accumulatedValues };
     listData.forEach((item) => {
-      if (!updatedAccumulatedValues[item.name]) {
-        updatedAccumulatedValues[item.name] = 0;
+      if (!updatedAccumulatedValues[item.resource_name]) {
+        updatedAccumulatedValues[item.resource_name] = 0;
       }
-      if (item.calculatedValue > 0 && item.calculatedValue < item.allocation) {
-        updatedAccumulatedValues[item.name] += calculateNewItemSecond(
-          item.second,
+      if (item.calculatedValue > 0 && item.calculatedValue < item?.capacity) {
+        updatedAccumulatedValues[item.resource_name] += calculateNewItemSecond(
+          item.frequency_mining,
           levelBot
         );
       }
@@ -120,11 +126,10 @@ const InfoMint = () => {
     setAccumulatedValues(updatedAccumulatedValues);
   }, [accumulatedValues, listData, levelBot]);
 
-  // Reset the timer for updating listData
   const resetTimer = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current);
     const allFull = listData.every(
-      (item) => item.calculatedValue >= item.allocation
+      (item) => item.calculatedValue >= item?.capacity
     );
     if (allFull) return;
     timerRef.current = setInterval(() => {
@@ -135,18 +140,20 @@ const InfoMint = () => {
     };
   }, [listData, updateListData]);
 
-  // Handle click event to update listData and accumulatedValues
   const handleClick = useCallback(() => {
     setListData((prevListData) =>
       prevListData.map((item) => {
         if (item.calculatedValue > 0) {
           const updatedValue =
             item.calculatedValue -
-            calculateNewItemSecond(item.second, levelBot);
+            calculateNewItemSecond(item.frequency_mining, levelBot);
           return {
             ...item,
             calculatedValue: Math.max(updatedValue, 0),
-            floatingText: `+${calculateNewItemSecond(item.second, levelBot)}`,
+            floatingText: `+${calculateNewItemSecond(
+              item.frequency_mining,
+              levelBot
+            )}`,
           };
         }
         return item;
@@ -157,12 +164,10 @@ const InfoMint = () => {
     resetTimer();
   }, [levelBot, addToAccumulatedValues, resetTimer]);
 
-  // Update localStorage when listData changes
   useEffect(() => {
     localStorage.setItem("listData", JSON.stringify(listData));
   }, [listData]);
 
-  // Update localStorage when accumulatedValues changes
   useEffect(() => {
     localStorage.setItem(
       "accumulatedValues",
@@ -170,36 +175,85 @@ const InfoMint = () => {
     );
   }, [accumulatedValues]);
 
-  // Update localStorage when totalItems changes
   useEffect(() => {
     localStorage.setItem("totalItems", totalItems.toString());
   }, [totalItems]);
 
-  // Start the timer when the component mounts and reset it when necessary
-  useEffect(() => {
-    resetTimer();
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, [resetTimer]);
+  // useEffect(() => {
+  //   const intervalId = setInterval(() => {
+  //     if (totalItemsRef.current > 0) {
+  //       const result = listData.map((item) => ({
+  //         name: item.resource_name,
+  //         value: totalItemsRef.current * item.frequency_mining,
+  //       }));
 
+  //       postDataToApi(result);
+
+  //       setTotalItems(0);
+  //     }
+  //   }, 30000);
+
+  //   return () => clearInterval(intervalId);
+  // }, [accumulatedValues]);
+
+  const rotateVariants = {
+    rotate: { rotate: 360 },
+  };
+
+  const clickVariants = {
+    click: {
+      scale: 1.05,
+      transition: { duration: 0.3, ease: "easeInOut" },
+    },
+    normal: {
+      scale: 1,
+      transition: { duration: 0.3, ease: "easeInOut" },
+    },
+  };
+  const controls = useAnimation();
+
+  const handleImageClick = () => {
+    controls.start("click").then(() => {
+      controls.start("normal");
+    });
+    handleClick();
+  };
   return (
     <VStack
       w={"full"}
       justifyContent={"space-between"}
-      minH="calc(100vh - 158px)"
+      minH="calc(100vh - 166px)"
     >
       <HStack w={"full"}>
         {listData.map((item) => (
           <MemoizedMintItem
-            key={item.name}
+            key={item.resource_name}
             item={item}
             accumulatedValues={accumulatedValues}
           />
         ))}
       </HStack>
       <Stack py={3} w={"full"} align={"center"}>
-        <Image onClick={handleClick} src="/assets/centerClick.png" />
+        <motion.div
+          animate={controls}
+          onClick={handleImageClick}
+          initial="normal"
+          variants={clickVariants}
+          whileHover="click"
+          whileTap="click"
+          style={{ display: "inline-block" }}
+        >
+          <motion.img
+            src="/assets/Planet/Nutom.png"
+            alt="Center Click"
+            animate={{ rotate: 360 }}
+            transition={{
+              repeat: Infinity,
+              duration: 90,
+              ease: "linear",
+            }}
+          />
+        </motion.div>
       </Stack>
       <Box />
       <Box />

@@ -1,5 +1,6 @@
 import { MintItemType } from "@/components/Tabs/Resources/TotalResource/InfoMint";
 import { DataMint } from "@/lib/data";
+import { imageResources } from "@/utils/utils";
 import {
   Box,
   Button,
@@ -18,9 +19,9 @@ const ListResources = () => {
       if (savedListData) {
         return JSON.parse(savedListData) as MintItemType[];
       } else {
-        const initialData = DataMint.map((item) => ({
+        const initialData = DataMint.map((item: any) => ({
           ...item,
-          calculatedValue: item.allocation,
+          calculatedValue: item.capacity,
         }));
         localStorage.setItem("listData", JSON.stringify(initialData));
         return initialData;
@@ -32,7 +33,7 @@ const ListResources = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       const allFull = listData.every(
-        (item) => item.calculatedValue >= item.allocation
+        (item) => item.calculatedValue >= item.capacity
       );
 
       if (allFull) {
@@ -48,8 +49,6 @@ const ListResources = () => {
     return () => clearInterval(interval);
   }, [listData]);
 
-  console.log(1);
-
   return (
     <>
       {listData.map((item, idx) => (
@@ -58,17 +57,25 @@ const ListResources = () => {
             <HStack justifyContent={"space-between"}>
               <HStack>
                 <Box bg={"rgba(255, 255, 255, 0.12)"} p={2} rounded={"xl"}>
-                  <Image src={item.image} w={"56px"} h={"56px"} />
+                  <Image
+                    src={imageResources[item?.resource_name]}
+                    w={"56px"}
+                    h={"56px"}
+                  />
                 </Box>
                 <VStack align={"start"}>
                   <Stack spacing={0}>
-                    <Text fontWeight={"800"}>{item.name}</Text>
-                    <Text fontSize={"xs"}>{item.second}/Tap</Text>
+                    <Text fontWeight={"800"}>{item.resource_name}</Text>
+                    <Text fontSize={"xs"}>{item.frequency_mining}/Tap</Text>
                   </Stack>
-                  <HStack spacing={1}>
-                    <Image src={item.image} w={"16px"} h={"16px"} />
+                  <HStack align={"center"} spacing={1}>
+                    <Image
+                      src={imageResources[item?.resource_name]}
+                      w={"16px"}
+                      h={"16px"}
+                    />
                     <Text fontSize={"sm"} fontWeight={"800"}>
-                      {item.calculatedValue}/{item.allocation}
+                      {item.calculatedValue}/{item.capacity}
                     </Text>
                   </HStack>
                 </VStack>

@@ -14,12 +14,12 @@ const BitcoinDisplay = ({ levelBot }: { levelBot: number }) => {
   const bitcoinValueMotion = useMotionValue(bitcoinValue);
 
   const animatedValue = useTransform(bitcoinValueMotion, (value) =>
-    value.toFixed(2)
+    value.toFixed(7)
   );
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const updatedValue = bitcoinValue + 0.15;
+      const updatedValue = bitcoinValue + 0.00002315;
       localStorage.setItem("bitcoinValue", updatedValue.toString());
 
       animate(bitcoinValueMotion, updatedValue, {
@@ -32,12 +32,12 @@ const BitcoinDisplay = ({ levelBot }: { levelBot: number }) => {
     return () => clearInterval(interval);
   }, [bitcoinValue, bitcoinValueMotion]);
 
-  const bitcoinValuePerSecond = 0.00000005 * levelBot;
+  const bitcoinValuePerSecond = 0.00002315 * levelBot;
 
   return (
     <HStack>
       <Box bg={"rgba(255, 255, 255, 0.12)"} p={2} rounded={"xl"}>
-        <Image src="/assets/bitcoin.svg" w={"56px"} h={"56px"} />
+        <Image src="/bitcoin.svg" w={"56px"} h={"56px"} />
       </Box>
       <VStack align={"start"}>
         <Stack spacing={0}>
@@ -45,7 +45,7 @@ const BitcoinDisplay = ({ levelBot }: { levelBot: number }) => {
           <Text fontSize={"xs"}>{bitcoinValuePerSecond.toFixed(8)}/s</Text>
         </Stack>
         <HStack spacing={1}>
-          <Image src="/assets/bitcoin.svg" w={"16px"} h={"16px"} />
+          <Image src="/bitcoin.svg" w={"16px"} h={"16px"} />
           <motion.div
             style={{
               fontSize: "14px",

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -16,6 +16,8 @@ import {
 } from "@chakra-ui/react";
 export default function PopupDailyRewards() {
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const [totalClaim, setTotalClaim] = useState();
 
   return (
     <Modal isOpen={isOpen} isCentered onClose={onClose}>

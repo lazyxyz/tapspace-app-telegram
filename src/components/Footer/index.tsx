@@ -15,12 +15,9 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import { FaChevronLeft } from "react-icons/fa";
 import ResourcesDrawer from "./Menu/Resource";
 import Swap from "./Menu/Resource/Swap";
-import { useRouter } from "next/navigation";
-import { BiArrowBack } from "react-icons/bi";
-import { BsArrowLeft } from "react-icons/bs";
-import { FaAngleLeft, FaChevronLeft } from "react-icons/fa";
 
 export default function Footer() {
   const { isOpen, onOpen, onClose } = useDisclosure();

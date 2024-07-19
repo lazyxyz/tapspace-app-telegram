@@ -1,21 +1,29 @@
 "use client";
 
-import {
-  Box,
-  Button,
-  HStack,
-  Image,
-  Stack,
-  Text,
-  VStack,
-} from "@chakra-ui/react";
-import React from "react";
-import { useBitcoin } from "../Wrapper/BitcoinProvider";
+import useResourceCapacity from "@/hooks/useResourceCapacity";
 import { useTelegram } from "@/lib/TelegramProvider";
+import { Box, Button, HStack, Image, Stack, Text } from "@chakra-ui/react";
+import { useBitcoin } from "../Wrapper/BitcoinProvider";
+import { useQuery } from "@tanstack/react-query";
+import systemService from "@/services/system.service";
 
 export default function Header() {
   const bitcoinValue = useBitcoin();
+
   const { user } = useTelegram();
+  const { data, error, isLoading, refetch } = useQuery({
+    queryKey: ["infoUser"],
+    queryFn: async () => {
+      const rs = await systemService.getUserInfo({
+        telegram_id: "1341419583",
+        planets: "Earth",
+      });
+      return rs.data[0];
+    },
+    staleTime: Infinity,
+    enabled: true,
+  });
+
   return (
     <HStack
       w={"full"}
@@ -66,11 +74,11 @@ export default function Header() {
         bg={"#13161F"}
       >
         <Text fontWeight={900} textColor={"white"}>
-          {bitcoinValue}
+          {data?.btc_value || 0}
         </Text>
         <Image
           src="/bitcoin.svg"
-          w={"30px"}
+          w={"32px"}
           h={"32px"}
           position={"absolute"}
           left={-3}

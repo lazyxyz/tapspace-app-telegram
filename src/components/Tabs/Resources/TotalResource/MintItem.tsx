@@ -1,19 +1,16 @@
 import { Box, Image, Stack, Text, VStack } from "@chakra-ui/react";
-import {
-  animate,
-  motion,
-  useMotionValue,
-  useSpring,
-  useTransform,
-} from "framer-motion";
+import { animate, motion, useMotionValue, useTransform } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { MintItemType } from "./InfoMint";
+import { imageResources } from "@/utils/utils";
 
 const MintItem: React.FC<{
   item: MintItemType;
   accumulatedValues: { [key: string]: number };
 }> = ({ item, accumulatedValues }) => {
-  const calculatedValueMotion = useMotionValue(accumulatedValues[item.name]);
+  const calculatedValueMotion = useMotionValue(
+    accumulatedValues[item.resource_name] || 0
+  );
   const calculatedCapacity = useMotionValue(item.calculatedValue);
   const [floatingTexts, setFloatingTexts] = useState<string[]>([]);
 
@@ -22,7 +19,7 @@ const MintItem: React.FC<{
   );
 
   useEffect(() => {
-    animate(calculatedValueMotion, accumulatedValues[item.name], {
+    animate(calculatedValueMotion, item.mining, {
       duration: 0.2,
       ease: "linear",
     });
@@ -31,22 +28,23 @@ const MintItem: React.FC<{
       ease: "linear",
     });
     if (item.floatingText) {
-      setFloatingTexts((prevTexts: any) => [...prevTexts, item.floatingText]);
+      //@ts-ignore
+      setFloatingTexts((prevTexts) => [...prevTexts, item.floatingText]);
       setTimeout(() => {
         setFloatingTexts((prevTexts) => prevTexts.slice(1));
       }, 1000);
     }
-  }, [accumulatedValues, item.calculatedValue, item.floatingText]);
+  }, [item.mining, item.calculatedValue, item.floatingText]);
 
   const progressValue = useTransform(
     calculatedCapacity,
-    (value) => (value / item.allocation) * 100
+    (value) => (value / item.capacity) * 100
   );
 
   return (
-    <VStack>
+    <VStack w={"20%"}>
       <VStack
-        w={"64px"}
+        w={"full"}
         bg={"#333649"}
         px={1}
         borderWidth={1}
@@ -56,9 +54,13 @@ const MintItem: React.FC<{
         justifyContent={"space-between"}
         position="relative"
       >
-        <VStack spacing={0} pb={1}>
-          <Box p={2} rounded={"xl"}>
-            <Image src={item.image} />
+        <VStack spacing={0} py={1}>
+          <Box p={1} rounded={"xl"}>
+            <Image
+              w={"24px"}
+              h={"24px"}
+              src={imageResources[item.resource_name]}
+            />
           </Box>
           <VStack align={"center"} spacing={0} w={"full"}>
             <Text
@@ -67,11 +69,11 @@ const MintItem: React.FC<{
               fontSize={"10px"}
               fontWeight={"bold"}
             >
-              {item.name}
+              {item.resource_name}
             </Text>
-
             <Text as={motion.span} fontSize={"sm"} fontWeight={"800"}>
-              {animatedValue.get()}
+              {/* @ts-ignore */}
+              {animatedValue}
             </Text>
           </VStack>
         </VStack>
@@ -95,7 +97,12 @@ const MintItem: React.FC<{
           style={{
             width: `${Math.min(progressValue.get(), 100)}%`,
             height: "100%",
-            backgroundColor: progressValue.get() < 50 ? "#FDBF25" : "#D5FE4B",
+            backgroundColor:
+              progressValue.get() < 50
+                ? "#FDBF25"
+                : progressValue.get() < 20
+                ? "red"
+                : "#D5FE4B",
             borderRadius: "inherit",
           }}
           initial={{ width: "0%" }}

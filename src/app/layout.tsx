@@ -3,6 +3,7 @@ import ChakraProviderWrapper from "@/components/Wrapper/ChakraProvider";
 import Layout from "@/components/Wrapper/Layout";
 import Script from "next/script";
 import { TelegramProvider } from "@/lib/TelegramProvider";
+import ClientProvider from "@/components/Wrapper/QueryClientProvider";
 
 export const metadata: Metadata = {
   title: "Open space",
@@ -19,7 +20,9 @@ export default function RootLayout({
       <body>
         <ChakraProviderWrapper>
           <TelegramProvider>
-            <Layout>{children}</Layout>
+            <ClientProvider>
+              <Layout>{children}</Layout>
+            </ClientProvider>
           </TelegramProvider>
         </ChakraProviderWrapper>
       </body>
