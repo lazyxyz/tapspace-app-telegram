@@ -7,15 +7,29 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
+import { useQueryClient } from "@tanstack/react-query";
 import BitcoinDisplay from "./Bitcoin";
-import { useEffect, useState } from "react";
-
+interface QueryData {
+  bot_level?: string;
+}
 const FrequencyResource = () => {
+  const convertLevelToNumber = (levelString: string) => {
+    const match = levelString.match(/lv(\d+)/);
+    return match ? parseInt(match[1], 10) : NaN;
+  };
+  const queryClient = useQueryClient();
+  const queryKey = [`infoUser`];
+
+  const data = queryClient.getQueryData<QueryData>(queryKey);
+  const botLevel = data?.bot_level
+    ? convertLevelToNumber(data.bot_level)
+    : undefined;
+
   return (
     <VStack w={"full"}>
       <Stack bg={"#13161F"} w={"full"} px={3} py={4} rounded={"xl"}>
         <HStack justifyContent={"space-between"}>
-          <BitcoinDisplay levelBot={1} />
+          <BitcoinDisplay levelBot={Number(botLevel)} />
 
           <Box
             bg={"rgba(255, 255, 255, 0.12)"}
@@ -35,7 +49,7 @@ const FrequencyResource = () => {
               left={2.5}
               top={-2}
             >
-              Level 2
+              Level {botLevel}
             </Text>
             <Button
               bottom={0}

@@ -7,17 +7,6 @@ export default function ResourcesDrawer({ isOpen, onClose }: any) {
     <Stack w={"full"}>
       <FrequencyResource />
       <ListResources />
-      <Button
-        mb={4}
-        onClick={async () => {
-          localStorage.clear();
-          window.location.reload();
-        }}
-      >
-        <Text fontSize={"sm"} fontWeight={"medium"}>
-          Refresh
-        </Text>
-      </Button>
     </Stack>
   );
 }

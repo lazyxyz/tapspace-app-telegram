@@ -33,10 +33,6 @@ const calculateNewItemSecond = (
   return parseFloat(newItemSecond.toFixed(2));
 };
 
-const postDataToApi = async (data: any) => {
-  alert(`Posting data: ${JSON.stringify(data)}`);
-};
-
 const InfoMint = () => {
   const { data, error, isLoading, refetch } = useQuery({
     queryKey: ["infoUser"],
@@ -50,6 +46,20 @@ const InfoMint = () => {
     staleTime: Infinity,
     enabled: true,
   });
+
+  const postDataToApi = async (data: any) => {
+    const updatedResources = await systemService.updateMining({
+      telegram_id: "1341419583",
+      mining_values: {
+        Steel: data[0].value,
+        Aluminum: data[1].value,
+        Copper: data[2].value,
+        Fiber: data[3].value,
+        Titanium: data[4].value,
+      },
+    });
+    refetch();
+  };
 
   const [listData, setListData] = useState<MintItemType[]>([]);
   const [accumulatedValues, setAccumulatedValues] = useState<{
@@ -179,22 +189,22 @@ const InfoMint = () => {
     localStorage.setItem("totalItems", totalItems.toString());
   }, [totalItems]);
 
-  // useEffect(() => {
-  //   const intervalId = setInterval(() => {
-  //     if (totalItemsRef.current > 0) {
-  //       const result = listData.map((item) => ({
-  //         name: item.resource_name,
-  //         value: totalItemsRef.current * item.frequency_mining,
-  //       }));
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (totalItemsRef.current > 0) {
+        const result = listData.map((item) => ({
+          name: item.resource_name,
+          value: totalItemsRef.current * item.frequency_mining,
+        }));
 
-  //       postDataToApi(result);
+        postDataToApi(result);
 
-  //       setTotalItems(0);
-  //     }
-  //   }, 30000);
+        setTotalItems(0);
+      }
+    }, 15000);
 
-  //   return () => clearInterval(intervalId);
-  // }, [accumulatedValues]);
+    return () => clearInterval(intervalId);
+  }, [accumulatedValues]);
 
   const rotateVariants = {
     rotate: { rotate: 360 },
