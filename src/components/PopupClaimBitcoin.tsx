@@ -20,9 +20,11 @@ import { useCallback, useEffect, useState } from "react";
 import { useBitcoin } from "./Wrapper/BitcoinProvider";
 import systemService from "@/services/system.service";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTelegram } from "@/lib/TelegramProvider";
 
 export default function PopupClaimBitcoin() {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { user } = useTelegram();
   const {
     bitcoinValue,
     //@ts-ignore
@@ -61,12 +63,12 @@ export default function PopupClaimBitcoin() {
     });
 
     const updateBtc = await systemService.updateTokenBtc({
-      telegram_id: "6298608837",
+      telegram_id: user?.id,
       btc_value: claimValue,
     });
 
     const updatedResources = await systemService.updateMining({
-      telegram_id: "6298608837",
+      telegram_id: user?.id,
       mining_values: {
         Steel: resources["Steel"],
         Aluminum: resources["Aluminum"],

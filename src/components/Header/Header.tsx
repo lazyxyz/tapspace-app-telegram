@@ -15,7 +15,7 @@ export default function Header() {
     queryKey: ["infoUser"],
     queryFn: async () => {
       const rs = await systemService.getUserInfo({
-        telegram_id: "6298608837",
+        telegram_id: user?.id,
         planets: "Earth",
       });
       return rs.data[0];

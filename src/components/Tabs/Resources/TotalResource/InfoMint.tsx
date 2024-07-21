@@ -11,6 +11,7 @@ import {
   useMotionValue,
   useTransform,
 } from "framer-motion";
+import { useTelegram } from "@/lib/TelegramProvider";
 
 export type MintItemType = {
   capacity: number;
@@ -34,11 +35,12 @@ const calculateNewItemSecond = (
 };
 
 const InfoMint = () => {
+  const { user } = useTelegram();
   const { data, error, isLoading, refetch } = useQuery({
     queryKey: ["infoUser"],
     queryFn: async () => {
       const rs = await systemService.getUserInfo({
-        telegram_id: "6298608837",
+        telegram_id: user?.id,
         planets: "Earth",
       });
       return rs.data[0];
@@ -49,7 +51,7 @@ const InfoMint = () => {
 
   const postDataToApi = async (data: any) => {
     const updatedResources = await systemService.updateMining({
-      telegram_id: "6298608837",
+      telegram_id: user?.id,
       mining_values: {
         Steel: data[0].value,
         Aluminum: data[1].value,
