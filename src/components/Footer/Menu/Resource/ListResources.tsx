@@ -1,6 +1,7 @@
+import PopupUpgradeBot from "@/components/PopupUpgradeBot";
 import { MintItemType } from "@/components/Tabs/Resources/TotalResource/InfoMint";
 import { DataMint } from "@/lib/data";
-import { imageResources } from "@/utils/utils";
+import { convertLevelToNumber, imageResources } from "@/utils/utils";
 import {
   Box,
   Button,
@@ -8,6 +9,7 @@ import {
   Image,
   Stack,
   Text,
+  useDisclosure,
   VStack,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
@@ -80,7 +82,7 @@ const ListResources = () => {
                   </HStack>
                 </VStack>
               </HStack>
-              <BotResource />
+              <BotResource item={item} />
             </HStack>
           </Stack>
         </VStack>
@@ -89,44 +91,56 @@ const ListResources = () => {
   );
 };
 
-const BotResource = () => {
+const BotResource = ({ item }: any) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   return (
-    <Box
-      bg={"rgba(255, 255, 255, 0.12)"}
-      position={"relative"}
-      p={2}
-      rounded={"xl"}
-    >
-      <Image src="/bot.svg" w={"56px"} h={"56px"} />
-      <Text
-        fontSize={"10px"}
-        fontWeight={800}
-        position={"absolute"}
-        bg={"#1EA2ED"}
-        px={2}
-        py={1}
+    <>
+      <Box
+        bg={"rgba(255, 255, 255, 0.12)"}
+        position={"relative"}
+        p={2}
         rounded={"xl"}
-        left={2.5}
-        top={-2}
+        onClick={() => onOpen()}
       >
-        Level 2
-      </Text>
-      <Button
-        bottom={0}
-        w={"full"}
-        left={0}
-        right={0}
-        roundedTop={0}
-        rounded={"xl"}
-        variant={"unsyled"}
-        fontSize={"xs"}
-        h={"24px"}
-        position={"absolute"}
-        bgGradient="linear(to-b, #0DD63E 0%, #00A65B 100%)"
-      >
-        Upgrade
-      </Button>
-    </Box>
+        <Image src="/bot.svg" w={"56px"} h={"56px"} />
+        <Text
+          fontSize={"10px"}
+          fontWeight={800}
+          position={"absolute"}
+          bg={"#1EA2ED"}
+          px={2}
+          py={1}
+          rounded={"xl"}
+          left={2.5}
+          top={-2}
+        >
+          Level {convertLevelToNumber(item.level_resource)}
+        </Text>
+        <Button
+          bottom={0}
+          w={"full"}
+          left={0}
+          right={0}
+          roundedTop={0}
+          rounded={"xl"}
+          variant={"unsyled"}
+          fontSize={"xs"}
+          h={"24px"}
+          position={"absolute"}
+          bgGradient="linear(to-b, #0DD63E 0%, #00A65B 100%)"
+        >
+          Upgrade
+        </Button>
+
+        <PopupUpgradeBot
+          isOpen={isOpen}
+          onOpen={onOpen}
+          onClose={onClose}
+          item={item}
+        />
+      </Box>
+    </>
   );
 };
 

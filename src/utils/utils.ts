@@ -23,6 +23,7 @@ export const numeralFormat = (
 };
 
 export const imageResources: any = {
+  BTC: "/bitcoin.svg",
   Bitcoin: "/bitcoin.svg",
   Aluminum: "/assets/resources/Alu.png",
   Copper: "/assets/resources/Copper.png",
@@ -37,4 +38,9 @@ export const checkPassiveUplevel = () => {
   Copper: 0.06;
   Fiber: 0.04;
   Titanium: 0.02;
+};
+
+export const convertLevelToNumber = (levelString: string): number => {
+  const match = levelString.match(/lv(\d+)/);
+  return match ? parseInt(match[1], 10) : 0; // Default to 0 if no match found
 };

@@ -25,6 +25,7 @@ export default function PopupClaimBitcoin() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
     bitcoinValue,
+    //@ts-ignore
     offlineEarnings,
     resources,
     resetBitcoinValue,
@@ -60,12 +61,12 @@ export default function PopupClaimBitcoin() {
     });
 
     const updateBtc = await systemService.updateTokenBtc({
-      telegram_id: "1341419583",
+      telegram_id: "6298608837",
       btc_value: claimValue,
     });
 
     const updatedResources = await systemService.updateMining({
-      telegram_id: "1341419583",
+      telegram_id: "6298608837",
       mining_values: {
         Steel: resources["Steel"],
         Aluminum: resources["Aluminum"],
@@ -108,6 +109,18 @@ export default function PopupClaimBitcoin() {
           rounded={"xl"}
         >
           <ModalBody>
+            <Button
+              mb={4}
+              onClick={async () => {
+                localStorage.clear();
+                window.location.reload();
+              }}
+            >
+              <Text fontSize={"sm"} fontWeight={"medium"}>
+                Refresh
+              </Text>
+            </Button>
+
             <VStack
               borderWidth={1}
               borderBottomWidth={3}
@@ -129,29 +142,31 @@ export default function PopupClaimBitcoin() {
                 </Text>
               </Stack>
               <SimpleGrid w={"full"} columns={3} spacing={4}>
-                {Object.entries(imageResources).map(([key, value]) => (
-                  <VStack
-                    key={key}
-                    bg={"#13161F"}
-                    py={2}
-                    rounded={"xl"}
-                    borderColor={"#3F435A"}
-                    borderWidth={1}
-                    borderBottomWidth={3}
-                  >
-                    <Image src={value as any} w={"44px"} h={"44px"} />
-                    <Text fontSize={"sm"} fontWeight={600}>
-                      {key}
-                    </Text>
-                    <HStack spacing={1}>
-                      <Text fontSize={"sm"} fontWeight={"800"}>
-                        {resources[key]
-                          ? resources[key]?.toFixed(5)
-                          : bitcoinValue.toFixed(5)}
+                {Object.entries(imageResources)
+                  .slice(1)
+                  .map(([key, value]) => (
+                    <VStack
+                      key={key}
+                      bg={"#13161F"}
+                      py={2}
+                      rounded={"xl"}
+                      borderColor={"#3F435A"}
+                      borderWidth={1}
+                      borderBottomWidth={3}
+                    >
+                      <Image src={value as any} w={"44px"} h={"44px"} />
+                      <Text fontSize={"sm"} fontWeight={600}>
+                        {key}
                       </Text>
-                    </HStack>
-                  </VStack>
-                ))}
+                      <HStack spacing={1}>
+                        <Text fontSize={"sm"} fontWeight={"800"}>
+                          {resources[key]
+                            ? resources[key]?.toFixed(5)
+                            : bitcoinValue.toFixed(5)}
+                        </Text>
+                      </HStack>
+                    </VStack>
+                  ))}
               </SimpleGrid>
 
               <Image
