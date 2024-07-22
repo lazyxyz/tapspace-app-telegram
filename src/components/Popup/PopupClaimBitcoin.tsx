@@ -62,15 +62,13 @@ export default function PopupClaimBitcoin({ data }: any) {
       return newTotal;
     });
 
-    onClose();
-
     const updateBtc = await systemService.updateTokenBtc({
-      telegram_id: user?.id,
+      telegram_id: user?.id.toString(),
       btc_value: claimValue,
     });
 
     const updatedResources = await systemService.updateMining({
-      telegram_id: user?.id,
+      telegram_id: user?.id.toString(),
       mining_values: {
         Steel: resources["Steel"],
         Aluminum: resources["Aluminum"],
@@ -79,6 +77,8 @@ export default function PopupClaimBitcoin({ data }: any) {
         Titanium: resources["Titanium"],
       },
     });
+
+    onClose();
     resetBitcoinValue();
     resetResources();
     setIsLoading(false);

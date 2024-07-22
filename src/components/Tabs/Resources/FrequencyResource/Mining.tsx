@@ -197,7 +197,7 @@ const Minting = () => {
       {user && (
         <VStack alignItems={"start"} w={"full"}>
           <Text>Username: {user?.username}</Text>
-          <Text>TelegramId: {user?.id}</Text>
+          <Text>TelegramId: {user?.id.toString()}</Text>
         </VStack>
       )}
       <HStack justifyContent={"space-between"} w={"full"} py={2}>
