@@ -40,6 +40,10 @@ export default function Footer() {
       label: "Battle",
       image: "battle.png",
     },
+    {
+      label: "Referral",
+      image: "Referral.png",
+    },
   ];
 
   const handleMenuClick = (index: number) => {
@@ -66,20 +70,19 @@ export default function Footer() {
           borderTopWidth={"3px"}
           bgGradient="linear(to-b, #333649 0%, #1F212E 100%)"
           borderColor={"#545978"}
-          py={1}
           roundedTop={"2xl"}
           position={"relative"}
-          minH={"80px"}
-          justifyContent={"end"}
+          minH={"72px"}
+          justifyContent={"center"}
           onClick={() => handleMenuClick(idx)}
           cursor="pointer"
         >
           <Image
             src={`/assets/menu/${item.image}`}
             position={"absolute"}
-            top={-3}
+            top={-5}
           />
-          <Text textColor={"white"} fontSize={"11px"} fontWeight={"900"}>
+          <Text textColor={"white"} mt={7} fontSize={"11px"} fontWeight={"900"}>
             {item.label}
           </Text>
         </VStack>
@@ -123,26 +126,26 @@ export default function Footer() {
                 w={"full"}
                 borderWidth={1}
                 borderTopWidth={"3px"}
-                bgGradient={
-                  selectedMenuItem === idx
-                    ? "linear(to-b, #0DD63E 0%, #00A65B 100%)"
-                    : "linear(to-b, #333649 0%, #1F212E 100%)"
-                }
-                borderColor={selectedMenuItem === idx ? "#7CEE22" : "#545978"}
-                py={1}
+                bgGradient="linear(to-b, #333649 0%, #1F212E 100%)"
+                borderColor={"#545978"}
                 roundedTop={"2xl"}
                 position={"relative"}
-                minH={"80px"}
-                justifyContent={"end"}
+                minH={"72px"}
+                justifyContent={"center"}
                 onClick={() => handleMenuClick(idx)}
                 cursor="pointer"
               >
                 <Image
                   src={`/assets/menu/${item.image}`}
                   position={"absolute"}
-                  top={-3}
+                  top={-5}
                 />
-                <Text textColor={"white"} fontSize={"11px"} fontWeight={"900"}>
+                <Text
+                  textColor={"white"}
+                  mt={7}
+                  fontSize={"11px"}
+                  fontWeight={"900"}
+                >
                   {item.label}
                 </Text>
               </VStack>

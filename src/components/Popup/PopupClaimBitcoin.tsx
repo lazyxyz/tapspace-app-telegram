@@ -46,7 +46,7 @@ export default function PopupClaimBitcoin({ data }: any) {
 
   useEffect(() => {
     onOpen();
-  }, [data]);
+  }, [onOpen]);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -63,12 +63,14 @@ export default function PopupClaimBitcoin({ data }: any) {
     });
 
     const updateBtc = await systemService.updateTokenBtc({
-      telegram_id: user?.id.toString(),
+      telegram_id:
+        process.env.NEXT_PUBLIC_API_ID_TELEGRAM || user?.id.toString(),
       btc_value: claimValue,
     });
 
     const updatedResources = await systemService.updateMining({
-      telegram_id: user?.id.toString(),
+      telegram_id:
+        process.env.NEXT_PUBLIC_API_ID_TELEGRAM || user?.id.toString(),
       mining_values: {
         Steel: resources["Steel"],
         Aluminum: resources["Aluminum"],

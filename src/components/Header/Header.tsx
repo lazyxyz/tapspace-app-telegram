@@ -15,7 +15,8 @@ export default function Header() {
     queryKey: ["infoUser"],
     queryFn: async () => {
       const rs = await systemService.getUserInfo({
-        telegram_id: user?.id.toString(),
+        telegram_id:
+          process.env.NEXT_PUBLIC_API_ID_TELEGRAM || user?.id.toString(),
         planets: "Earth",
       });
       return rs.data[0];
@@ -59,7 +60,8 @@ export default function Header() {
               {user?.username || "Unnamed"}
             </Text>
             <Text fontSize={"10px"} fontWeight={800} textColor={"white"}>
-              ID:{user?.id.toString()}
+              ID:
+              {process.env.NEXT_PUBLIC_API_ID_TELEGRAM || user?.id.toString()}
             </Text>
           </Stack>
         </HStack>

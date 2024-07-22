@@ -1,9 +1,9 @@
-import type { Metadata } from "next";
+import Preload from "@/components/Preload";
 import ChakraProviderWrapper from "@/components/Wrapper/ChakraProvider";
 import Layout from "@/components/Wrapper/Layout";
-import Script from "next/script";
-import { TelegramProvider } from "@/lib/TelegramProvider";
 import ClientProvider from "@/components/Wrapper/QueryClientProvider";
+import { TelegramProvider } from "@/lib/TelegramProvider";
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Open space",

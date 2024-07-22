@@ -2,7 +2,7 @@ import { Box, Image, Stack, Text, VStack } from "@chakra-ui/react";
 import { animate, motion, useMotionValue, useTransform } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { MintItemType } from "./InfoMint";
-import { imageResources } from "@/utils/utils";
+import { imageResources, numeralFormat } from "@/utils/utils";
 
 const MintItem: React.FC<{
   item: MintItemType;
@@ -15,7 +15,7 @@ const MintItem: React.FC<{
   const [floatingTexts, setFloatingTexts] = useState<string[]>([]);
 
   const animatedValue = useTransform(calculatedValueMotion, (value) =>
-    value?.toFixed(0)
+    numeralFormat(value)
   );
 
   useEffect(() => {

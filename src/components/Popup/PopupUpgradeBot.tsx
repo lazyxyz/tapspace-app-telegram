@@ -1,6 +1,10 @@
 import useResourceCapacity from "@/hooks/useResourceCapacity";
 import systemService from "@/services/system.service";
-import { convertLevelToNumber, imageResources } from "@/utils/utils";
+import {
+  convertLevelToNumber,
+  imageResources,
+  numeralFormat,
+} from "@/utils/utils";
 import {
   Box,
   Button,
@@ -81,7 +85,8 @@ export default function PopupUpgradeBot({
   const handleClaim = useCallback(async () => {
     setIsLoading(true);
     const updateBot = await systemService.updateBotResourcesLevel({
-      telegram_id: user?.id.toString(),
+      telegram_id:
+        process.env.NEXT_PUBLIC_API_ID_TELEGRAM || user?.id.toString(),
       name: item.resource_name,
       level_resource: `lv${convertLevelToNumber(item.level_resource) + 1}`,
     });
@@ -206,11 +211,12 @@ export default function PopupUpgradeBot({
                             fontWeight={"800"}
                           >
                             {key === "BTC"
-                              ? data?.btc_value
+                              ? //@ts-ignore
+                                numeralFormat(data?.btc_value)
                               : listData.find(
                                   (dataItem) => dataItem.resource_name === key
                                 )?.mining}
-                            /{numericValue}
+                            /{numeralFormat(numericValue)}
                           </Text>
                         </HStack>
                       </VStack>

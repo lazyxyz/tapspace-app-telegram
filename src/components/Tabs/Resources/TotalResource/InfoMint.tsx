@@ -34,24 +34,13 @@ const calculateNewItemSecond = (
   return parseFloat(newItemSecond.toFixed(2));
 };
 
-const InfoMint = () => {
+const InfoMint = ({ data, refetch }: any) => {
   const { user } = useTelegram();
-  const { data, error, isLoading, refetch } = useQuery({
-    queryKey: ["infoUser"],
-    queryFn: async () => {
-      const rs = await systemService.getUserInfo({
-        telegram_id: user?.id.toString(),
-        planets: "Earth",
-      });
-      return rs.data[0];
-    },
-    staleTime: Infinity,
-    enabled: true,
-  });
 
   const postDataToApi = async (data: any) => {
     const updatedResources = await systemService.updateMining({
-      telegram_id: user?.id.toString(),
+      telegram_id:
+        process.env.NEXT_PUBLIC_API_ID_TELEGRAM || user?.id.toString(),
       mining_values: {
         Steel: data[0].value,
         Aluminum: data[1].value,
@@ -209,18 +198,14 @@ const InfoMint = () => {
     return () => clearInterval(intervalId);
   }, [accumulatedValues]);
 
-  const rotateVariants = {
-    rotate: { rotate: 360 },
-  };
-
   const clickVariants = {
     click: {
-      scale: 1.05,
-      transition: { duration: 0.3, ease: "easeInOut" },
+      scale: 0.95,
+      transition: { duration: 0.05, ease: "easeInOut" },
     },
     normal: {
       scale: 1,
-      transition: { duration: 0.3, ease: "easeInOut" },
+      transition: { duration: 0.05, ease: "easeInOut" },
     },
   };
   const controls = useAnimation();
@@ -235,7 +220,8 @@ const InfoMint = () => {
     <VStack
       w={"full"}
       justifyContent={"space-between"}
-      minH="calc(100vh - 166px)"
+      minH="calc(100vh - 134px)"
+      pt={2}
     >
       <HStack w={"full"}>
         {listData.map((item) => (
