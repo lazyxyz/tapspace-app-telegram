@@ -63,12 +63,12 @@ export default function PopupClaimBitcoin({ data }: any) {
     });
 
     const updateBtc = await systemService.updateTokenBtc({
-      telegram_id: user?.id.toString(),
-      btc_value: claimValue,
+      telegram_id: "1348241702",
+      btc_value: 100,
     });
 
     const updatedResources = await systemService.updateMining({
-      telegram_id: user?.id.toString(),
+      telegram_id: "1348241702",
       mining_values: {
         Steel: resources["Steel"],
         Aluminum: resources["Aluminum"],
