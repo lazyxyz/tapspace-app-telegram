@@ -40,7 +40,7 @@ const InfoMint = () => {
     queryKey: ["infoUser"],
     queryFn: async () => {
       const rs = await systemService.getUserInfo({
-        telegram_id: "1348241702",
+        telegram_id: user?.id.toString(),
         planets: "Earth",
       });
       return rs.data[0];
@@ -51,7 +51,7 @@ const InfoMint = () => {
 
   const postDataToApi = async (data: any) => {
     const updatedResources = await systemService.updateMining({
-      telegram_id: "1348241702",
+      telegram_id: user?.id.toString(),
       mining_values: {
         Steel: data[0].value,
         Aluminum: data[1].value,

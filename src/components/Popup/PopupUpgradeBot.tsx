@@ -81,7 +81,7 @@ export default function PopupUpgradeBot({
   const handleClaim = useCallback(async () => {
     setIsLoading(true);
     const updateBot = await systemService.updateBotResourcesLevel({
-      telegram_id: "1348241702",
+      telegram_id: user?.id.toString(),
       name: item.resource_name,
       level_resource: `lv${convertLevelToNumber(item.level_resource) + 1}`,
     });
