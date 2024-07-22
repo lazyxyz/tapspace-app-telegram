@@ -1,6 +1,7 @@
 import { IconBitcoin } from "@/components/Icons";
 import PopupSuccessSwap from "@/components/Popup/PopupSuccessSwap";
 import SelectResources from "@/components/Popup/SelectResources";
+import { useTelegram } from "@/lib/TelegramProvider";
 import systemService from "@/services/system.service";
 import { imageResources } from "@/utils/utils";
 import {
@@ -36,6 +37,8 @@ export default function Swap() {
   const [modalType, setModalType] = useState<"resource1" | "resource2" | null>(
     null
   );
+
+  const { user } = useTelegram();
   const queryClient = useQueryClient();
   const queryKey = [`infoUser`];
   const data = queryClient.getQueryData<{ resources: Resource[] }>(queryKey);
@@ -115,7 +118,7 @@ export default function Swap() {
     setIsloading(true);
     if (selectedResource1 && selectedResource2 && inputValue) {
       const swap = await systemService.swapResource({
-        telegram_id: "6298608837",
+        telegram_id: user?.id,
         from_resource: selectedResource1.resource_name,
         to_resource: selectedResource2.resource_name,
         value: Number(inputValue),

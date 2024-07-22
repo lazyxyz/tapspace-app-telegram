@@ -24,6 +24,7 @@ import { useCallback, useMemo, useState } from "react";
 import { BsArrowRight } from "react-icons/bs";
 import { useBitcoin } from "../Wrapper/BitcoinProvider";
 import PopupSuccessUplevel from "./PopupSuccessUplevel";
+import { useTelegram } from "@/lib/TelegramProvider";
 
 interface PopupUpgradeBotProps {
   isOpen: boolean;
@@ -68,6 +69,7 @@ export default function PopupUpgradeBot({
     return 0;
   });
 
+  const { user } = useTelegram();
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const {
@@ -79,7 +81,7 @@ export default function PopupUpgradeBot({
   const handleClaim = useCallback(async () => {
     setIsLoading(true);
     const updateBot = await systemService.updateBotResourcesLevel({
-      telegram_id: "6298608837",
+      telegram_id: user?.id,
       name: item.resource_name,
       level_resource: `lv${convertLevelToNumber(item.level_resource) + 1}`,
     });
