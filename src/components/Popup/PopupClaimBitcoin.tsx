@@ -17,12 +17,12 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useCallback, useEffect, useState } from "react";
-import { useBitcoin } from "./Wrapper/BitcoinProvider";
+import { useBitcoin } from "../Wrapper/BitcoinProvider";
 import systemService from "@/services/system.service";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTelegram } from "@/lib/TelegramProvider";
 
-export default function PopupClaimBitcoin() {
+export default function PopupClaimBitcoin({ data }: any) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { user } = useTelegram();
   const {
@@ -46,7 +46,7 @@ export default function PopupClaimBitcoin() {
 
   useEffect(() => {
     onOpen();
-  }, [onOpen]);
+  }, [data]);
 
   const [isLoading, setIsLoading] = useState(false);
 

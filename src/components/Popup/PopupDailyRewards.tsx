@@ -14,7 +14,7 @@ import {
   VStack,
   SimpleGrid,
 } from "@chakra-ui/react";
-export default function PopupDailyRewards() {
+export default function PopupDailyRewards({ data }: any) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [totalClaim, setTotalClaim] = useState();

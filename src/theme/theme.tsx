@@ -2,8 +2,8 @@ import { ComponentStyleConfig, extendTheme } from "@chakra-ui/react";
 import "@fontsource/nunito";
 
 const fonts = {
-  heading: `'Nunito Variable',sans-serif`,
-  body: `'Nunito Variable',sans-serif`,
+  heading: `'Nunito',sans-serif`,
+  body: `'Nunito',sans-serif`,
 };
 
 const breakpoints = {

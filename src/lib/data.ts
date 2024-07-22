@@ -2,7 +2,7 @@ export const DataMint = [
   {
     name: "Fiber",
     second: 8,
-    allocation: 1440,
+    allocation: 14400,
     image: "/assets/resources/Fiber.png",
   },
   {

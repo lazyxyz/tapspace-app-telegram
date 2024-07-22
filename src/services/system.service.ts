@@ -36,11 +36,23 @@ const updateMining = async (body: {
   return await client.post("Update/update/mining", body);
 };
 
+const swapResource = async (body: {
+  telegram_id: any;
+  from_resource: string;
+  to_resource: string;
+  value: number;
+}) => {
+  return await client.post("Swap/swap_resource", body);
+};
+
 const systemService = {
   getUserInfo,
+
   updateBotBtc,
   updateTokenBtc,
   updateBotResourcesLevel,
   updateMining,
+
+  swapResource,
 };
 export default systemService;

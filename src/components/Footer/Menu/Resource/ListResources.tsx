@@ -1,4 +1,5 @@
-import PopupUpgradeBot from "@/components/PopupUpgradeBot";
+import PopupSuccessUplevel from "@/components/Popup/PopupSuccessUplevel";
+import PopupUpgradeBot from "@/components/Popup/PopupUpgradeBot";
 import { MintItemType } from "@/components/Tabs/Resources/TotalResource/InfoMint";
 import { DataMint } from "@/lib/data";
 import { convertLevelToNumber, imageResources } from "@/utils/utils";
@@ -12,16 +13,22 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
 const ListResources = () => {
+  const queryKey = [`infoUser`];
+  const queryClient = useQueryClient();
+  const data = queryClient.getQueryData(queryKey);
+
   const [listData, setListData] = useState<MintItemType[]>(() => {
     if (typeof window !== "undefined") {
       const savedListData = localStorage.getItem("listData");
       if (savedListData) {
         return JSON.parse(savedListData) as MintItemType[];
       } else {
-        const initialData = DataMint.map((item: any) => ({
+        //@ts-ignore
+        const initialData = data?.resources.map((item: any) => ({
           ...item,
           calculatedValue: item.capacity,
         }));
@@ -82,7 +89,12 @@ const ListResources = () => {
                   </HStack>
                 </VStack>
               </HStack>
-              <BotResource item={item} />
+              <BotResource
+                item={item}
+                listData={listData}
+                data={data}
+                idx={idx}
+              />
             </HStack>
           </Stack>
         </VStack>
@@ -91,7 +103,7 @@ const ListResources = () => {
   );
 };
 
-const BotResource = ({ item }: any) => {
+const BotResource = ({ item, listData, data, idx }: any) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -138,6 +150,8 @@ const BotResource = ({ item }: any) => {
           onOpen={onOpen}
           onClose={onClose}
           item={item}
+          listData={listData}
+          levelResource={data.resources[idx].level_resource}
         />
       </Box>
     </>
