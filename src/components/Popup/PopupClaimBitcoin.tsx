@@ -62,6 +62,8 @@ export default function PopupClaimBitcoin({ data }: any) {
       return newTotal;
     });
 
+    onClose();
+
     const updateBtc = await systemService.updateTokenBtc({
       telegram_id: user?.id,
       btc_value: claimValue,
@@ -79,7 +81,6 @@ export default function PopupClaimBitcoin({ data }: any) {
     });
     resetBitcoinValue();
     resetResources();
-    onClose();
     setIsLoading(false);
     queryClient.invalidateQueries({
       queryKey: ["infoUser"],
