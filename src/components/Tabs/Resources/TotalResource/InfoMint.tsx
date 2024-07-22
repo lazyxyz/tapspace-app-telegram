@@ -75,6 +75,7 @@ const InfoMint = () => {
       const initialData = data?.resources?.map((item: any) => ({
         ...item,
         calculatedValue: item.capacity,
+        capaticyLevel: "",
       }));
       setListData(initialData);
       localStorage.setItem("listData", JSON.stringify(initialData));
@@ -201,7 +202,7 @@ const InfoMint = () => {
 
         setTotalItems(0);
       }
-    }, 15000);
+    }, 1000);
 
     return () => clearInterval(intervalId);
   }, [accumulatedValues]);
