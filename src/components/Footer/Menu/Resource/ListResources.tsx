@@ -1,7 +1,5 @@
-import PopupSuccessUplevel from "@/components/Popup/PopupSuccessUplevel";
 import PopupUpgradeBot from "@/components/Popup/PopupUpgradeBot";
 import { MintItemType } from "@/components/Tabs/Resources/TotalResource/InfoMint";
-import { DataMint } from "@/lib/data";
 import { convertLevelToNumber, imageResources } from "@/utils/utils";
 import {
   Box,
@@ -59,47 +57,55 @@ const ListResources = () => {
   }, [listData]);
 
   return (
-    <>
+    <Stack>
       {listData.map((item, idx) => (
-        <VStack w={"full"} key={idx}>
-          <Stack bg={"#13161F"} w={"full"} px={3} py={4} rounded={"xl"}>
-            <HStack justifyContent={"space-between"}>
-              <HStack>
-                <Box bg={"rgba(255, 255, 255, 0.12)"} p={2} rounded={"xl"}>
+        <Stack
+          bg={"#13161F"}
+          w={"full"}
+          key={idx}
+          px={3}
+          py={4}
+          rounded={"xl"}
+          borderWidth={1}
+          borderBottomWidth={3}
+          borderColor={"#3F435A"}
+        >
+          <HStack justifyContent={"space-between"}>
+            <HStack>
+              <Box bg={"rgba(255, 255, 255, 0.12)"} p={2} rounded={"xl"}>
+                <Image
+                  src={imageResources[item?.resource_name]}
+                  w={"56px"}
+                  h={"56px"}
+                />
+              </Box>
+              <VStack align={"start"}>
+                <Stack spacing={0}>
+                  <Text fontWeight={"800"}>{item.resource_name}</Text>
+                  <Text fontSize={"xs"}>{item.frequency_mining}/Tap</Text>
+                </Stack>
+                <HStack align={"center"} spacing={1}>
                   <Image
                     src={imageResources[item?.resource_name]}
-                    w={"56px"}
-                    h={"56px"}
+                    w={"16px"}
+                    h={"16px"}
                   />
-                </Box>
-                <VStack align={"start"}>
-                  <Stack spacing={0}>
-                    <Text fontWeight={"800"}>{item.resource_name}</Text>
-                    <Text fontSize={"xs"}>{item.frequency_mining}/Tap</Text>
-                  </Stack>
-                  <HStack align={"center"} spacing={1}>
-                    <Image
-                      src={imageResources[item?.resource_name]}
-                      w={"16px"}
-                      h={"16px"}
-                    />
-                    <Text fontSize={"sm"} fontWeight={"800"}>
-                      {item.calculatedValue}/{item.capacity}
-                    </Text>
-                  </HStack>
-                </VStack>
-              </HStack>
-              <BotResource
-                item={item}
-                listData={listData}
-                data={data}
-                idx={idx}
-              />
+                  <Text fontSize={"sm"} fontWeight={"800"}>
+                    {item.calculatedValue}/{item.capacity}
+                  </Text>
+                </HStack>
+              </VStack>
             </HStack>
-          </Stack>
-        </VStack>
+            <BotResource
+              item={item}
+              listData={listData}
+              data={data}
+              idx={idx}
+            />
+          </HStack>
+        </Stack>
       ))}
-    </>
+    </Stack>
   );
 };
 
@@ -107,54 +113,52 @@ const BotResource = ({ item, listData, data, idx }: any) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
-    <>
-      <Box
-        bg={"rgba(255, 255, 255, 0.12)"}
-        position={"relative"}
-        p={2}
+    <Box
+      bg={"rgba(255, 255, 255, 0.12)"}
+      position={"relative"}
+      p={2}
+      rounded={"xl"}
+      onClick={() => onOpen()}
+    >
+      <Image src="/bot.svg" w={"56px"} h={"56px"} />
+      <Text
+        fontSize={"10px"}
+        fontWeight={800}
+        position={"absolute"}
+        bg={"#1EA2ED"}
+        px={2}
+        py={1}
         rounded={"xl"}
-        onClick={() => onOpen()}
+        left={2.5}
+        top={-2}
       >
-        <Image src="/bot.svg" w={"56px"} h={"56px"} />
-        <Text
-          fontSize={"10px"}
-          fontWeight={800}
-          position={"absolute"}
-          bg={"#1EA2ED"}
-          px={2}
-          py={1}
-          rounded={"xl"}
-          left={2.5}
-          top={-2}
-        >
-          Level {convertLevelToNumber(item.level_resource)}
-        </Text>
-        <Button
-          bottom={0}
-          w={"full"}
-          left={0}
-          right={0}
-          roundedTop={0}
-          rounded={"xl"}
-          variant={"unsyled"}
-          fontSize={"xs"}
-          h={"24px"}
-          position={"absolute"}
-          bgGradient="linear(to-b, #0DD63E 0%, #00A65B 100%)"
-        >
-          Upgrade
-        </Button>
+        Level {convertLevelToNumber(item.level_resource)}
+      </Text>
+      <Button
+        bottom={0}
+        w={"full"}
+        left={0}
+        right={0}
+        roundedTop={0}
+        rounded={"xl"}
+        variant={"unsyled"}
+        fontSize={"xs"}
+        h={"24px"}
+        position={"absolute"}
+        bgGradient="linear(to-b, #0DD63E 0%, #00A65B 100%)"
+      >
+        Upgrade
+      </Button>
 
-        <PopupUpgradeBot
-          isOpen={isOpen}
-          onOpen={onOpen}
-          onClose={onClose}
-          item={item}
-          listData={listData}
-          levelResource={data.resources[idx].level_resource}
-        />
-      </Box>
-    </>
+      <PopupUpgradeBot
+        isOpen={isOpen}
+        onOpen={onOpen}
+        onClose={onClose}
+        item={item}
+        listData={listData}
+        levelResource={data.resources[idx].level_resource}
+      />
+    </Box>
   );
 };
 

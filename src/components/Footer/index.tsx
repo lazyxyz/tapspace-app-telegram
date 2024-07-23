@@ -100,7 +100,7 @@ export default function Footer() {
           borderColor={"#545978"}
           roundedTop={"xl"}
         >
-          <DrawerHeader borderBottomWidth="1px" border={0}>
+          <DrawerHeader borderBottomWidth="1px" border={0} pt={2} pb={1}>
             <HStack w={"full"} justifyContent={"space-between"}>
               {!tab && <Text> {listMenu[selectedMenuItem]?.label}</Text>}
               <Button

@@ -121,7 +121,14 @@ const FloatingText = ({ text }: { text: string }) => (
     transition={{ duration: 1 }}
     style={{ position: "absolute", bottom: "0", left: "0", zIndex: 10 }}
   >
-    <Text fontSize="sm" fontWeight="bold" color="green.500">
+    <Text
+      color="white"
+      textAlign="center"
+      textShadow="0px 1px 0px #13161F, 0px 0px 5px #D5FE4B"
+      sx={{
+        WebkitTextStrokeWidth: "1px",
+      }}
+    >
       {text}
     </Text>
   </motion.div>

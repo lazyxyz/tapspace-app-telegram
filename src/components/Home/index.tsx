@@ -28,6 +28,8 @@ export default function HomePage() {
     enabled: true,
   });
 
+  console.log(user);
+
   return (
     <BitcoinProvider>
       {isLoading ? (

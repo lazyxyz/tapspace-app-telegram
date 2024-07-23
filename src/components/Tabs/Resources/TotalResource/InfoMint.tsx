@@ -1,5 +1,5 @@
 import { DataMint } from "@/lib/data";
-import { Box, HStack, Image, Stack, VStack } from "@chakra-ui/react";
+import { Box, HStack, Image, Stack, Text, VStack } from "@chakra-ui/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { MemoizedMintItem } from "./MintItem";
 import { useQuery } from "@tanstack/react-query";

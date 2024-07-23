@@ -16,6 +16,7 @@ const colors = {
   primary: {
     DEFAULT: "#30417a",
     "100": "#30417a",
+    "text": ""
   },
 
   gray: {

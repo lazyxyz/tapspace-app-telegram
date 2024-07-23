@@ -41,8 +41,13 @@ export default function Header() {
     >
       <HStack>
         <Button
+          borderWidth={1}
+          borderBottomWidth={3}
+          borderColor={"#018241"}
           bgGradient="linear(to-b, #0DD63E 0%, #00A65B 100%)"
-          p={3}
+          px={"8px"}
+          py={"11px"}
+          variant={"padding"}
           rounded={"lg"}
         >
           <BarMenu />

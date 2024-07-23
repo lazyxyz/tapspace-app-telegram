@@ -4,7 +4,7 @@ import ListResources from "./ListResources";
 
 export default function ResourcesDrawer({ isOpen, onClose }: any) {
   return (
-    <Stack w={"full"}>
+    <Stack w={"full"} spacing={0}>
       <FrequencyResource />
       <ListResources />
     </Stack>

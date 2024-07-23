@@ -5,10 +5,12 @@ import {
   Image,
   Stack,
   Text,
+  useDisclosure,
   VStack,
 } from "@chakra-ui/react";
 import { useQueryClient } from "@tanstack/react-query";
 import BitcoinDisplay from "./Bitcoin";
+import PopupUpgradeBtc from "@/components/Popup/PopupUpgradeBtc";
 interface QueryData {
   bot_level?: string;
 }
@@ -25,9 +27,20 @@ const FrequencyResource = () => {
     ? convertLevelToNumber(data.bot_level)
     : undefined;
 
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   return (
     <VStack w={"full"}>
-      <Stack bg={"#13161F"} w={"full"} px={3} py={4} rounded={"xl"}>
+      <Stack
+        bg={"#13161F"}
+        borderWidth={1}
+        borderBottomWidth={3}
+        borderColor={"#3F435A"}
+        rounded={"xl"}
+        w={"full"}
+        px={3}
+        py={4}
+      >
         <HStack justifyContent={"space-between"}>
           <BitcoinDisplay levelBot={Number(botLevel)} />
 
@@ -36,6 +49,7 @@ const FrequencyResource = () => {
             position={"relative"}
             p={2}
             rounded={"xl"}
+            onClick={() => onOpen()}
           >
             <Image src="/bot.svg" w={"56px"} h={"56px"} />
             <Text
@@ -69,6 +83,15 @@ const FrequencyResource = () => {
           </Box>
         </HStack>
       </Stack>
+
+      <PopupUpgradeBtc
+        isOpen={isOpen}
+        onOpen={onOpen}
+        onClose={onClose}
+        //@ts-ignore
+        listData={data?.resources}
+        levelResource={botLevel}
+      />
     </VStack>
   );
 };

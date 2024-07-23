@@ -1,8 +1,8 @@
 import useResourceCapacity from "@/hooks/useResourceCapacity";
+import { useTelegram } from "@/lib/TelegramProvider";
 import systemService from "@/services/system.service";
 import {
   checkPassiveUplevel,
-  convertLevelToNumber,
   imageResources,
   numeralFormat,
 } from "@/utils/utils";
@@ -25,22 +25,16 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useCallback, useMemo, useState } from "react";
-import { BsArrowRight, BsLightningChargeFill } from "react-icons/bs";
+import { useCallback, useState } from "react";
+import { BsArrowRight } from "react-icons/bs";
 import { useBitcoin } from "../Wrapper/BitcoinProvider";
 import PopupSuccessUplevel from "./PopupSuccessUplevel";
-import { useTelegram } from "@/lib/TelegramProvider";
 import { IconArrowRight } from "../Icons";
 
 interface PopupUpgradeBotProps {
   isOpen: boolean;
   onOpen: () => void;
   onClose: () => void;
-  item: {
-    resource_name: string;
-    level_resource: string;
-    mining: number;
-  };
   listData: {
     resource_name: string;
     mining: number;
@@ -54,16 +48,16 @@ interface ResourceCapacity {
   };
 }
 
-export default function PopupUpgradeBot({
+export default function PopupUpgradeBtc({
   isOpen,
   onOpen,
   onClose,
-  item,
   listData,
   levelResource,
 }: PopupUpgradeBotProps) {
   const { bitcoinValue, resources, resetBitcoinValue, resetResources } =
     useBitcoin();
+
   const [claiming, setClaiming] = useState<boolean>(false);
   const [claimAmount, setClaimAmount] = useState<number>(0);
   const queryClient = useQueryClient();
@@ -86,11 +80,10 @@ export default function PopupUpgradeBot({
 
   const handleClaim = useCallback(async () => {
     setIsLoading(true);
-    const updateBot = await systemService.updateBotResourcesLevel({
+    const updateBot = await systemService.updateBotBtc({
       telegram_id:
         process.env.NEXT_PUBLIC_API_ID_TELEGRAM || user?.id.toString(),
-      name: item.resource_name,
-      level_resource: `lv${convertLevelToNumber(item.level_resource) + 1}`,
+      level: `lv${levelResource + 1}`,
     });
     onOpenSuccess();
     onClose();
@@ -100,26 +93,28 @@ export default function PopupUpgradeBot({
       queryKey: ["infoUser"],
       exact: true,
     });
-  }, [item, onClose, queryClient]);
+  }, [onClose, queryClient]);
 
-  const currentLevel = convertLevelToNumber(item.level_resource);
+  const currentLevel = levelResource;
   const nextLevel = currentLevel + 1;
   const resourceCapacity = useResourceCapacity(nextLevel);
 
   const queryKey = [`infoUser`];
   const data = queryClient.getQueryData<{ btc_value: number }>(queryKey);
 
-  const isDisabled = useMemo(() => {
-    return Object.entries(resourceCapacity[`lv${nextLevel}`])
-      .filter(([key]) => key === item.resource_name || key === "BTC")
-      .some(([key, value]) => {
-        const numericValue = typeof value === "number" ? value : 0;
-        return (
-          item.mining < numericValue ||
-          (key === "BTC" && (data?.btc_value ?? 0) < numericValue)
-        );
-      });
-  }, [item, resourceCapacity, nextLevel, data]);
+  // const isDisabled = useMemo(() => {
+  //   return Object.entries(resourceCapacity[`lv${nextLevel}`])
+  //     .filter(([key]) => key === item.resource_name || key === "BTC")
+  //     .some(([key, value]) => {
+  //       const numericValue = typeof value === "number" ? value : 0;
+  //       return (
+  //         item.mining < numericValue ||
+  //         (key === "BTC" && (data?.btc_value ?? 0) < numericValue)
+  //       );
+  //     });
+  // }, [resourceCapacity, nextLevel, data]);
+
+  console.log(checkPassiveUplevel);
 
   return (
     <Box>
@@ -133,11 +128,17 @@ export default function PopupUpgradeBot({
           bgGradient="linear(to-b, #333649 0%, #1F212E 100%)"
           rounded={"xl"}
         >
-          <ModalBody>
-            <VStack spacing={5} w={"full"} rounded={"xl"} position={"relative"}>
+          <ModalBody p={0}>
+            <VStack
+              spacing={5}
+              p={4}
+              w={"full"}
+              rounded={"xl"}
+              position={"relative"}
+            >
               <Stack align={"center"}>
                 <Text fontSize={"lg"} textColor={"white"} fontWeight={800}>
-                  Upgrade Miner
+                  Upgrade BTC
                 </Text>
                 <Box
                   bg={"rgba(255, 255, 255, 0.15)"}
@@ -150,84 +151,33 @@ export default function PopupUpgradeBot({
                 </Box>
 
                 <Text fontSize={"sm"} fontWeight={700} textColor={"#DADFF4"}>
-                  {item.resource_name} Miner
+                  BTC
                 </Text>
 
                 <HStack
                   fontWeight={"800"}
-                  textColor={"#ECEFF9"}
                   textTransform={"uppercase"}
+                  textColor={"#ECEFF9"}
                 >
                   <Text>Level {currentLevel}</Text>
                   <Icon as={IconArrowRight} />
                   <Text textColor={"#D5FE4B"}>Level {currentLevel + 1}</Text>
                 </HStack>
-
-                <HStack
-                  fontSize={"sm"}
-                  fontWeight={"bold"}
-                  bg={"rgba(255, 255, 255, 0.15)"}
-                  px={2}
-                  py={1}
-                  rounded={"2xl"}
-                  borderWidth={1}
-                >
-                  <HStack spacing={1} align={"center"}>
-                    <Stack
-                      bg={"#D5FE4B"}
-                      rounded={"full"}
-                      color={"black"}
-                      p={1}
-                    >
-                      <Icon fontSize={"10px"} as={BsLightningChargeFill} />
-                    </Stack>
-
-                    <Text fontWeight={800}>
-                      {numeralFormat(
-                        //@ts-ignore
-                        checkPassiveUplevel[item.resource_name] *
-                          Math.pow(1 + 0.1, currentLevel)
-                      )}
-                    </Text>
-                  </HStack>
-                  <Icon as={IconArrowRight} />
-                  <HStack spacing={1} align={"center"}>
-                    <Stack
-                      bg={"#D5FE4B"}
-                      rounded={"full"}
-                      color={"black"}
-                      p={1}
-                    >
-                      <Icon fontSize={"10px"} as={BsLightningChargeFill} />
-                    </Stack>
-
-                    <Text fontWeight={800}>
-                      {numeralFormat(
-                        //@ts-ignore
-                        checkPassiveUplevel[item.resource_name] *
-                          Math.pow(1 + 0.1, currentLevel + 1)
-                      )}
-                    </Text>
-                  </HStack>
-                </HStack>
               </Stack>
               <SimpleGrid
                 w={"full"}
-                columns={2}
+                columns={3}
                 spacing={4}
                 alignContent={"center"}
               >
-                {Object.entries(resourceCapacity[`lv${nextLevel}`])
-                  .filter(
-                    ([key]) => key === item.resource_name || key === "BTC"
-                  )
-                  .map(([key, value], idx) => {
+                {Object.entries(resourceCapacity[`lv${nextLevel}`]).map(
+                  ([key, value], idx) => {
                     const numericValue = typeof value === "number" ? value : 0;
                     return (
                       <VStack
                         key={key}
                         bg={"#13161F"}
-                        py={2}
+                        p={3}
                         rounded={"xl"}
                         borderColor={"#3F435A"}
                         borderWidth={1}
@@ -238,14 +188,18 @@ export default function PopupUpgradeBot({
                           w={"44px"}
                           h={"44px"}
                         />
-                        <Text fontSize={"sm"} fontWeight={600}>
+                        <Text
+                          fontSize={"sm"}
+                          fontWeight={600}
+                          textColor={"#BBC1DE"}
+                        >
                           {key}
                         </Text>
                         <HStack spacing={1}>
                           <Text
                             fontSize={"sm"}
                             textColor={
-                              item.mining < numericValue ||
+                              listData[idx]?.mining < numericValue ||
                               (key === "BTC" &&
                                 (data?.btc_value ?? 0) < numericValue)
                                 ? "#EB303B"
@@ -254,28 +208,33 @@ export default function PopupUpgradeBot({
                             fontWeight={"800"}
                           >
                             {key === "BTC"
-                              ? //@ts-ignore
-                                numeralFormat(data?.btc_value)
-                              : listData.find(
-                                  (dataItem) => dataItem.resource_name === key
-                                )?.mining}
+                              ? numeralFormat(Number(data?.btc_value))
+                              : numeralFormat(
+                                  Number(
+                                    listData.find(
+                                      (dataItem) =>
+                                        dataItem.resource_name === key
+                                    )?.mining
+                                  )
+                                )}
                             /{numeralFormat(numericValue)}
                           </Text>
                         </HStack>
                       </VStack>
                     );
-                  })}
+                  }
+                )}
               </SimpleGrid>
             </VStack>
           </ModalBody>
 
-          <ModalFooter px={2}>
+          <ModalFooter px={4}>
             <Button
               w={"full"}
               rounded={"xl"}
               borderBottomWidth={3}
               py={5}
-              isDisabled={isDisabled}
+              isDisabled={false}
               _hover={{ bgGradient: "linear(to-b, #0DD63E 0%, #00A65B 100%)" }}
               fontWeight={800}
               borderColor={"#0DD63E"}
@@ -293,7 +252,7 @@ export default function PopupUpgradeBot({
         isOpen={onSuccess}
         onOpen={onOpenSuccess}
         level={currentLevel + 1}
-        miner={item.resource_name}
+        miner={"item.resource_name"}
       />
     </Box>
   );

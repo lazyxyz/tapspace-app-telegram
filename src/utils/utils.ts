@@ -32,12 +32,12 @@ export const imageResources: any = {
   Titanium: "/assets/resources/Titan.png",
 };
 
-export const checkPassiveUplevel = () => {
-  Steel: 0.16;
-  Aluminum: 0.1;
-  Copper: 0.06;
-  Fiber: 0.04;
-  Titanium: 0.02;
+export const checkPassiveUplevel = {
+  Steel: 0.16,
+  Aluminum: 0.1,
+  Copper: 0.06,
+  Fiber: 0.04,
+  Titanium: 0.02,
 };
 
 export const convertLevelToNumber = (levelString: string): number => {
