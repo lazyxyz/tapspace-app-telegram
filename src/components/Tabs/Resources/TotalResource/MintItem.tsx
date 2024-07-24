@@ -4,6 +4,10 @@ import React, { useEffect, useState } from "react";
 import { MintItemType } from "./InfoMint";
 import { imageResources, numeralFormat } from "@/utils/utils";
 
+interface FloatingTextProps {
+  id: string;
+  text: string;
+}
 const MintItem: React.FC<{
   item: MintItemType;
   accumulatedValues: { [key: string]: number };
@@ -12,7 +16,7 @@ const MintItem: React.FC<{
     accumulatedValues[item.resource_name] || 0
   );
   const calculatedCapacity = useMotionValue(item.calculatedValue);
-  const [floatingTexts, setFloatingTexts] = useState<string[]>([]);
+  const [floatingTexts, setFloatingTexts] = useState<FloatingTextProps[]>([]);
 
   const animatedValue = useTransform(calculatedValueMotion, (value) =>
     numeralFormat(value)
@@ -28,10 +32,15 @@ const MintItem: React.FC<{
       ease: "linear",
     });
     if (item.floatingText) {
-      //@ts-ignore
-      setFloatingTexts((prevTexts) => [...prevTexts, item.floatingText]);
+      const id = new Date().getTime().toString();
+      setFloatingTexts((prevTexts: any) => [
+        ...prevTexts,
+        { id, text: item.floatingText },
+      ]);
       setTimeout(() => {
-        setFloatingTexts((prevTexts) => prevTexts.slice(1));
+        setFloatingTexts((prevTexts) =>
+          prevTexts.filter((text) => text.id !== id)
+        );
       }, 1000);
     }
   }, [item.mining, item.calculatedValue, item.floatingText]);
@@ -79,8 +88,8 @@ const MintItem: React.FC<{
         </VStack>
 
         {progressValue.get() > 0 &&
-          floatingTexts.map((text, index) => (
-            <FloatingText key={index} text={text} />
+          floatingTexts.map((floatingText) => (
+            <FloatingText key={floatingText.id} text={floatingText.text} />
           ))}
       </VStack>
 

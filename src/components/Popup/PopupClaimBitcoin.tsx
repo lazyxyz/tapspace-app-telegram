@@ -1,4 +1,4 @@
-import { imageResources } from "@/utils/utils";
+import { imageResources, numeralFormat } from "@/utils/utils";
 import {
   Box,
   Button,
@@ -166,8 +166,8 @@ export default function PopupClaimBitcoin({ data }: any) {
                       <HStack spacing={1}>
                         <Text fontSize={"sm"} fontWeight={"800"}>
                           {resources[key]
-                            ? resources[key]?.toFixed(5)
-                            : bitcoinValue.toFixed(5)}
+                            ? numeralFormat(resources[key])
+                            : numeralFormat(Number(bitcoinValue.toFixed(5)))}
                         </Text>
                       </HStack>
                     </VStack>
