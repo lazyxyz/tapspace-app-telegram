@@ -208,13 +208,41 @@ const InfoMint = ({ data, refetch }: any) => {
       transition: { duration: 0.05, ease: "easeInOut" },
     },
   };
-  const controls = useAnimation();
 
-  const handleImageClick = () => {
-    controls.start("click").then(() => {
-      controls.start("normal");
-    });
+  const Sparkle = ({ x, y }: any) => (
+    <motion.div
+      initial={{ opacity: 1, scale: 0 }}
+      animate={{ opacity: 0, scale: 1.5 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      style={{
+        position: "absolute",
+        top: y,
+        left: x,
+        width: 20,
+        height: 20,
+        backgroundColor: "rgba(255, 255, 255, 0.8)",
+        borderRadius: "50%",
+        pointerEvents: "none",
+        zIndex: 100,
+      }}
+    />
+  );
+  const [sparkles, setSparkles] = useState<any>([]);
+
+  const handleImageClick = (event: any) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    const newSparkle = { x, y, id: Date.now() };
+    setSparkles([...sparkles, newSparkle]);
     handleClick();
+
+    setTimeout(() => {
+      setSparkles((prev: any) =>
+        prev.filter((sparkle: any) => sparkle.id !== newSparkle.id)
+      );
+    }, 500); // Duration should match the transition duration in Sparkle component
   };
   return (
     <VStack
@@ -234,13 +262,11 @@ const InfoMint = ({ data, refetch }: any) => {
       </HStack>
       <Stack py={3} w={"full"} align={"center"}>
         <motion.div
-          animate={controls}
           onClick={handleImageClick}
           initial="normal"
           variants={clickVariants}
-          whileHover="click"
           whileTap="click"
-          style={{ display: "inline-block" }}
+          style={{ display: "inline-block", position: "relative" }}
         >
           <motion.img
             src="/assets/Planet/Nutom.png"
@@ -252,6 +278,9 @@ const InfoMint = ({ data, refetch }: any) => {
               ease: "linear",
             }}
           />
+          {sparkles.map((sparkle: any) => (
+            <Sparkle key={sparkle.id} x={sparkle.x} y={sparkle.y} />
+          ))}
         </motion.div>
       </Stack>
       <Box />
