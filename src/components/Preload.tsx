@@ -1,7 +1,15 @@
-import { Box, Image, Spinner, Stack, Text, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Image,
+  Progress,
+  Spinner,
+  Stack,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import React from "react";
 
-export default function Preload() {
+export default function Preload({ progress, loading }: any) {
   return (
     <VStack
       overflowY="auto"
@@ -27,7 +35,31 @@ export default function Preload() {
         gap={6}
       >
         <Image src="/logo.svg" />
-        <Spinner size={"xl"} color="#1EA2ED" />
+
+        <Box w="80%" mt={16}>
+          <Text color="white" fontWeight="800" textAlign="center" my={2}>
+            {progress}%
+          </Text>
+
+          <Stack
+            spacing={5}
+            w={"full"}
+            bg="rgba(255, 255, 255, 0.2)"
+            rounded={"xl"}
+            position="relative"
+            h={3}
+            overflow="hidden"
+          >
+            <Box
+              style={{
+                width: `${Math.min(progress, 100)}%`,
+                height: "100%",
+                backgroundColor: "#D5FE4B",
+                borderRadius: "inherit",
+              }}
+            />
+          </Stack>
+        </Box>
       </Box>
 
       <Stack spacing={0} align="center" pb={6}>

@@ -32,7 +32,7 @@ export const imageResources: any = {
   Titanium: "/assets/resources/Titan.png",
 };
 
-export const checkPassiveUplevel = {
+export const checkPassiveUplevel: any = {
   Steel: 0.16,
   Aluminum: 0.1,
   Copper: 0.06,
@@ -40,7 +40,10 @@ export const checkPassiveUplevel = {
   Titanium: 0.02,
 };
 
-export const convertLevelToNumber = (levelString: string): number => {
-  const match = levelString.match(/lv(\d+)/);
-  return match ? parseInt(match[1], 10) : 0; // Default to 0 if no match found
+export const checkBtcUplevel: any = {
+  BTC: 0.00002315,
+};
+
+export const convertLevelToNumber = (levelString: number): number => {
+  return levelString; // Default to 0 if no match found
 };

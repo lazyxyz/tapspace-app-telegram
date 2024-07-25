@@ -24,12 +24,14 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
-import { BsArrowRight } from "react-icons/bs";
+import { BsArrowRight, BsLightningChargeFill } from "react-icons/bs";
 import { useBitcoin } from "../Wrapper/BitcoinProvider";
 import PopupSuccessUplevel from "./PopupSuccessUplevel";
 import { IconArrowRight } from "../Icons";
+import { queryClient } from "../Wrapper/QueryClientProvider";
+import { CurrentPassive } from "./PopupUpgradeBot";
 
 interface PopupUpgradeBotProps {
   isOpen: boolean;
@@ -40,12 +42,6 @@ interface PopupUpgradeBotProps {
     mining: number;
   }[];
   levelResource: any;
-}
-
-interface ResourceCapacity {
-  [key: string]: {
-    [resource: string]: number;
-  };
 }
 
 export default function PopupUpgradeBtc({
@@ -60,7 +56,6 @@ export default function PopupUpgradeBtc({
 
   const [claiming, setClaiming] = useState<boolean>(false);
   const [claimAmount, setClaimAmount] = useState<number>(0);
-  const queryClient = useQueryClient();
   const [totalCoin, setTotalCoin] = useState<number>(() => {
     if (typeof window !== "undefined") {
       const savedTotal = localStorage.getItem("totalCoin");
@@ -83,38 +78,26 @@ export default function PopupUpgradeBtc({
     const updateBot = await systemService.updateBotBtc({
       telegram_id:
         process.env.NEXT_PUBLIC_API_ID_TELEGRAM || user?.id.toString(),
-      level: `lv${levelResource + 1}`,
+      level: `${levelResource + 1}`,
     });
     onOpenSuccess();
     onClose();
     setIsLoading(false);
 
-    queryClient.invalidateQueries({
+    queryClient.refetchQueries({
       queryKey: ["infoUser"],
-      exact: true,
     });
-  }, [onClose, queryClient]);
+  }, [onClose, levelResource, queryClient, onOpenSuccess, user?.id]);
 
   const currentLevel = levelResource;
   const nextLevel = currentLevel + 1;
   const resourceCapacity = useResourceCapacity(nextLevel);
 
-  const queryKey = [`infoUser`];
-  const data = queryClient.getQueryData<{ btc_value: number }>(queryKey);
+  const { data } = useQuery<any>({
+    queryKey: ["infoUser"],
+  });
 
-  // const isDisabled = useMemo(() => {
-  //   return Object.entries(resourceCapacity[`lv${nextLevel}`])
-  //     .filter(([key]) => key === item.resource_name || key === "BTC")
-  //     .some(([key, value]) => {
-  //       const numericValue = typeof value === "number" ? value : 0;
-  //       return (
-  //         item.mining < numericValue ||
-  //         (key === "BTC" && (data?.btc_value ?? 0) < numericValue)
-  //       );
-  //     });
-  // }, [resourceCapacity, nextLevel, data]);
-
-  console.log(checkPassiveUplevel);
+  const resourcesForNextLevel = resourceCapacity[`lv${nextLevel}`] || {};
 
   return (
     <Box>
@@ -163,6 +146,8 @@ export default function PopupUpgradeBtc({
                   <Icon as={IconArrowRight} />
                   <Text textColor={"#D5FE4B"}>Level {currentLevel + 1}</Text>
                 </HStack>
+
+                <CurrentPassive currentLevel={currentLevel} item={""} isBtc />
               </Stack>
               <SimpleGrid
                 w={"full"}
@@ -170,7 +155,7 @@ export default function PopupUpgradeBtc({
                 spacing={4}
                 alignContent={"center"}
               >
-                {Object.entries(resourceCapacity[`lv${nextLevel}`]).map(
+                {Object.entries(resourcesForNextLevel).map(
                   ([key, value], idx) => {
                     const numericValue = typeof value === "number" ? value : 0;
                     return (
@@ -251,8 +236,9 @@ export default function PopupUpgradeBtc({
         onClose={onCloseSuccess}
         isOpen={onSuccess}
         onOpen={onOpenSuccess}
-        level={currentLevel + 1}
-        miner={"item.resource_name"}
+        level={currentLevel}
+        miner={""}
+        isBtc={true}
       />
     </Box>
   );

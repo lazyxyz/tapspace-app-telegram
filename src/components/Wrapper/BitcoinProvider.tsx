@@ -1,7 +1,17 @@
 import { useQueryClient } from "@tanstack/react-query";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
 
-const initialResourceRates = {
+interface ResourceRates {
+  [key: string]: number;
+}
+
+const initialResourceRates: ResourceRates = {
   Steel: 0.16,
   Aluminum: 0.1,
   Copper: 0.06,
@@ -9,13 +19,25 @@ const initialResourceRates = {
   Titanium: 0.02,
 };
 
-const BitcoinContext = createContext<{
+interface Resource {
+  resource_name: string;
+  level_resource: number;
+}
+
+interface QueryData {
+  btc_value: number;
+  resources: Resource[];
+}
+
+interface BitcoinContextType {
   bitcoinValue: number;
   resetBitcoinValue: () => void;
   offlineEarnings: number;
-  resources: { [key: string]: number };
+  resources: ResourceRates;
   resetResources: () => void;
-}>({
+}
+
+const BitcoinContext = createContext<BitcoinContextType>({
   bitcoinValue: 0,
   resetBitcoinValue: () => {},
   offlineEarnings: 0,
@@ -25,36 +47,33 @@ const BitcoinContext = createContext<{
 
 export const useBitcoin = () => useContext(BitcoinContext);
 
-export const BitcoinProvider = ({ children }: any) => {
-  const [bitcoinValue, setBitcoinValue] = useState(0);
-  const [offlineEarnings, setOfflineEarnings] = useState(0);
-  const [resources, setResources] = useState<{ [key: string]: number }>(() => {
-    const initialResources: { [key: string]: number } = {};
+interface BitcoinProviderProps {
+  children: ReactNode;
+}
+
+export const BitcoinProvider: React.FC<BitcoinProviderProps> = ({
+  children,
+}) => {
+  const [bitcoinValue, setBitcoinValue] = useState<number>(0);
+  const [offlineEarnings, setOfflineEarnings] = useState<number>(0);
+  const [resources, setResources] = useState<ResourceRates>(() => {
+    const initialResources: ResourceRates = {};
     for (const key in initialResourceRates) {
       initialResources[key] = 0;
     }
     return initialResources;
   });
-  const [resourceLevels, setResourceLevels] = useState<{
-    [key: string]: number;
-  }>({});
+  const [resourceLevels, setResourceLevels] = useState<ResourceRates>({});
 
   const queryClient = useQueryClient();
   const queryKey = [`infoUser`];
-  const data = queryClient.getQueryData<{
-    btc_value: number;
-    resources: { [key: string]: { level_resource: string } };
-  }>(queryKey);
+  const data = queryClient.getQueryData<QueryData>(queryKey);
 
   useEffect(() => {
     if (data) {
-      // Extract levels for resources based on resource name
-      const levels: { [key: string]: number } = {};
-      //@ts-ignore
-      data.resources?.map((resource: any, index: number) => {
-        const levelString = resource.level_resource || "lv1";
-
-        levels[resource.resource_name] = convertLevelToNumber(levelString);
+      const levels: ResourceRates = {};
+      data.resources.forEach((resource) => {
+        levels[resource.resource_name] = resource.level_resource || 1;
       });
       setResourceLevels(levels);
     }
@@ -81,11 +100,9 @@ export const BitcoinProvider = ({ children }: any) => {
         const offlineBitcoinEarnings = timeDifference * 0.00002315;
         setOfflineEarnings(parseFloat(offlineBitcoinEarnings.toFixed(4)));
 
-        // Calculate offline earnings for each resource
-        const updatedResources: { [key: string]: number } = {};
+        const updatedResources: ResourceRates = {};
         for (const key in initialResourceRates) {
           updatedResources[key] =
-            //@ts-ignore
             timeDifference * initialResourceRates[key] +
             (savedResources ? JSON.parse(savedResources)[key] : 0);
         }
@@ -97,18 +114,20 @@ export const BitcoinProvider = ({ children }: any) => {
   useEffect(() => {
     const interval = setInterval(() => {
       setBitcoinValue((prevValue) => {
-        const updatedValue = prevValue + 0.00002315;
+        const level = data?.resources ? data.resources[0]?.level_resource : 1;
+        const growthRate = 0.2;
+        const rate = 0.00002315 * Math.pow(1 + growthRate, level - 1);
+        const updatedValue = prevValue + rate;
         localStorage.setItem("bitcoinValue", updatedValue.toString());
         return updatedValue;
       });
 
       setResources((prevResources) => {
-        const updatedResources: { [key: string]: number } = {};
+        const updatedResources: ResourceRates = {};
         for (const key in initialResourceRates) {
-          const level = resourceLevels[key] || 1; // Default to level 1 if not found
-          const growthRate = 0.1; // 10% growth
+          const level = resourceLevels[key] || 1;
+          const growthRate = 0.1;
           const rate =
-            //@ts-ignore
             initialResourceRates[key] * Math.pow(1 + growthRate, level - 1);
           updatedResources[key] = (prevResources[key] || 0) + rate;
         }
@@ -118,12 +137,7 @@ export const BitcoinProvider = ({ children }: any) => {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [resourceLevels]);
-
-  const convertLevelToNumber = (levelString: string): number => {
-    const match = levelString.match(/lv(\d+)/);
-    return match ? parseInt(match[1], 10) : 1; // Default to level 1 if no match found
-  };
+  }, [resourceLevels, data]);
 
   const resetBitcoinValue = () => {
     setBitcoinValue(0);
@@ -132,7 +146,7 @@ export const BitcoinProvider = ({ children }: any) => {
   };
 
   const resetResources = () => {
-    const initialResources: { [key: string]: number } = {};
+    const initialResources: ResourceRates = {};
     for (const key in initialResourceRates) {
       initialResources[key] = 0;
     }

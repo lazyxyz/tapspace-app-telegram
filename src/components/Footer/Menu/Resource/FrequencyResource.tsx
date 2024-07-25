@@ -1,3 +1,4 @@
+import PopupUpgradeBtc from "@/components/Popup/PopupUpgradeBtc";
 import {
   Box,
   Button,
@@ -8,24 +9,17 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import BitcoinDisplay from "./Bitcoin";
-import PopupUpgradeBtc from "@/components/Popup/PopupUpgradeBtc";
 interface QueryData {
   bot_level?: string;
 }
 const FrequencyResource = () => {
-  const convertLevelToNumber = (levelString: string) => {
-    const match = levelString.match(/lv(\d+)/);
-    return match ? parseInt(match[1], 10) : NaN;
-  };
-  const queryClient = useQueryClient();
-  const queryKey = [`infoUser`];
+  const { data } = useQuery<any>({
+    queryKey: ["infoUser"],
+  });
 
-  const data = queryClient.getQueryData<QueryData>(queryKey);
-  const botLevel = data?.bot_level
-    ? convertLevelToNumber(data.bot_level)
-    : undefined;
+  const botLevel = data?.bot_level;
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 

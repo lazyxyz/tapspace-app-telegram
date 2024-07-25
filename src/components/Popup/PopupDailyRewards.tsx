@@ -17,8 +17,6 @@ import {
 export default function PopupDailyRewards({ data }: any) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const [totalClaim, setTotalClaim] = useState();
-
   return (
     <Modal isOpen={isOpen} isCentered onClose={onClose}>
       <ModalOverlay />

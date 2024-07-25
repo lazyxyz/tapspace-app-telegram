@@ -1,4 +1,3 @@
-import Preload from "@/components/Preload";
 import ChakraProviderWrapper from "@/components/Wrapper/ChakraProvider";
 import Layout from "@/components/Wrapper/Layout";
 import ClientProvider from "@/components/Wrapper/QueryClientProvider";

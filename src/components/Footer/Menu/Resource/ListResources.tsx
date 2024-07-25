@@ -1,6 +1,6 @@
 import PopupUpgradeBot from "@/components/Popup/PopupUpgradeBot";
 import { MintItemType } from "@/components/Tabs/Resources/TotalResource/InfoMint";
-import { convertLevelToNumber, imageResources } from "@/utils/utils";
+import { imageResources, numeralFormat } from "@/utils/utils";
 import {
   Box,
   Button,
@@ -11,13 +11,13 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
 const ListResources = () => {
-  const queryKey = [`infoUser`];
-  const queryClient = useQueryClient();
-  const data = queryClient.getQueryData(queryKey);
+  const { data } = useQuery<any>({
+    queryKey: ["infoUser"],
+  });
 
   const [listData, setListData] = useState<MintItemType[]>(() => {
     if (typeof window !== "undefined") {
@@ -56,9 +56,11 @@ const ListResources = () => {
     return () => clearInterval(interval);
   }, [listData]);
 
+  console.log(data?.resources);
+
   return (
     <Stack>
-      {listData.map((item, idx) => (
+      {data?.resources.map((item: any, idx: number) => (
         <Stack
           bg={"#13161F"}
           w={"full"}
@@ -91,13 +93,14 @@ const ListResources = () => {
                     h={"16px"}
                   />
                   <Text fontSize={"sm"} fontWeight={"800"}>
-                    {item.calculatedValue}/{item.capacity}
+                    {/* {item.calculatedValue}/{item.capacity} */}
+                    {numeralFormat(item.mining)}
                   </Text>
                 </HStack>
               </VStack>
             </HStack>
             <BotResource
-              item={item}
+              item={data.resources[idx]}
               listData={listData}
               data={data}
               idx={idx}
@@ -132,7 +135,7 @@ const BotResource = ({ item, listData, data, idx }: any) => {
         left={2.5}
         top={-2}
       >
-        Level {convertLevelToNumber(item.level_resource)}
+        Level {data?.resources[idx].level_resource}
       </Text>
       <Button
         bottom={0}
@@ -156,7 +159,7 @@ const BotResource = ({ item, listData, data, idx }: any) => {
         onClose={onClose}
         item={item}
         listData={listData}
-        levelResource={data.resources[idx].level_resource}
+        levelResource={data?.resources[idx].level_resource}
       />
     </Box>
   );

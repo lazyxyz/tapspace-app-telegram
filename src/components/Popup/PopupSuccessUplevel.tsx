@@ -10,13 +10,15 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
+import { CurrentPassive } from "./PopupUpgradeBot";
 
 interface PopupUpgradeBotProps {
   isOpen: boolean;
   onOpen: () => void;
   onClose: () => void;
   level: number;
-  miner: string;
+  miner: any;
+  isBtc?: boolean;
 }
 
 interface ResourceCapacity {
@@ -31,6 +33,7 @@ export default function PopupSuccessUplevel({
   onClose,
   level,
   miner,
+  isBtc,
 }: PopupUpgradeBotProps) {
   return (
     <Box>
@@ -57,12 +60,12 @@ export default function PopupSuccessUplevel({
                 Congratulation!
               </Text>
               <Text fontSize={"sm"} textColor={"white"} fontWeight={800}>
-                {miner} Miner
+                {miner.resource_name} Miner
               </Text>
               <Text textColor={"#D5FE4B"} fontSize={"24px"} fontWeight={900}>
                 LEVEL {level}
               </Text>
-
+              <CurrentPassive currentLevel={level - 1} item={miner} isBtc />
               <Box
                 position={"absolute"}
                 zIndex={-1}

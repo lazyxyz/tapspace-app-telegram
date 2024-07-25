@@ -242,7 +242,7 @@ const InfoMint = ({ data, refetch }: any) => {
       setSparkles((prev: any) =>
         prev.filter((sparkle: any) => sparkle.id !== newSparkle.id)
       );
-    }, 500); // Duration should match the transition duration in Sparkle component
+    }, 500);
   };
   return (
     <VStack

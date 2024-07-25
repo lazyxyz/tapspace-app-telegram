@@ -1,11 +1,10 @@
 "use client";
 
-import useResourceCapacity from "@/hooks/useResourceCapacity";
 import { useTelegram } from "@/lib/TelegramProvider";
-import { Box, Button, HStack, Image, Stack, Text } from "@chakra-ui/react";
-import { useBitcoin } from "../Wrapper/BitcoinProvider";
-import { useQuery } from "@tanstack/react-query";
 import systemService from "@/services/system.service";
+import { Box, Button, HStack, Image, Stack, Text } from "@chakra-ui/react";
+import { useQuery } from "@tanstack/react-query";
+import { useBitcoin } from "../Wrapper/BitcoinProvider";
 
 export default function Header() {
   const bitcoinValue = useBitcoin();
@@ -33,7 +32,7 @@ export default function Header() {
       position={"sticky"}
       top={0}
       justifyContent={"space-between"}
-      zIndex={"100"}
+      zIndex={9999}
       borderBottomWidth={1}
       borderColor={"#34384B"}
       roundedBottom={"lg"}

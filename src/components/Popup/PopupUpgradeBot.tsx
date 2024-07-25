@@ -1,4 +1,5 @@
 import useResourceCapacity from "@/hooks/useResourceCapacity";
+import { useTelegram } from "@/lib/TelegramProvider";
 import systemService from "@/services/system.service";
 import {
   checkPassiveUplevel,
@@ -22,15 +23,15 @@ import {
   Stack,
   Text,
   useDisclosure,
+  useToast,
   VStack,
 } from "@chakra-ui/react";
-import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useMemo, useState } from "react";
-import { BsArrowRight, BsLightningChargeFill } from "react-icons/bs";
-import { useBitcoin } from "../Wrapper/BitcoinProvider";
-import PopupSuccessUplevel from "./PopupSuccessUplevel";
-import { useTelegram } from "@/lib/TelegramProvider";
+import { BsLightningChargeFill } from "react-icons/bs";
 import { IconArrowRight } from "../Icons";
+import { useBitcoin } from "../Wrapper/BitcoinProvider";
+import { queryClient } from "../Wrapper/QueryClientProvider";
+import PopupSuccessUplevel from "./PopupSuccessUplevel";
 
 interface PopupUpgradeBotProps {
   isOpen: boolean;
@@ -66,7 +67,6 @@ export default function PopupUpgradeBot({
     useBitcoin();
   const [claiming, setClaiming] = useState<boolean>(false);
   const [claimAmount, setClaimAmount] = useState<number>(0);
-  const queryClient = useQueryClient();
   const [totalCoin, setTotalCoin] = useState<number>(() => {
     if (typeof window !== "undefined") {
       const savedTotal = localStorage.getItem("totalCoin");
@@ -83,28 +83,38 @@ export default function PopupUpgradeBot({
     onOpen: onOpenSuccess,
     onClose: onCloseSuccess,
   } = useDisclosure();
-
+  const toast = useToast();
   const handleClaim = useCallback(async () => {
     setIsLoading(true);
-    const updateBot = await systemService.updateBotResourcesLevel({
-      telegram_id:
-        process.env.NEXT_PUBLIC_API_ID_TELEGRAM || user?.id.toString(),
-      name: item.resource_name,
-      level_resource: `lv${convertLevelToNumber(item.level_resource) + 1}`,
-    });
-    onOpenSuccess();
-    onClose();
-    setIsLoading(false);
+    try {
+      const updateBot = await systemService.updateBotResourcesLevel({
+        telegram_id:
+          process.env.NEXT_PUBLIC_API_ID_TELEGRAM || user?.id.toString(),
+        name: item.resource_name,
+        level_resource: `${item.level_resource + 1}`,
+      });
+      onOpenSuccess();
+      onClose();
+      setIsLoading(false);
 
-    queryClient.invalidateQueries({
-      queryKey: ["infoUser"],
-      exact: true,
-    });
+      queryClient.refetchQueries({
+        queryKey: ["infoUser"],
+      });
+    } catch (error) {
+      toast({
+        status: "error",
+        title: "Failed",
+        description: String(error),
+        position: "top-right",
+        isClosable: true,
+        duration: 3000,
+      });
+    }
   }, [item, onClose, queryClient]);
 
-  const currentLevel = convertLevelToNumber(item.level_resource);
+  const currentLevel = Number(item.level_resource);
   const nextLevel = currentLevel + 1;
-  const resourceCapacity = useResourceCapacity(nextLevel);
+  const resourceCapacity = useResourceCapacity(Number(nextLevel));
 
   const queryKey = [`infoUser`];
   const data = queryClient.getQueryData<{ btc_value: number }>(queryKey);
@@ -163,53 +173,7 @@ export default function PopupUpgradeBot({
                   <Text textColor={"#D5FE4B"}>Level {currentLevel + 1}</Text>
                 </HStack>
 
-                <HStack
-                  fontSize={"sm"}
-                  fontWeight={"bold"}
-                  bg={"rgba(255, 255, 255, 0.15)"}
-                  px={2}
-                  py={1}
-                  rounded={"2xl"}
-                  borderWidth={1}
-                >
-                  <HStack spacing={1} align={"center"}>
-                    <Stack
-                      bg={"#D5FE4B"}
-                      rounded={"full"}
-                      color={"black"}
-                      p={1}
-                    >
-                      <Icon fontSize={"10px"} as={BsLightningChargeFill} />
-                    </Stack>
-
-                    <Text fontWeight={800}>
-                      {numeralFormat(
-                        //@ts-ignore
-                        checkPassiveUplevel[item.resource_name] *
-                          Math.pow(1 + 0.1, currentLevel)
-                      )}
-                    </Text>
-                  </HStack>
-                  <Icon as={IconArrowRight} />
-                  <HStack spacing={1} align={"center"}>
-                    <Stack
-                      bg={"#D5FE4B"}
-                      rounded={"full"}
-                      color={"black"}
-                      p={1}
-                    >
-                      <Icon fontSize={"10px"} as={BsLightningChargeFill} />
-                    </Stack>
-
-                    <Text fontWeight={800}>
-                      {numeralFormat(
-                        //@ts-ignore
-                        checkPassiveUplevel[item.resource_name] *
-                          Math.pow(1 + 0.1, currentLevel + 1)
-                      )}
-                    </Text>
-                  </HStack>
-                </HStack>
+                <CurrentPassive currentLevel={currentLevel} item={item} />
               </Stack>
               <SimpleGrid
                 w={"full"}
@@ -292,9 +256,61 @@ export default function PopupUpgradeBot({
         onClose={onCloseSuccess}
         isOpen={onSuccess}
         onOpen={onOpenSuccess}
-        level={currentLevel + 1}
-        miner={item.resource_name}
+        level={currentLevel}
+        miner={item}
       />
     </Box>
   );
 }
+
+export const CurrentPassive = ({
+  currentLevel,
+  item,
+  isBtc,
+}: {
+  currentLevel: number;
+  item: any;
+  isBtc?: boolean;
+}) => {
+  return (
+    <HStack
+      fontSize={"sm"}
+      fontWeight={"bold"}
+      bg={"rgba(255, 255, 255, 0.15)"}
+      px={2}
+      py={1}
+      rounded={"2xl"}
+      borderWidth={1}
+    >
+      <HStack spacing={1} align={"center"}>
+        <Stack bg={"#D5FE4B"} rounded={"full"} color={"black"} p={1}>
+          <Icon fontSize={"10px"} as={BsLightningChargeFill} />
+        </Stack>
+
+        <Text fontWeight={800}>
+          {isBtc
+            ? (0.00002315 * Math.pow(1 + 0.2, currentLevel)).toFixed(7)
+            : numeralFormat(
+                checkPassiveUplevel[item.resource_name] *
+                  Math.pow(1 + 0.1, currentLevel)
+              )}
+        </Text>
+      </HStack>
+      <Icon as={IconArrowRight} />
+      <HStack spacing={1} align={"center"}>
+        <Stack bg={"#D5FE4B"} rounded={"full"} color={"black"} p={1}>
+          <Icon fontSize={"10px"} as={BsLightningChargeFill} />
+        </Stack>
+
+        <Text fontWeight={800}>
+          {isBtc
+            ? (0.00002315 * Math.pow(1 + 0.2, currentLevel + 1)).toFixed(7)
+            : numeralFormat(
+                checkPassiveUplevel[item.resource_name] *
+                  Math.pow(1 + 0.1, currentLevel + 1)
+              )}
+        </Text>
+      </HStack>
+    </HStack>
+  );
+};
