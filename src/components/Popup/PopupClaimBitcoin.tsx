@@ -65,18 +65,18 @@ export default function PopupClaimBitcoin({ data }: any) {
     const updateBtc = await systemService.updateTokenBtc({
       telegram_id:
         process.env.NEXT_PUBLIC_API_ID_TELEGRAM || user?.id.toString(),
-      btc_value: claimValue + 1000,
+      btc_value: claimValue,
     });
 
     const updatedResources = await systemService.updateMining({
       telegram_id:
         process.env.NEXT_PUBLIC_API_ID_TELEGRAM || user?.id.toString(),
       mining_values: {
-        Steel: resources["Steel"] + 100000,
-        Aluminum: resources["Aluminum"] + 100000,
-        Copper: resources["Copper"] + 100000,
-        Fiber: resources["Fiber"] + 100000,
-        Titanium: resources["Titanium"] + 100000,
+        Steel: resources["Steel"],
+        Aluminum: resources["Aluminum"],
+        Copper: resources["Copper"],
+        Fiber: resources["Fiber"],
+        Titanium: resources["Titanium"],
       },
     });
 
@@ -99,7 +99,7 @@ export default function PopupClaimBitcoin({ data }: any) {
   return (
     <Box>
       <Modal
-        isOpen={false}
+        isOpen={isOpen}
         closeOnOverlayClick={false}
         isCentered
         onClose={onClose}
