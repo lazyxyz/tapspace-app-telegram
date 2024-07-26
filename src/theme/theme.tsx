@@ -1,4 +1,8 @@
-import { ComponentStyleConfig, extendTheme } from "@chakra-ui/react";
+import {
+  background,
+  ComponentStyleConfig,
+  extendTheme,
+} from "@chakra-ui/react";
 import "@fontsource/nunito";
 
 const fonts = {
@@ -16,7 +20,7 @@ const colors = {
   primary: {
     DEFAULT: "#30417a",
     "100": "#30417a",
-    "text": ""
+    text: "",
   },
 
   gray: {
@@ -34,7 +38,14 @@ const colors = {
     "100": "#D4D4D8",
   },
 };
-const styles = {};
+const styles = {
+  global: {
+    "html, body": {
+      scrollBehavior: "smooth",
+      overflow: "hidden",
+    },
+  },
+};
 
 const Button: ComponentStyleConfig = {
   variants: {
