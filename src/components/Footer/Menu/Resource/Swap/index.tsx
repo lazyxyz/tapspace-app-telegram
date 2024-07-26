@@ -1,6 +1,7 @@
 import { IconBitcoin } from "@/components/Icons";
 import PopupSuccessSwap from "@/components/Popup/PopupSuccessSwap";
 import SelectResources from "@/components/Popup/SelectResources";
+import { queryClient } from "@/components/Wrapper/QueryClientProvider";
 import { useTelegram } from "@/lib/TelegramProvider";
 import systemService from "@/services/system.service";
 import { imageResources } from "@/utils/utils";
@@ -15,7 +16,7 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { IoChevronDown } from "react-icons/io5";
 
@@ -39,9 +40,9 @@ export default function Swap() {
   );
 
   const { user } = useTelegram();
-  const queryClient = useQueryClient();
-  const queryKey = [`infoUser`];
-  const data = queryClient.getQueryData<{ resources: Resource[] }>(queryKey);
+  const { data } = useQuery({
+    queryKey: ["infoUser"],
+  });
 
   const [selectedResource1, setSelectedResource1] = useState<Resource | null>(
     null
@@ -310,6 +311,7 @@ export default function Swap() {
 
         <SelectResources
           isOpen={isOpen}
+          //@ts-ignore
           resources={data?.resources || []}
           onClose={onClose}
           onSelect={handleSelect}
@@ -320,7 +322,7 @@ export default function Swap() {
         <Text>Transaction Fee</Text>
         <HStack textColor={"white"} fontWeight={"800"}>
           <IconBitcoin w={"20px"} />
-          <Text>1 + 10% Output</Text>
+          <Text>0.1 + 10% Output</Text>
         </HStack>
       </HStack>
 

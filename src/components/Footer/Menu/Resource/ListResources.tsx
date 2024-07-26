@@ -1,5 +1,6 @@
 import PopupUpgradeBot from "@/components/Popup/PopupUpgradeBot";
 import { MintItemType } from "@/components/Tabs/Resources/TotalResource/InfoMint";
+import useResourceCapacity from "@/hooks/useResourceCapacity";
 import { imageResources, numeralFormat } from "@/utils/utils";
 import {
   Box,
@@ -12,7 +13,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const ListResources = () => {
   const { data } = useQuery<any>({
@@ -55,8 +56,6 @@ const ListResources = () => {
 
     return () => clearInterval(interval);
   }, [listData]);
-
-  console.log(data?.resources);
 
   return (
     <Stack>
@@ -115,10 +114,28 @@ const ListResources = () => {
 const BotResource = ({ item, listData, data, idx }: any) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const currentLevel = Number(item.level_resource);
+  const nextLevel = currentLevel + 1;
+  const resourceCapacity = useResourceCapacity(Number(nextLevel));
+
+  const isDisabled = useMemo(() => {
+    return Object.entries(resourceCapacity[`lv${nextLevel}`])
+      .filter(([key]) => key === item.resource_name || key === "BTC")
+      .some(([key, value]) => {
+        const numericValue = typeof value === "number" ? value : 0;
+        return (
+          item.mining < numericValue ||
+          (key === "BTC" && (data?.btc_value ?? 0) < numericValue)
+        );
+      });
+  }, [item, resourceCapacity, nextLevel, data]);
+
   return (
     <Box
       bg={"rgba(255, 255, 255, 0.12)"}
       position={"relative"}
+      borderWidth={1}
+      borderColor={!isDisabled ? "#D5FE4B" : "transparent"}
       p={2}
       rounded={"xl"}
       onClick={() => onOpen()}
@@ -148,7 +165,8 @@ const BotResource = ({ item, listData, data, idx }: any) => {
         fontSize={"xs"}
         h={"24px"}
         position={"absolute"}
-        bgGradient="linear(to-b, #0DD63E 0%, #00A65B 100%)"
+        bg={isDisabled ? "#545978" : ""}
+        bgGradient={!isDisabled ? "linear(to-b, #0DD63E 0%, #00A65B 100%)" : ""}
       >
         Upgrade
       </Button>
@@ -158,8 +176,10 @@ const BotResource = ({ item, listData, data, idx }: any) => {
         onOpen={onOpen}
         onClose={onClose}
         item={item}
+        data={data}
         listData={listData}
         levelResource={data?.resources[idx].level_resource}
+        isDisabled={isDisabled}
       />
     </Box>
   );

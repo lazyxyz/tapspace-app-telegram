@@ -50,8 +50,14 @@ const MintItem: React.FC<{
     (value) => (value / item.capacity) * 100
   );
 
+  const progressColor =
+    progressValue.get() < 20
+      ? "#EB303B"
+      : progressValue.get() < 50
+      ? "#FDBF25"
+      : "#0DD63E";
   return (
-    <VStack w={"20%"}>
+    <VStack w={"20%"} overflow={"hidden"}>
       <VStack
         w={"full"}
         bg={"#333649"}
@@ -94,30 +100,43 @@ const MintItem: React.FC<{
       </VStack>
 
       <Stack
-        spacing={5}
+        spacing={0}
         w={"full"}
-        bg="gray.200"
+        bg="rgba(255, 255, 255, 0.15)"
+        h={4}
         rounded={"xl"}
         position="relative"
-        h={2}
         overflow="hidden"
       >
         <motion.div
           style={{
             width: `${Math.min(progressValue.get(), 100)}%`,
             height: "100%",
-            backgroundColor:
-              progressValue.get() < 50
-                ? "#FDBF25"
-                : progressValue.get() < 20
-                ? "red"
-                : "#D5FE4B",
+            backgroundColor: progressColor,
             borderRadius: "inherit",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            position: "relative",
           }}
           initial={{ width: "0%" }}
           animate={{ width: `${Math.min(progressValue.get(), 100)}%` }}
           transition={{ duration: 0.5, ease: "easeInOut" }}
         />
+        <Text
+          textShadow="-1px -1px 1px #000, 1px -1px 1px #000, -1px 1px 1px #000, 1px 1px 1px #000"
+          color="white"
+          px={2}
+          fontSize="12px"
+          fontWeight={800}
+          position="absolute"
+          top="50%"
+          left="50%"
+          transform="translate(-50%, -50%)"
+        >
+          {item.calculatedValue.toFixed(0)}/{item.capacity}
+        </Text>
       </Stack>
     </VStack>
   );
@@ -133,10 +152,8 @@ const FloatingText = ({ text }: { text: string }) => (
     <Text
       color="white"
       textAlign="center"
-      textShadow="0px 1px 0px #13161F, 0px 0px 5px #D5FE4B"
-      sx={{
-        WebkitTextStrokeWidth: "1px",
-      }}
+      fontWeight={900}
+      textShadow="-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0px 1px 0px #13161F, 0px 0px 5px #D5FE4B"
     >
       {text}
     </Text>

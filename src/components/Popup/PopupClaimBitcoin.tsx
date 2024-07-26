@@ -52,7 +52,8 @@ export default function PopupClaimBitcoin({ data }: any) {
 
   const handleClaim = useCallback(async () => {
     setIsLoading(true);
-    const claimValue = parseFloat((bitcoinValue + offlineEarnings).toFixed());
+    //@ts-ignore
+    const claimValue = parseFloat(bitcoinValue + offlineEarnings);
     setClaimAmount(claimValue);
     setClaiming(true);
 
@@ -113,18 +114,6 @@ export default function PopupClaimBitcoin({ data }: any) {
           rounded={"xl"}
         >
           <ModalBody>
-            <Button
-              mb={4}
-              onClick={async () => {
-                localStorage.clear();
-                window.location.reload();
-              }}
-            >
-              <Text fontSize={"sm"} fontWeight={"medium"}>
-                Refresh
-              </Text>
-            </Button>
-
             <VStack
               borderWidth={1}
               borderBottomWidth={3}

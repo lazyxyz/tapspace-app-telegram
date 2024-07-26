@@ -1,4 +1,5 @@
 import { IconCoppyLink } from "@/components/Icons";
+import GenerateAvatar from "@/lib/GenerateAvatar";
 import { useTelegram } from "@/lib/TelegramProvider";
 import systemService from "@/services/system.service";
 import {
@@ -34,6 +35,12 @@ export default function ReferralDrawer() {
     },
   });
 
+  const { data: dataUser } = useQuery<any>({
+    queryKey: ["infoUser"],
+  });
+
+  console.log(dataUser?.referred_users);
+
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
@@ -44,13 +51,15 @@ export default function ReferralDrawer() {
     }, 2000);
   };
 
+  const countRef = dataUser?.referred_users.length;
+
   return (
     <VStack justifyContent={"space-between"} h={"full"} pb={4}>
       <Stack>
         <HStack bg={"#1F212E"} p={3} rounded={"xl"} my={2}>
           <Image src="/assets/menu/Referral.png" w={"24px"} h={"24px"} />
           <Text fontSize={"xs"} textColor={"#ECEFF9"} fontWeight={800}>
-            Each referral will grant you more
+            Each referral will grant you more{" "}
             <Box color={"#0FE0FD"} as="span">
               2%
             </Box>{" "}
@@ -62,7 +71,7 @@ export default function ReferralDrawer() {
           <Image src="/assets/rewards/Fill/Gold.svg" />
           <Stack spacing={0}>
             <Text textColor={"#FFE42C"} fontSize={"lg"} fontWeight={800}>
-              +2%
+              {countRef * 2}%
             </Text>
             <Text fontSize={"xs"} textColor={"#ECEFF9"} fontWeight={800}>
               All resources/tap
@@ -80,17 +89,38 @@ export default function ReferralDrawer() {
           <Image src="/assets/rewards/Fill/Energyy.svg" />
           <Stack spacing={0}>
             <Text textColor={"#7CEE22"} fontSize={"lg"} fontWeight={800}>
-              +10%
+              {countRef * 10}%
             </Text>
             <Text fontSize={"xs"} textColor={"#ECEFF9"} fontWeight={800}>
-              All resources/tap
+              Capacity/resources
             </Text>
           </Stack>
         </HStack>
 
-        <Text fontSize={"sm"} fontWeight={600} textColor={"#BBC1DE"}>
-          List of friends
+        <Text fontSize={"sm"} py={2} fontWeight={600} textColor={"#BBC1DE"}>
+          List of friends{" "}
+          <Box as="span" textColor={"white"}>
+            {countRef}
+          </Box>
         </Text>
+
+        <Stack overflow={"auto"} maxH={"200px"}>
+          {dataUser.referred_users?.map((item: string, idx: number) => (
+            <HStack spacing={3} key={idx}>
+              <GenerateAvatar
+                borderRadius={"full"}
+                overflow={"hidden"}
+                w={"36px"}
+                h={"36px"}
+                jazzicon={{
+                  diameter: 31,
+                  seed: String(user?.id),
+                }}
+              />
+              <Text fontWeight={700}>{item}</Text>
+            </HStack>
+          ))}
+        </Stack>
       </Stack>
 
       <HStack w={"full"}>

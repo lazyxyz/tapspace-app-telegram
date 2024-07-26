@@ -5,7 +5,8 @@ import systemService from "@/services/system.service";
 import { Box, Button, HStack, Image, Stack, Text } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { BarMenu } from "../Icons";
-import { useBitcoin } from "../Wrapper/BitcoinProvider";
+import GenerateAvatar from "@/lib/GenerateAvatar";
+import { numeralFormat } from "@/utils/utils";
 
 export default function Header() {
   const { user } = useTelegram();
@@ -21,7 +22,6 @@ export default function Header() {
       return rs.data;
     },
     staleTime: Infinity,
-    enabled: true,
   });
 
   return (
@@ -52,21 +52,26 @@ export default function Header() {
           <BarMenu />
         </Button>
         <HStack>
-          <Box
-            bg={"white"}
-            opacity={"10%"}
+          <GenerateAvatar
+            borderRadius={"full"}
+            overflow={"hidden"}
             w={"36px"}
             h={"36px"}
-            rounded={"full"}
+            jazzicon={{
+              diameter: 31,
+              seed: String(user?.id),
+            }}
           />
           <Stack spacing={0}>
             <Text fontSize={"sm"} textColor={"white"} fontWeight={"800"}>
               {user?.username || "Unnamed"}
             </Text>
-            <Text fontSize={"10px"} fontWeight={800} textColor={"white"}>
-              ID:
-              {process.env.NEXT_PUBLIC_API_ID_TELEGRAM || user?.id.toString()}
-            </Text>
+            <HStack spacing={0}>
+              <Image src="/assets/cup.svg" />
+              <Text fontSize={"10px"} textColor={"#DADFF4"} fontWeight={600}>
+                #{data?.rank || "-"}
+              </Text>
+            </HStack>
           </Stack>
         </HStack>
       </HStack>
@@ -79,8 +84,8 @@ export default function Header() {
         rounded={"lg"}
         bg={"#13161F"}
       >
-        <Text fontWeight={900} textColor={"white"}>
-          {data?.btc_value || 0}
+        <Text fontWeight={900} pl={3} pr={1} textColor={"white"}>
+          {numeralFormat(data?.btc_value) || 0}
         </Text>
         <Image
           src="/bitcoin.svg"

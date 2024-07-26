@@ -11,6 +11,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { CurrentPassive } from "./PopupUpgradeBot";
+import ConfettiComponent from "@/lib/Confetti";
 
 interface PopupUpgradeBotProps {
   isOpen: boolean;
@@ -49,6 +50,7 @@ export default function PopupSuccessUplevel({
           p={0}
         >
           <ModalBody p={0}>
+            <ConfettiComponent />
             <VStack
               spacing={5}
               py={6}

@@ -45,6 +45,7 @@ const InfoMint = ({ data, refetch }: any) => {
   };
 
   const [listData, setListData] = useState<MintItemType[]>([]);
+  const [tap, setTap] = useState(1);
   const [accumulatedValues, setAccumulatedValues] = useState<{
     [key: string]: number;
   }>({});
@@ -55,11 +56,18 @@ const InfoMint = ({ data, refetch }: any) => {
 
   useEffect(() => {
     if (data && typeof window !== "undefined") {
-      const initialData = data?.resources?.map((item: any) => ({
-        ...item,
-        calculatedValue: item.capacity,
-        capaticyLevel: "",
-      }));
+      const initialData = data?.resources?.map((item: any) => {
+        const storedCalculatedValue = localStorage.getItem(
+          `calculatedValue_${item.resource_name}`
+        );
+        return {
+          ...item,
+          calculatedValue: storedCalculatedValue
+            ? parseFloat(storedCalculatedValue)
+            : item.capacity,
+          capaticyLevel: "",
+        };
+      });
       setListData(initialData);
       localStorage.setItem("listData", JSON.stringify(initialData));
     }
@@ -93,6 +101,10 @@ const InfoMint = ({ data, refetch }: any) => {
           const updatedValue =
             item.calculatedValue +
             calculateNewItemSecond(item.frequency_mining, levelBot);
+          localStorage.setItem(
+            `calculatedValue_${item.resource_name}`,
+            Math.min(updatedValue, item.capacity).toString()
+          );
           return {
             ...item,
             calculatedValue: Math.min(updatedValue, item?.capacity),
@@ -141,6 +153,10 @@ const InfoMint = ({ data, refetch }: any) => {
           const updatedValue =
             item.calculatedValue -
             calculateNewItemSecond(item.frequency_mining, levelBot);
+          localStorage.setItem(
+            `calculatedValue_${item.resource_name}`,
+            Math.max(updatedValue, 0).toString()
+          );
           return {
             ...item,
             calculatedValue: Math.max(updatedValue, 0),
@@ -201,17 +217,17 @@ const InfoMint = ({ data, refetch }: any) => {
     },
   };
 
-  const Sparkle = ({ x, y }: any) => (
+  const Sparkle = ({ x, y }: { x: number; y: number }) => (
     <motion.div
       initial={{ opacity: 1, scale: 0 }}
       animate={{ opacity: 0, scale: 1.5 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
       style={{
         position: "absolute",
-        top: y,
-        left: x,
-        width: 20,
-        height: 20,
+        top: y - 10,
+        left: x - 10,
+        width: 40,
+        height: 40,
         backgroundColor: "rgba(255, 255, 255, 0.8)",
         borderRadius: "50%",
         pointerEvents: "none",
@@ -219,6 +235,7 @@ const InfoMint = ({ data, refetch }: any) => {
       }}
     />
   );
+
   const [sparkles, setSparkles] = useState<any>([]);
 
   const handleImageClick = (event: any) => {
@@ -237,7 +254,6 @@ const InfoMint = ({ data, refetch }: any) => {
     }, 500);
   };
 
-  console.log(listData);
   return (
     <VStack w="full" h="full" px={2} justifyContent="flex-start" pt={2}>
       <HStack w={"full"}>

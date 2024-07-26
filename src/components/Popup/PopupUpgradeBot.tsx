@@ -47,6 +47,8 @@ interface PopupUpgradeBotProps {
     mining: number;
   }[];
   levelResource: any;
+  isDisabled: any;
+  data: any;
 }
 
 interface ResourceCapacity {
@@ -62,19 +64,9 @@ export default function PopupUpgradeBot({
   item,
   listData,
   levelResource,
+  isDisabled,
+  data,
 }: PopupUpgradeBotProps) {
-  const { bitcoinValue, resources, resetBitcoinValue, resetResources } =
-    useBitcoin();
-  const [claiming, setClaiming] = useState<boolean>(false);
-  const [claimAmount, setClaimAmount] = useState<number>(0);
-  const [totalCoin, setTotalCoin] = useState<number>(() => {
-    if (typeof window !== "undefined") {
-      const savedTotal = localStorage.getItem("totalCoin");
-      return savedTotal ? parseFloat(savedTotal) : 0;
-    }
-    return 0;
-  });
-
   const { user } = useTelegram();
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -115,21 +107,6 @@ export default function PopupUpgradeBot({
   const currentLevel = Number(item.level_resource);
   const nextLevel = currentLevel + 1;
   const resourceCapacity = useResourceCapacity(Number(nextLevel));
-
-  const queryKey = [`infoUser`];
-  const data = queryClient.getQueryData<{ btc_value: number }>(queryKey);
-
-  const isDisabled = useMemo(() => {
-    return Object.entries(resourceCapacity[`lv${nextLevel}`])
-      .filter(([key]) => key === item.resource_name || key === "BTC")
-      .some(([key, value]) => {
-        const numericValue = typeof value === "number" ? value : 0;
-        return (
-          item.mining < numericValue ||
-          (key === "BTC" && (data?.btc_value ?? 0) < numericValue)
-        );
-      });
-  }, [item, resourceCapacity, nextLevel, data]);
 
   return (
     <Box>

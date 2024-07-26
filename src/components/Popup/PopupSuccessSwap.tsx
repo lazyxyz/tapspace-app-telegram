@@ -1,3 +1,4 @@
+import ConfettiComponent from "@/lib/Confetti";
 import { imageResources } from "@/utils/utils";
 import {
   Box,
@@ -52,6 +53,7 @@ export default function PopupSuccessSwap({
           p={0}
         >
           <ModalBody p={0}>
+            <ConfettiComponent />
             <VStack
               spacing={5}
               py={16}
