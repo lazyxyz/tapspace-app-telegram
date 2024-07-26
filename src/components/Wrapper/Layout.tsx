@@ -12,7 +12,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       overflow="hidden"
       minHeight="-webkit-fill-available"
       w="100vw"
-      h={"100vh"}
+      h={"var(--chakra-vh)"}
       bgImage={"/background.png"}
       bgRepeat={"no-repeat"}
       bgSize={"cover"}
