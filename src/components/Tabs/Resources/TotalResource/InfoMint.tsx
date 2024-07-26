@@ -219,20 +219,20 @@ const InfoMint = ({ data, refetch }: any) => {
 
   const Sparkle = ({ x, y }: { x: number; y: number }) => (
     <motion.div
-      initial={{ opacity: 1, scale: 0 }}
-      animate={{ opacity: 0, scale: 1.5 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
-      style={{
-        position: "absolute",
-        top: y - 10,
-        left: x - 10,
-        width: 40,
-        height: 40,
-        backgroundColor: "rgba(255, 255, 255, 0.8)",
-        borderRadius: "50%",
-        pointerEvents: "none",
-        zIndex: 100,
-      }}
+    // initial={{ opacity: 1, scale: 0 }}
+    // animate={{ opacity: 0, scale: 1.5 }}
+    // transition={{ duration: 0.5, ease: "easeOut" }}
+    // style={{
+    //   position: "absolute",
+    //   top: y - 10,
+    //   left: x - 10,
+    //   width: 40,
+    //   height: 40,
+    //   backgroundColor: "rgba(255, 255, 255, 0.8)",
+    //   borderRadius: "50%",
+    //   pointerEvents: "none",
+    //   zIndex: 100,
+    // }}
     />
   );
 

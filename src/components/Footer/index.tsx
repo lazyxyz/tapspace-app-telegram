@@ -159,7 +159,7 @@ export default function Footer() {
 
   return (
     <HStack
-      position={"sticky"}
+      position={"fixed"}
       bottom={0}
       w={"full"}
       justifyContent={"space-between"}
