@@ -45,6 +45,10 @@ const swapResource = async (body: {
   return await client.post("Swap/swap_resource", body);
 };
 
+const sendInviteLink = async (body: { telegram_id: number }) => {
+  return await client.post("referal/send_invite_link", body);
+};
+
 const systemService = {
   getUserInfo,
 
@@ -54,5 +58,7 @@ const systemService = {
   updateMining,
 
   swapResource,
+
+  sendInviteLink,
 };
 export default systemService;

@@ -1,36 +1,29 @@
 "use client";
 
-import { Box, Stack, VStack } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
-import Header from "../Header/Header";
+import { Box, VStack } from "@chakra-ui/react";
+import React from "react";
 import Footer from "../Footer";
-import { BitcoinProvider } from "./BitcoinProvider";
-import Preload from "../Preload";
+import Header from "../Header/Header";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const [isPreloading, setIsPreloading] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsPreloading(false);
-    }, 3000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <VStack
       overflowY="auto"
       overflowX="hidden"
       w="100vw"
+      h={"100vh"}
       bgImage={"/background.png"}
       bgRepeat={"no-repeat"}
       bgSize={"cover"}
       justifyContent={"space-between"}
     >
-      <Box w="full" h="full">
+      <Box w={"full"} flex="0 0 auto">
         <Header />
+      </Box>
+      <Box w="full" flex="1 1 auto">
         {children}
+      </Box>
+      <Box w={"full"} flex="0 0 auto">
         <Footer />
       </Box>
     </VStack>

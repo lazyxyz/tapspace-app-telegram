@@ -245,12 +245,7 @@ const InfoMint = ({ data, refetch }: any) => {
     }, 500);
   };
   return (
-    <VStack
-      w={"full"}
-      justifyContent={"space-between"}
-      minH="calc(100vh - 134px)"
-      pt={2}
-    >
+    <VStack w="full" h="full" px={2} justifyContent="flex-start" pt={2}>
       <HStack w={"full"}>
         {listData.map((item) => (
           <MemoizedMintItem
@@ -260,7 +255,13 @@ const InfoMint = ({ data, refetch }: any) => {
           />
         ))}
       </HStack>
-      <Stack py={3} w={"full"} align={"center"}>
+      <Stack
+        py={3}
+        flex="1"
+        justifyContent="center"
+        alignItems="center"
+        w="full"
+      >
         <motion.div
           onClick={handleImageClick}
           initial="normal"
@@ -283,8 +284,6 @@ const InfoMint = ({ data, refetch }: any) => {
           ))}
         </motion.div>
       </Stack>
-      <Box />
-      <Box />
     </VStack>
   );
 };

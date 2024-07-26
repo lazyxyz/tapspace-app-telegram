@@ -63,9 +63,7 @@ export default function HomePage() {
         <Preload progress={progress} loading={loading} />
       ) : (
         <>
-          <Box px={2} w={"full"}>
-            <InfoMint data={data} refetch={refetch} />
-          </Box>
+          <InfoMint data={data} refetch={refetch} />
           <PopupDailyRewards data={data} />
           <PopupClaimBitcoin data={data} />
         </>

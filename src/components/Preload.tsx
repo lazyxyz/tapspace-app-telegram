@@ -7,9 +7,17 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect } from "react";
 
 export default function Preload({ progress, loading }: any) {
+  useEffect(() => {
+    const storedValue = localStorage.getItem("chakra-ui-color-mode");
+    if (storedValue === "light") {
+      localStorage.setItem("chakra-ui-color-mode", "dark");
+      window.location.reload();
+    }
+  }, []);
+
   return (
     <VStack
       overflowY="auto"
