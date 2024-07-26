@@ -84,9 +84,8 @@ export default function PopupClaimBitcoin({ data }: any) {
     resetBitcoinValue();
     resetResources();
     setIsLoading(false);
-    queryClient.invalidateQueries({
+    queryClient.refetchQueries({
       queryKey: ["infoUser"],
-      exact: true,
     });
   }, [
     bitcoinValue,

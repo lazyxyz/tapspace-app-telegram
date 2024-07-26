@@ -4,6 +4,7 @@ import { Box, VStack } from "@chakra-ui/react";
 import React from "react";
 import Footer from "../Footer";
 import Header from "../Header/Header";
+import { BitcoinProvider } from "./BitcoinProvider";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (

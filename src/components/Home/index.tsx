@@ -1,15 +1,14 @@
 "use client";
 
-import { Box } from "@chakra-ui/react";
-import InfoMint from "../Tabs/Resources/TotalResource/InfoMint";
-import { BitcoinProvider } from "../Wrapper/BitcoinProvider";
-import PopupDailyRewards from "../Popup/PopupDailyRewards";
-import PopupClaimBitcoin from "../Popup/PopupClaimBitcoin";
+import { useTelegram } from "@/lib/TelegramProvider";
+import systemService from "@/services/system.service";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import systemService from "@/services/system.service";
-import { useTelegram } from "@/lib/TelegramProvider";
+import PopupClaimBitcoin from "../Popup/PopupClaimBitcoin";
+import PopupDailyRewards from "../Popup/PopupDailyRewards";
 import Preload from "../Preload";
+import InfoMint from "../Tabs/Resources/TotalResource/InfoMint";
+import { BitcoinProvider } from "../Wrapper/BitcoinProvider";
 
 export default function HomePage() {
   const { user } = useTelegram();
@@ -25,10 +24,8 @@ export default function HomePage() {
           process.env.NEXT_PUBLIC_API_ID_TELEGRAM || user?.id.toString(),
         planets: "Earth",
       });
-      return rs.data[0];
+      return rs.data;
     },
-
-    staleTime: Infinity,
   });
 
   useEffect(() => {
@@ -58,16 +55,18 @@ export default function HomePage() {
   }, [isLoading]);
 
   return (
-    <BitcoinProvider>
+    <>
       {!loadingComplete ? (
         <Preload progress={progress} loading={loading} />
       ) : (
         <>
-          <InfoMint data={data} refetch={refetch} />
-          <PopupDailyRewards data={data} />
-          <PopupClaimBitcoin data={data} />
+          <BitcoinProvider>
+            <InfoMint data={data} refetch={refetch} />
+            <PopupDailyRewards data={data} />
+            <PopupClaimBitcoin data={data} />
+          </BitcoinProvider>
         </>
       )}
-    </BitcoinProvider>
+    </>
   );
 }

@@ -5,9 +5,11 @@ import systemService from "@/services/system.service";
 import { Box, Button, HStack, Image, Stack, Text } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { BarMenu } from "../Icons";
+import { useBitcoin } from "../Wrapper/BitcoinProvider";
 
 export default function Header() {
   const { user } = useTelegram();
+
   const { data, error, isLoading, refetch } = useQuery({
     queryKey: ["infoUser"],
     queryFn: async () => {
@@ -16,7 +18,7 @@ export default function Header() {
           process.env.NEXT_PUBLIC_API_ID_TELEGRAM || user?.id.toString(),
         planets: "Earth",
       });
-      return rs.data[0];
+      return rs.data;
     },
     staleTime: Infinity,
     enabled: true,

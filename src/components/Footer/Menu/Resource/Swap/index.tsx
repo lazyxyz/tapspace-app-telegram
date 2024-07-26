@@ -129,15 +129,9 @@ export default function Swap() {
         onOpenSuccess();
 
         setIsloading(false);
-        queryClient.invalidateQueries({
+        queryClient.refetchQueries({
           queryKey: ["infoUser"],
-          exact: true,
         });
-
-        // if (!isOpenSuccess) {
-        //   setSelectedResource1(null);
-        //   setSelectedResource2(null);
-        // }
       }
     }
   };

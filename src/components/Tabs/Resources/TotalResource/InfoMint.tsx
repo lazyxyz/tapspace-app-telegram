@@ -1,17 +1,9 @@
-import { DataMint } from "@/lib/data";
-import { Box, HStack, Image, Stack, Text, VStack } from "@chakra-ui/react";
+import { useTelegram } from "@/lib/TelegramProvider";
+import systemService from "@/services/system.service";
+import { HStack, Stack, VStack } from "@chakra-ui/react";
+import { motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { MemoizedMintItem } from "./MintItem";
-import { useQuery } from "@tanstack/react-query";
-import systemService from "@/services/system.service";
-import {
-  animate,
-  motion,
-  useAnimation,
-  useMotionValue,
-  useTransform,
-} from "framer-motion";
-import { useTelegram } from "@/lib/TelegramProvider";
 
 export type MintItemType = {
   capacity: number;
@@ -244,6 +236,8 @@ const InfoMint = ({ data, refetch }: any) => {
       );
     }, 500);
   };
+
+  console.log(listData);
   return (
     <VStack w="full" h="full" px={2} justifyContent="flex-start" pt={2}>
       <HStack w={"full"}>
