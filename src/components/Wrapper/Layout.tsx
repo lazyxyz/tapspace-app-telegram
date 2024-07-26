@@ -8,8 +8,8 @@ import Header from "../Header/Header";
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <VStack
-      overflowY="auto"
-      overflowX="hidden"
+      overflow="hidden"
+      minHeight="-webkit-fill-available"
       w="100vw"
       h={"100vh"}
       bgImage={"/background.png"}
