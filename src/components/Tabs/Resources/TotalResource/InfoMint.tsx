@@ -271,22 +271,30 @@ const InfoMint = ({ data, refetch }: any) => {
         justifyContent="center"
         alignItems="center"
         w="full"
+        pb={24}
       >
         <motion.div
           onClick={handleImageClick}
           initial="normal"
           variants={clickVariants}
           whileTap="click"
-          style={{ display: "inline-block", position: "relative" }}
+          style={{
+            display: "inline-block",
+            position: "relative",
+          }}
         >
           <motion.img
-            src="/assets/Planet/Nutom.png"
+            src="/assets/centerClick.png"
             alt="Center Click"
             animate={{ rotate: 360 }}
             transition={{
               repeat: Infinity,
               duration: 90,
               ease: "linear",
+            }}
+            style={{
+              display: "inline-block",
+              filter: "drop-shadow(0px 4px 50px rgba(239, 103, 244, 0.45))",
             }}
           />
           {sparkles.map((sparkle: any) => (
