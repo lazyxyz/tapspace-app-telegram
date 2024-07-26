@@ -96,7 +96,7 @@ export default function ReferralDrawer() {
       <HStack w={"full"}>
         <Link
           as={NextLink}
-          href={"https://t.me/tap_space_bot"}
+          href={"https://t.me/tap_space_bot?start?startapp=1348241702"}
           w={"full"}
           rounded={"xl"}
           borderBottomWidth={3}
