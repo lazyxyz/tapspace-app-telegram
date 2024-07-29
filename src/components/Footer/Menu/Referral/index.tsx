@@ -54,7 +54,7 @@ export default function ReferralDrawer() {
   const countRef = dataUser?.referred_users.length;
 
   return (
-    <VStack justifyContent={"space-between"} h={"full"} pb={4} px={3}>
+    <VStack justifyContent={"space-between"} h={"full"} pb={24} px={3}>
       <Stack>
         <HStack bg={"#1F212E"} p={3} rounded={"xl"} my={2}>
           <Image src="/assets/menu/Referral.png" w={"24px"} h={"24px"} />
