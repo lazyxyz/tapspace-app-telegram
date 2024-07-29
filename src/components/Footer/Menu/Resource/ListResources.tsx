@@ -1,7 +1,11 @@
 import PopupUpgradeBot from "@/components/Popup/PopupUpgradeBot";
 import { MintItemType } from "@/components/Tabs/Resources/TotalResource/InfoMint";
 import useResourceCapacity from "@/hooks/useResourceCapacity";
-import { imageResources, numeralFormat } from "@/utils/utils";
+import {
+  checkPassiveUplevel,
+  imageResources,
+  numeralFormat,
+} from "@/utils/utils";
 import {
   Box,
   Button,
@@ -83,7 +87,13 @@ const ListResources = () => {
               <VStack align={"start"}>
                 <Stack spacing={0}>
                   <Text fontWeight={"800"}>{item.resource_name}</Text>
-                  <Text fontSize={"xs"}>{item.frequency_mining}/Tap</Text>
+                  <Text fontSize={"xs"}>
+                    {Number(
+                      checkPassiveUplevel[item.resource_name] *
+                        Math.pow(1 + 0.1, item.level_resource)
+                    ).toFixed(5)}
+                    /s
+                  </Text>
                 </Stack>
                 <HStack align={"center"} spacing={1}>
                   <Image
@@ -92,7 +102,6 @@ const ListResources = () => {
                     h={"16px"}
                   />
                   <Text fontSize={"sm"} fontWeight={"800"}>
-                    {/* {item.calculatedValue}/{item.capacity} */}
                     {numeralFormat(item.mining)}
                   </Text>
                 </HStack>

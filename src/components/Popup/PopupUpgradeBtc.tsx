@@ -29,7 +29,7 @@ import { useCallback, useMemo, useState } from "react";
 import { BsArrowRight, BsLightningChargeFill } from "react-icons/bs";
 import { useBitcoin } from "../Wrapper/BitcoinProvider";
 import PopupSuccessUplevel from "./PopupSuccessUplevel";
-import { IconArrowRight } from "../Icons";
+import { IconArrowRight, IconClose } from "../Icons";
 import { queryClient } from "../Wrapper/QueryClientProvider";
 import { CurrentPassive } from "./PopupUpgradeBot";
 
@@ -113,6 +113,15 @@ export default function PopupUpgradeBtc({
           bgGradient="linear(to-b, #333649 0%, #1F212E 100%)"
           rounded={"xl"}
         >
+          <Box
+            position={"absolute"}
+            right={3}
+            top={3}
+            zIndex={99}
+            onClick={onClose}
+          >
+            <Icon as={IconClose} right={0} position={"absolute"} w={"full"} />
+          </Box>
           <ModalBody p={0}>
             <VStack
               spacing={5}

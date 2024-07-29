@@ -25,7 +25,7 @@ import { useTelegram } from "@/lib/TelegramProvider";
 //       position="relative"
 //     >
 //       <HStack spacing={4}>
-//         <Image src="/bitcoin.svg" alt="Bitcoin Icon" />
+//         <Image src="/Bitcoin.svg" alt="Bitcoin Icon" />
 //         <VStack align="start" whiteSpace={"pre"}>
 //           <Text fontSize={"xl"} fontWeight={"bold"}>
 //             Bitcoin (lv{levelBot})

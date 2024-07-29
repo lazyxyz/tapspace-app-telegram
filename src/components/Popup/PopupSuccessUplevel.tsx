@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Icon,
   Image,
   Modal,
   ModalBody,
@@ -12,6 +13,7 @@ import {
 } from "@chakra-ui/react";
 import { CurrentPassive } from "./PopupUpgradeBot";
 import ConfettiComponent from "@/lib/Confetti";
+import { IconClose } from "../Icons";
 
 interface PopupUpgradeBotProps {
   isOpen: boolean;
@@ -49,6 +51,15 @@ export default function PopupSuccessUplevel({
           rounded={"xl"}
           p={0}
         >
+          <Box
+            position={"absolute"}
+            right={3}
+            top={3}
+            zIndex={99}
+            onClick={onClose}
+          >
+            <Icon as={IconClose} right={0} position={"absolute"} w={"full"} />
+          </Box>
           <ModalBody p={0}>
             <ConfettiComponent />
             <VStack

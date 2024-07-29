@@ -47,3 +47,11 @@ export const checkBtcUplevel: any = {
 export const convertLevelToNumber = (levelString: number): number => {
   return levelString; // Default to 0 if no match found
 };
+
+export const useShortenedName = (name: string, maxLength?: number) => {
+  const truncatedName =
+    name?.length > (maxLength || 0)
+      ? name?.substring(0, maxLength || 10) + "..."
+      : name;
+  return truncatedName;
+};

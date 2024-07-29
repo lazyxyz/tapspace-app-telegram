@@ -53,7 +53,10 @@ const FrequencyResource = () => {
         py={4}
       >
         <HStack justifyContent={"space-between"}>
-          <BitcoinDisplay levelBot={Number(botLevel)} />
+          <BitcoinDisplay
+            levelBot={Number(botLevel)}
+            totalBit={data.btc_value}
+          />
 
           <Box
             bg={"rgba(255, 255, 255, 0.12)"}

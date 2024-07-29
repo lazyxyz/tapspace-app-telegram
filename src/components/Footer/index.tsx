@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Box,
   Button,
   Drawer,
   DrawerBody,
@@ -37,6 +38,7 @@ const listMenu = [
     drawerContent: (isOpen: boolean, onClose: () => void) => (
       <ComingSoon tab={"Spaceship"} />
     ),
+    bgIncoming: "/assets/menu/bgSpaceship.png",
     status: false,
   },
   {
@@ -46,6 +48,7 @@ const listMenu = [
     drawerContent: (isOpen: boolean, onClose: () => void) => (
       <ComingSoon tab={"Universe"} />
     ),
+    bgIncoming: "/assets/menu/bgUniverse.png",
   },
   {
     label: "Battles",
@@ -54,6 +57,7 @@ const listMenu = [
     drawerContent: (isOpen: boolean, onClose: () => void) => (
       <ComingSoon tab={"Battles"} />
     ),
+    bgIncoming: "/assets/menu/bgBattles.png",
   },
   {
     label: "Referral",
@@ -75,7 +79,7 @@ export default function Footer() {
 
   const RenderMenuItems = ({ checkActive }: { checkActive?: boolean }) => {
     return (
-      <>
+      <HStack w={"full"} spacing={0}>
         {listMenu.map((item, idx) => (
           <VStack
             key={idx}
@@ -112,7 +116,7 @@ export default function Footer() {
             </Text>
           </VStack>
         ))}
-      </>
+      </HStack>
     );
   };
 
@@ -174,8 +178,9 @@ export default function Footer() {
           h={checkCommingSoon ? "100vh" : "82vh"}
           px={"0 !"}
           mx={"0 !"}
-          bgGradient="linear(to-b, #333649 0%, #1F212E 100%)"
-          bg={checkCommingSoon ? "rgba(0, 0, 0, 0.8)" : ""}
+          bgGradient={"linear(to-b, #333649 0%, #1F212E 100%)"}
+          bgImage={listMenu[selectedMenuItem].bgIncoming}
+          bgSize={"cover"}
           borderTopWidth={3}
           borderColor={"#545978"}
           roundedTop={"xl"}
@@ -189,14 +194,21 @@ export default function Footer() {
               <HeaderReferral />
             )}
           </DrawerHeader>
-          <DrawerBody px={3}>
+          <DrawerBody px={0} py={0}>
             {tab ? (
               <Swap />
             ) : (
               listMenu[selectedMenuItem]?.drawerContent?.(isOpen, onClose)
             )}
           </DrawerBody>
-          <DrawerFooter p={0} position={"sticky"} bottom={0} zIndex={999999}>
+          <DrawerFooter
+            p={0}
+            position={"fixed"}
+            bgGradient={"linear(to-b, #333649 0%, #1F212E 100%)"}
+            w={"full"}
+            rounded={"xl"}
+            bottom={0}
+          >
             <RenderMenuItems checkActive={true} />
           </DrawerFooter>
         </DrawerContent>

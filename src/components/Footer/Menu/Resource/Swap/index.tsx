@@ -4,7 +4,7 @@ import SelectResources from "@/components/Popup/SelectResources";
 import { queryClient } from "@/components/Wrapper/QueryClientProvider";
 import { useTelegram } from "@/lib/TelegramProvider";
 import systemService from "@/services/system.service";
-import { imageResources } from "@/utils/utils";
+import { imageResources, numeralFormat } from "@/utils/utils";
 import {
   Button,
   HStack,
@@ -51,6 +51,15 @@ export default function Swap() {
     null
   );
   const [inputValue, setInputValue] = useState<number | string>("");
+
+  //@ts-ignore
+  const resourceBalances = data?.resources.reduce(
+    (acc: { [key: string]: number }, resource: Resource) => {
+      acc[resource.resource_name] = resource.mining;
+      return acc;
+    },
+    {}
+  );
 
   const handleSelect = (resource: Resource) => {
     if (modalType === "resource1") {
@@ -128,14 +137,12 @@ export default function Swap() {
 
       if (swap) {
         onOpenSuccess();
-
         setIsloading(false);
-        queryClient.refetchQueries({
-          queryKey: ["infoUser"],
-        });
+        queryClient.refetchQueries({ queryKey: ["infoUser"] });
       }
     }
   };
+
   return (
     <VStack w={"full"}>
       <VStack position={"relative"} w={"full"}>
@@ -204,7 +211,12 @@ export default function Swap() {
               <IoChevronDown />
             </HStack>
             <HStack>
-              <Text>Balance: {selectedResource1?.mining ?? "0"}</Text>
+              <Text>
+                Balance:{" "}
+                {numeralFormat(
+                  resourceBalances[selectedResource1?.resource_name || ""]
+                ) ?? "0"}
+              </Text>
               <Button
                 variant={"padding"}
                 px={0}
@@ -305,7 +317,9 @@ export default function Swap() {
               </Text>
               <IoChevronDown />
             </HStack>
-            <Text>Balance: {selectedResource2?.mining ?? "0"}</Text>
+            <Text>
+              Balance: {numeralFormat(Number(selectedResource2?.mining)) ?? "0"}
+            </Text>
           </Stack>
         </HStack>
 

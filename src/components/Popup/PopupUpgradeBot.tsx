@@ -28,7 +28,7 @@ import {
 } from "@chakra-ui/react";
 import { useCallback, useMemo, useState } from "react";
 import { BsLightningChargeFill } from "react-icons/bs";
-import { IconArrowRight } from "../Icons";
+import { IconArrowRight, IconClose } from "../Icons";
 import { useBitcoin } from "../Wrapper/BitcoinProvider";
 import { queryClient } from "../Wrapper/QueryClientProvider";
 import PopupSuccessUplevel from "./PopupSuccessUplevel";
@@ -112,6 +112,7 @@ export default function PopupUpgradeBot({
     <Box>
       <Modal isOpen={isOpen} isCentered onClose={onClose}>
         <ModalOverlay />
+
         <ModalContent
           borderWidth={1}
           borderBottomWidth={3}
@@ -120,6 +121,15 @@ export default function PopupUpgradeBot({
           bgGradient="linear(to-b, #333649 0%, #1F212E 100%)"
           rounded={"xl"}
         >
+          <Box
+            position={"absolute"}
+            right={3}
+            top={3}
+            zIndex={99}
+            onClick={onClose}
+          >
+            <Icon as={IconClose} right={0} position={"absolute"} w={"full"} />
+          </Box>
           <ModalBody>
             <VStack spacing={5} w={"full"} rounded={"xl"} position={"relative"}>
               <Stack align={"center"}>
@@ -235,6 +245,7 @@ export default function PopupUpgradeBot({
         onOpen={onOpenSuccess}
         level={currentLevel}
         miner={item}
+        isBtc={false}
       />
     </Box>
   );

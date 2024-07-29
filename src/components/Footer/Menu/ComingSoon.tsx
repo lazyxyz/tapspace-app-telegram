@@ -10,9 +10,9 @@ export default function ComingSoon({ tab }: { tab: string }) {
       "Prepare your resources and warships, hone your skills, and get ready to conquer the universe. Stay tuned for more details!",
   };
   return (
-    <Stack h={"full"}>
+    <Stack h={"full"} bg={"rgba(0, 0, 0, 0.8)"} backdropFilter={"blur(4.5px)"}>
       <Center h={"full"} textAlign={"center"}>
-        <Stack align={"center"}>
+        <Stack align={"center"} px={6} pb={24}>
           <Image src="/assets/menu/lock.svg" w={"31px"} h={"48px"} />
           <Text fontSize={"2xl"} fontWeight={800} color={"white"}>
             Coming soon

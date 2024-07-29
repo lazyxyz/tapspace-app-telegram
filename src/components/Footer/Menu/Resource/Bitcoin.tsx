@@ -2,7 +2,13 @@ import React, { memo, useEffect, useState } from "react";
 import { HStack, VStack, Box, Text, Image, Stack } from "@chakra-ui/react";
 import { motion, useMotionValue, useTransform, animate } from "framer-motion";
 
-const BitcoinDisplay = ({ levelBot }: { levelBot: number }) => {
+const BitcoinDisplay = ({
+  levelBot,
+  totalBit,
+}: {
+  levelBot: number;
+  totalBit: number;
+}) => {
   const [bitcoinValue, setBitcoinValue] = useState(() => {
     if (typeof window !== "undefined") {
       const savedValue = localStorage.getItem("bitcoinValue");
@@ -14,7 +20,7 @@ const BitcoinDisplay = ({ levelBot }: { levelBot: number }) => {
   const bitcoinValueMotion = useMotionValue(bitcoinValue);
 
   const animatedValue = useTransform(bitcoinValueMotion, (value) =>
-    value.toFixed(7)
+    (value + totalBit).toFixed(7)
   );
 
   useEffect(() => {
@@ -37,7 +43,7 @@ const BitcoinDisplay = ({ levelBot }: { levelBot: number }) => {
   return (
     <HStack>
       <Box bg={"rgba(255, 255, 255, 0.12)"} p={2} rounded={"xl"}>
-        <Image src="/bitcoin.svg" w={"56px"} h={"56px"} />
+        <Image src="/Bitcoin.svg" w={"56px"} h={"56px"} />
       </Box>
       <VStack align={"start"}>
         <Stack spacing={0}>
@@ -45,7 +51,7 @@ const BitcoinDisplay = ({ levelBot }: { levelBot: number }) => {
           <Text fontSize={"xs"}>{bitcoinValuePerSecond.toFixed(8)}/s</Text>
         </Stack>
         <HStack spacing={1}>
-          <Image src="/bitcoin.svg" w={"16px"} h={"16px"} />
+          <Image src="/Bitcoin.svg" w={"16px"} h={"16px"} />
           <motion.div
             style={{
               fontSize: "14px",

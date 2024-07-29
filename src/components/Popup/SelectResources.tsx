@@ -1,7 +1,8 @@
-import { imageResources } from "@/utils/utils";
+import { imageResources, numeralFormat } from "@/utils/utils";
 import {
   Box,
   HStack,
+  Icon,
   Image,
   Modal,
   ModalBody,
@@ -13,6 +14,7 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
+import { IconClose } from "../Icons";
 
 interface Resource {
   resource_name: string;
@@ -50,7 +52,15 @@ export default function SelectResources({
           rounded={"xl"}
         >
           <ModalHeader>Select Resources</ModalHeader>
-          <ModalCloseButton />
+          <Box
+            position={"absolute"}
+            right={3}
+            top={3}
+            zIndex={99}
+            onClick={onClose}
+          >
+            <Icon as={IconClose} right={0} position={"absolute"} w={"full"} />
+          </Box>
           <ModalBody>
             <VStack
               py={3}
@@ -78,7 +88,7 @@ export default function SelectResources({
                       <Box fontWeight={600} as="span" textColor={"#BBC1DE"}>
                         Balance: {""}
                       </Box>
-                      {item.mining}
+                      {numeralFormat(item.mining)}
                     </Text>
                   </Stack>
                 </HStack>

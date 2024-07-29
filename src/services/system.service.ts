@@ -4,6 +4,10 @@ const getUserInfo = async (params: any) => {
   return await client.get("Users/user_info", { params });
 };
 
+const getLeaderboard = async () => {
+  return await client.get("Users/leaderboard");
+};
+
 const updateBotBtc = async (body: { telegram_id: any; level: string }) => {
   return await client.post("Update/update/bot_BTC_level", body);
 };
@@ -51,6 +55,7 @@ const sendInviteLink = async (body: { telegram_id: number }) => {
 
 const systemService = {
   getUserInfo,
+  getLeaderboard,
 
   updateBotBtc,
   updateTokenBtc,

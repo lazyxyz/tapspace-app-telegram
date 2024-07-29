@@ -27,6 +27,7 @@ interface Resource {
 interface QueryData {
   btc_value: number;
   resources: Resource[];
+  referred_users: string[];
 }
 
 interface BitcoinContextType {
@@ -69,6 +70,9 @@ export const BitcoinProvider: React.FC<BitcoinProviderProps> = ({
   const queryKey = [`infoUser`];
   const data = queryClient.getQueryData<QueryData>(queryKey);
 
+  const referredUsersLength = data?.referred_users.length || 0;
+  const referralBonus = 1 + referredUsersLength * 0.02; // Tỷ lệ gia tăng dựa trên referred_users.length
+
   useEffect(() => {
     if (data) {
       const levels: ResourceRates = {};
@@ -103,13 +107,13 @@ export const BitcoinProvider: React.FC<BitcoinProviderProps> = ({
         const updatedResources: ResourceRates = {};
         for (const key in initialResourceRates) {
           updatedResources[key] =
-            timeDifference * initialResourceRates[key] +
+            timeDifference * initialResourceRates[key] * referralBonus +
             (savedResources ? JSON.parse(savedResources)[key] : 0);
         }
         setResources(updatedResources);
       }
     }
-  }, []);
+  }, [referralBonus]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -128,7 +132,9 @@ export const BitcoinProvider: React.FC<BitcoinProviderProps> = ({
           const level = resourceLevels[key] || 1;
           const growthRate = 0.1;
           const rate =
-            initialResourceRates[key] * Math.pow(1 + growthRate, level - 1);
+            initialResourceRates[key] *
+            Math.pow(1 + growthRate, level - 1) *
+            referralBonus;
           updatedResources[key] = (prevResources[key] || 0) + rate;
         }
         localStorage.setItem("resources", JSON.stringify(updatedResources));
@@ -137,7 +143,7 @@ export const BitcoinProvider: React.FC<BitcoinProviderProps> = ({
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [resourceLevels, data]);
+  }, [resourceLevels, data, referralBonus]);
 
   const resetBitcoinValue = () => {
     setBitcoinValue(0);
