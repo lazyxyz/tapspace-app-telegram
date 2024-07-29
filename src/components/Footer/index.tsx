@@ -26,7 +26,7 @@ import ComingSoon from "./Menu/ComingSoon";
 const listMenu = [
   {
     label: "Resources",
-    image: "resources.png",
+    image: "Resources.png",
     drawerContent: (isOpen: boolean, onClose: () => void) => (
       <ResourcesDrawer isOpen={isOpen} onClose={onClose} />
     ),
@@ -34,7 +34,7 @@ const listMenu = [
   },
   {
     label: "Spaceship",
-    image: "spaceship.png",
+    image: "Spaceship.png",
     drawerContent: (isOpen: boolean, onClose: () => void) => (
       <ComingSoon tab={"Spaceship"} />
     ),
@@ -52,7 +52,7 @@ const listMenu = [
   },
   {
     label: "Battles",
-    image: "battle.png",
+    image: "Battles.png",
     status: false,
     drawerContent: (isOpen: boolean, onClose: () => void) => (
       <ComingSoon tab={"Battles"} />
@@ -105,6 +105,9 @@ export default function Footer() {
               src={`/assets/menu/${item.image}`}
               position={"absolute"}
               top={-5}
+              w={"56px"}
+              h={"56px"}
+              objectFit="contain"
             />
             <Text
               textColor={"white"}
