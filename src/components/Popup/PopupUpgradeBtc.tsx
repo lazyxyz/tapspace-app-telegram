@@ -25,7 +25,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { BsArrowRight, BsLightningChargeFill } from "react-icons/bs";
 import { useBitcoin } from "../Wrapper/BitcoinProvider";
 import PopupSuccessUplevel from "./PopupSuccessUplevel";
@@ -42,6 +42,7 @@ interface PopupUpgradeBotProps {
     mining: number;
   }[];
   levelResource: any;
+  isInsufficientResources: boolean;
 }
 
 export default function PopupUpgradeBtc({
@@ -50,6 +51,7 @@ export default function PopupUpgradeBtc({
   onClose,
   listData,
   levelResource,
+  isInsufficientResources,
 }: PopupUpgradeBotProps) {
   const { bitcoinValue, resources, resetBitcoinValue, resetResources } =
     useBitcoin();
@@ -219,7 +221,7 @@ export default function PopupUpgradeBtc({
               rounded={"xl"}
               borderBottomWidth={3}
               py={5}
-              isDisabled={false}
+              isDisabled={isInsufficientResources}
               _hover={{ bgGradient: "linear(to-b, #0DD63E 0%, #00A65B 100%)" }}
               fontWeight={800}
               borderColor={"#0DD63E"}

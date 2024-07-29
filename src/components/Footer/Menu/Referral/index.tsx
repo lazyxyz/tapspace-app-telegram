@@ -53,6 +53,8 @@ export default function ReferralDrawer() {
 
   const countRef = dataUser?.referred_users.length;
 
+  console.log(dataUser);
+
   return (
     <VStack justifyContent={"space-between"} h={"full"} pb={4}>
       <Stack>
@@ -114,7 +116,7 @@ export default function ReferralDrawer() {
                 h={"36px"}
                 jazzicon={{
                   diameter: 31,
-                  seed: String(user?.id),
+                  seed: String(item),
                 }}
               />
               <Text fontWeight={700}>{item}</Text>

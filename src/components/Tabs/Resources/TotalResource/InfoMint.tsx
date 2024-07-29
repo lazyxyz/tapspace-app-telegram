@@ -146,6 +146,10 @@ const InfoMint = ({ data, refetch }: any) => {
     };
   }, [listData, updateListData]);
 
+  useEffect(() => {
+    resetTimer();
+  }, [resetTimer]);
+
   const handleClick = useCallback(() => {
     setListData((prevListData) =>
       prevListData.map((item) => {
@@ -217,41 +221,11 @@ const InfoMint = ({ data, refetch }: any) => {
     },
   };
 
-  const Sparkle = ({ x, y }: { x: number; y: number }) => (
-    <motion.div
-    // initial={{ opacity: 1, scale: 0 }}
-    // animate={{ opacity: 0, scale: 1.5 }}
-    // transition={{ duration: 0.5, ease: "easeOut" }}
-    // style={{
-    //   position: "absolute",
-    //   top: y - 10,
-    //   left: x - 10,
-    //   width: 40,
-    //   height: 40,
-    //   backgroundColor: "rgba(255, 255, 255, 0.8)",
-    //   borderRadius: "50%",
-    //   pointerEvents: "none",
-    //   zIndex: 100,
-    // }}
-    />
-  );
-
-  const [sparkles, setSparkles] = useState<any>([]);
-
   const handleImageClick = (event: any) => {
     const rect = event.currentTarget.getBoundingClientRect();
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
-
-    const newSparkle = { x, y, id: Date.now() };
-    setSparkles([...sparkles, newSparkle]);
     handleClick();
-
-    setTimeout(() => {
-      setSparkles((prev: any) =>
-        prev.filter((sparkle: any) => sparkle.id !== newSparkle.id)
-      );
-    }, 500);
   };
 
   return (
@@ -297,9 +271,6 @@ const InfoMint = ({ data, refetch }: any) => {
               filter: "drop-shadow(0px 4px 50px rgba(239, 103, 244, 0.45))",
             }}
           />
-          {sparkles.map((sparkle: any) => (
-            <Sparkle key={sparkle.id} x={sparkle.x} y={sparkle.y} />
-          ))}
         </motion.div>
       </Stack>
     </VStack>

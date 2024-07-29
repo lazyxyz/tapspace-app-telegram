@@ -86,7 +86,7 @@ export default function PopupUpgradeBot({
         level_resource: `${item.level_resource + 1}`,
       });
       onOpenSuccess();
-      onClose();
+
       setIsLoading(false);
 
       queryClient.refetchQueries({

@@ -11,6 +11,8 @@ import {
 } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import BitcoinDisplay from "./Bitcoin";
+import { useMemo } from "react";
+import useResourceCapacity from "@/hooks/useResourceCapacity";
 interface QueryData {
   bot_level?: string;
 }
@@ -22,6 +24,21 @@ const FrequencyResource = () => {
   const botLevel = data?.bot_level;
 
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const nextLevel = botLevel + 1;
+  const resourceCapacity = useResourceCapacity(nextLevel);
+  const resourcesForNextLevel = resourceCapacity[`lv${nextLevel}`] || {};
+
+  const isDisabled = useMemo(() => {
+    return Object.entries(resourcesForNextLevel).some(([key, value], idx) => {
+      const numericValue = typeof value === "number" ? value : 0;
+      const userValue =
+        key === "BTC"
+          ? data?.btc_value ?? 0
+          : data?.resources[idx]?.mining ?? 0;
+      return userValue < numericValue;
+    });
+  }, [resourcesForNextLevel, data?.resources, data]);
 
   return (
     <VStack w={"full"}>
@@ -40,6 +57,8 @@ const FrequencyResource = () => {
 
           <Box
             bg={"rgba(255, 255, 255, 0.12)"}
+            borderWidth={1}
+            borderColor={!isDisabled ? "#D5FE4B" : "transparent"}
             position={"relative"}
             p={2}
             rounded={"xl"}
@@ -70,7 +89,10 @@ const FrequencyResource = () => {
               fontSize={"xs"}
               h={"24px"}
               position={"absolute"}
-              bgGradient="linear(to-b, #0DD63E 0%, #00A65B 100%)"
+              bg={isDisabled ? "#545978" : ""}
+              bgGradient={
+                !isDisabled ? "linear(to-b, #0DD63E 0%, #00A65B 100%)" : ""
+              }
             >
               Upgrade
             </Button>
@@ -82,9 +104,9 @@ const FrequencyResource = () => {
         isOpen={isOpen}
         onOpen={onOpen}
         onClose={onClose}
-        //@ts-ignore
         listData={data?.resources}
         levelResource={botLevel}
+        isInsufficientResources={isDisabled}
       />
     </VStack>
   );
