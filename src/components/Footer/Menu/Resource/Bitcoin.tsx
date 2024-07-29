@@ -43,7 +43,7 @@ const BitcoinDisplay = ({
   return (
     <HStack>
       <Box bg={"rgba(255, 255, 255, 0.12)"} p={2} rounded={"xl"}>
-        <Image src="/Bitcoin.svg" w={"56px"} h={"56px"} />
+        <Image src="/bitcoin.svg" w={"56px"} h={"56px"} />
       </Box>
       <VStack align={"start"}>
         <Stack spacing={0}>
@@ -51,7 +51,7 @@ const BitcoinDisplay = ({
           <Text fontSize={"xs"}>{bitcoinValuePerSecond.toFixed(8)}/s</Text>
         </Stack>
         <HStack spacing={1}>
-          <Image src="/Bitcoin.svg" w={"16px"} h={"16px"} />
+          <Image src="/bitcoin.svg" w={"16px"} h={"16px"} />
           <motion.div
             style={{
               fontSize: "14px",
