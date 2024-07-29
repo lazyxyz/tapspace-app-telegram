@@ -26,7 +26,7 @@ import ComingSoon from "./Menu/ComingSoon";
 const listMenu = [
   {
     label: "resources",
-    image: "Resources.png",
+    image: "resources.png",
     drawerContent: (isOpen: boolean, onClose: () => void) => (
       <ResourcesDrawer isOpen={isOpen} onClose={onClose} />
     ),
@@ -34,7 +34,7 @@ const listMenu = [
   },
   {
     label: "spaceship",
-    image: "Spaceship.png",
+    image: "spaceship.png",
     drawerContent: (isOpen: boolean, onClose: () => void) => (
       <ComingSoon tab={"Spaceship"} />
     ),
