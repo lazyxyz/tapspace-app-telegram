@@ -3,8 +3,13 @@ import GenerateAvatar from "@/lib/GenerateAvatar";
 import { useTelegram } from "@/lib/TelegramProvider";
 import systemService from "@/services/system.service";
 import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
   Box,
   Button,
+  CloseButton,
   HStack,
   Icon,
   Image,
@@ -70,7 +75,7 @@ export default function ReferralDrawer() {
         </HStack>
 
         <HStack bg={"rgba(253, 191, 37, 0.2)"} p={3} w={"full"} rounded={"xl"}>
-          <Image src="/assets/rewards/Fill/Gold.svg" />
+          <Image src="/assets/rewards/Fill/Gold.png" w={"48px"} h={"48px"} />
           <Stack spacing={0}>
             <Text textColor={"#FFE42C"} fontSize={"lg"} fontWeight={800}>
               {countRef * 2}%
@@ -84,11 +89,11 @@ export default function ReferralDrawer() {
         <HStack
           bg={"rgba(124, 238, 34, 0.2)"}
           px={3}
-          py={2}
+          py={3}
           w={"full"}
           rounded={"xl"}
         >
-          <Image src="/assets/rewards/Fill/Energyy.svg" />
+          <Image src="/assets/rewards/Fill/Energy.png" w={"48px"} h={"48px"} />
           <Stack spacing={0}>
             <Text textColor={"#7CEE22"} fontSize={"lg"} fontWeight={800}>
               {countRef * 10}%
@@ -125,77 +130,128 @@ export default function ReferralDrawer() {
         </Stack>
       </Stack>
 
-      <HStack w={"full"}>
-        <Link
-          as={NextLink}
-          href={"https://t.me/tap_space_bot?start?startapp=1348241702"}
-          w={"full"}
-          rounded={"xl"}
-          borderBottomWidth={3}
-          py={2}
-          textAlign={"center"}
-          _hover={{ bgGradient: "linear(to-b, #0DD63E 0%, #00A65B 100%)" }}
-          fontWeight={800}
-          borderColor={"#0DD63E"}
-          bgGradient={"linear(to-b, #0DD63E 0%, #00A65B 100%)"}
-        >
-          Invite a friend
-        </Link>
-
-        <MotionButton
-          borderWidth={1}
-          w={"52px"}
-          h={"44px"}
-          rounded={"xl"}
-          variant={"unstyled"}
-          display={"flex"}
-          alignItems={"center"}
-          justifyContent={"center"}
-          borderBottomWidth={3}
-          bgGradient={
-            copied
-              ? "linear(to-b, #0DD63E 0%, #00A65B 100%)"
-              : "linear(to-b, #333649 0%, #1F212E 100%)"
-          }
-          borderColor={copied ? "#0DD63E" : "#545978"}
-          onClick={handleCopy}
-          initial={{ scale: 1 }}
-          transition={{ type: "spring", stiffness: 300 }}
-        >
-          {copied ? (
-            <MotionBox
-              initial={{ height: 0, scale: 1 }}
-              animate={{ height: "100%", scale: copied ? 1.2 : 1 }}
-              transition={{ duration: 0.3 }}
-              overflow="hidden"
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-            >
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <motion.path
-                  d="M5 13L9 17L19 7"
-                  stroke="white"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
+      <Stack w={"full"} spacing={4}>
+        {copied && (
+          <Alert status="success" rounded={"xl"} bg={"rgba(13, 214, 62, 0.1)"}>
+            <HStack w={"full"} justifyContent={"space-between"}>
+              <HStack>
+                <MotionBox
+                  initial={{ height: 0, scale: 1 }}
+                  animate={{ height: "100%", scale: copied ? 1.2 : 1 }}
                   transition={{ duration: 0.3 }}
-                />
-              </svg>
-            </MotionBox>
-          ) : (
-            <IconCoppyLink />
-          )}
-        </MotionButton>
-      </HStack>
+                  overflow="hidden"
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  bgGradient={"linear(to-b, #0DD63E 0%, #00A65B 100%)"}
+                  rounded={"full"}
+                  p={1}
+                >
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <motion.path
+                      d="M5 13L9 17L19 7"
+                      stroke="white"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      initial={{ pathLength: 0 }}
+                      animate={{ pathLength: 1 }}
+                      transition={{ duration: 0.3 }}
+                    />
+                  </svg>
+                </MotionBox>
+                <Text textColor={"white"} fontWeight={600}>
+                  Copied link!
+                </Text>
+              </HStack>
+              <CloseButton
+                fontWeight={600}
+                alignSelf="flex-start"
+                position="relative"
+                onClick={() => {}}
+              />
+            </HStack>
+          </Alert>
+        )}
+
+        <HStack w={"full"}>
+          <Link
+            as={NextLink}
+            href={"https://t.me/tap_space_bot?start?startapp=1348241702"}
+            w={"full"}
+            rounded={"xl"}
+            borderBottomWidth={3}
+            py={2}
+            textAlign={"center"}
+            _hover={{ bgGradient: "linear(to-b, #0DD63E 0%, #00A65B 100%)" }}
+            fontWeight={800}
+            borderColor={"#0DD63E"}
+            bgGradient={"linear(to-b, #0DD63E 0%, #00A65B 100%)"}
+          >
+            Invite a friend
+          </Link>
+
+          <MotionButton
+            borderWidth={1}
+            w={"52px"}
+            h={"44px"}
+            rounded={"xl"}
+            variant={"unstyled"}
+            display={"flex"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            borderBottomWidth={3}
+            bgGradient={
+              copied
+                ? "linear(to-b, #0DD63E 0%, #00A65B 100%)"
+                : "linear(to-b, #333649 0%, #1F212E 100%)"
+            }
+            borderColor={copied ? "#0DD63E" : "#545978"}
+            onClick={handleCopy}
+            initial={{ scale: 1 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            {copied ? (
+              <MotionBox
+                initial={{ height: 0, scale: 1 }}
+                animate={{ height: "100%", scale: copied ? 1.2 : 1 }}
+                transition={{ duration: 0.3 }}
+                overflow="hidden"
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+              >
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <motion.path
+                    d="M5 13L9 17L19 7"
+                    stroke="white"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </svg>
+              </MotionBox>
+            ) : (
+              <IconCoppyLink />
+            )}
+          </MotionButton>
+        </HStack>
+      </Stack>
     </VStack>
   );
 }

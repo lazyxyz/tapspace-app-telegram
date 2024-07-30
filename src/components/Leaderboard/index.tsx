@@ -34,8 +34,6 @@ export default function Leaderboard({
     },
   });
 
-  console.log(data);
-
   const bgTop = [
     "linear-gradient(90deg, rgba(253, 191, 37, 0.25) 0%, rgba(253, 191, 37, 0.03) 100%)",
     "linear-gradient(90deg, rgba(30, 162, 237, 0.25) 0%, rgba(30, 162, 237, 0.03) 100%)",
@@ -45,9 +43,9 @@ export default function Leaderboard({
 
   const colorTop = ["#FDBF25", "#1EA2ED", "#0DD63E"];
   const imageTop = [
-    "/assets/rewards/top1.svg",
-    "/assets/rewards/top2.svg",
-    "/assets/rewards/top3.svg",
+    "/assets/rewards/top1.png",
+    "/assets/rewards/top2.png",
+    "/assets/rewards/top3.png",
   ];
 
   return (
@@ -104,9 +102,10 @@ export default function Leaderboard({
                       <Box>
                         {idx < 3 ? (
                           <Image
-                            px={1}
                             src={imageTop[idx]}
                             whiteSpace={"pre"}
+                            w={"24px"}
+                            h={"24px"}
                           />
                         ) : (
                           <Stack

@@ -101,7 +101,7 @@ export default function Header() {
                   onOpen();
                 }}
               >
-                <Image src="/assets/cup.svg" />
+                <Image src="/assets/Trophy.png" w={"14px"} h={"14px"} />
                 <Text fontSize={"10px"} textColor={"#DADFF4"} fontWeight={600}>
                   #{data?.rank || "-"}
                 </Text>

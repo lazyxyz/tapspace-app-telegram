@@ -17,14 +17,16 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { FaChevronLeft } from "react-icons/fa";
 import ResourcesDrawer from "./Menu/Resource";
 import Swap from "./Menu/Resource/Swap";
 import ReferralDrawer from "./Menu/Referral";
 import ComingSoon from "./Menu/ComingSoon";
 import { IconClose } from "../Icons";
+import { motion } from "framer-motion";
 
+const MotionBox = motion(Box);
 const listMenu = [
   {
     label: "Resources",
@@ -59,7 +61,7 @@ const listMenu = [
     drawerContent: (isOpen: boolean, onClose: () => void) => (
       <ComingSoon tab={"Battles"} />
     ),
-    bgIncoming: "/assets/menu/bgBattles.png",
+    bgIncoming: "/assets/battles.mp4",
   },
   {
     label: "Referral",
@@ -166,7 +168,15 @@ export default function Footer() {
   };
 
   const checkCommingSoon = !listMenu[selectedMenuItem]?.status;
+  const bgIncoming = listMenu[selectedMenuItem]?.bgIncoming;
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    setIsLoading(true);
+  }, [selectedMenuItem]);
 
+  const handleMediaLoad = () => {
+    setIsLoading(false);
+  };
   return (
     <HStack
       position={"fixed"}
@@ -191,12 +201,47 @@ export default function Footer() {
           px={"0 !"}
           mx={"0 !"}
           bgGradient={"linear(to-b, #333649 0%, #1F212E 100%)"}
-          bgImage={listMenu[selectedMenuItem].bgIncoming}
           bgSize={"cover"}
           borderTopWidth={3}
           borderColor={"#545978"}
           roundedTop={"xl"}
         >
+          {bgIncoming && bgIncoming.endsWith(".mp4") ? (
+            <MotionBox
+              as="video"
+              src={bgIncoming}
+              autoPlay
+              loop
+              muted
+              position="absolute"
+              top="0"
+              left="0"
+              width="100%"
+              height="100%"
+              objectFit="cover"
+              zIndex="-1"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1 }}
+              onLoadedData={handleMediaLoad}
+            />
+          ) : (
+            <MotionBox
+              bgImage={`url(${bgIncoming})`}
+              bgSize="cover"
+              position="absolute"
+              top="0"
+              left="0"
+              width="100%"
+              height="100%"
+              zIndex="-1"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1 }}
+              onLoad={handleMediaLoad}
+            />
+          )}
+
           {listMenu[selectedMenuItem]?.label === "Referral" && (
             <Box
               position={"absolute"}
