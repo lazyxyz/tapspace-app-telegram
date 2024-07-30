@@ -225,7 +225,6 @@ export default function Footer() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 1 }}
-              onLoadedData={handleMediaLoad}
             />
           ) : (
             <MotionBox
@@ -240,7 +239,6 @@ export default function Footer() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 1 }}
-              onLoad={handleMediaLoad}
             />
           )}
 
