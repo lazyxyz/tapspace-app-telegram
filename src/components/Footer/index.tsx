@@ -213,13 +213,15 @@ export default function Footer() {
               autoPlay
               loop
               muted
-              position="absolute"
+              playsInline
+              position="fixed"
               top="0"
               left="0"
               width="100%"
               height="100%"
               objectFit="cover"
               zIndex="-1"
+              pointerEvents="none"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 1 }}
