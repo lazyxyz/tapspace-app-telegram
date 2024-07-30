@@ -10,6 +10,7 @@ import {
   DrawerHeader,
   DrawerOverlay,
   HStack,
+  Icon,
   Image,
   Stack,
   Text,
@@ -22,6 +23,7 @@ import ResourcesDrawer from "./Menu/Resource";
 import Swap from "./Menu/Resource/Swap";
 import ReferralDrawer from "./Menu/Referral";
 import ComingSoon from "./Menu/ComingSoon";
+import { IconClose } from "../Icons";
 
 const listMenu = [
   {
@@ -74,6 +76,7 @@ export default function Footer() {
 
   const handleMenuClick = (index: number) => {
     setSelectedMenuItem(index);
+    setTab(false);
     onOpen();
   };
 
@@ -83,7 +86,7 @@ export default function Footer() {
         {listMenu.map((item, idx) => (
           <VStack
             key={idx}
-            w={"full"}
+            w={"20%"}
             borderWidth={1}
             borderTopWidth={"3px"}
             bgGradient={
@@ -178,7 +181,13 @@ export default function Footer() {
       <Drawer placement={"bottom"} onClose={onClose} isOpen={isOpen}>
         <DrawerOverlay />
         <DrawerContent
-          h={checkCommingSoon ? "100vh" : "82vh"}
+          h={
+            checkCommingSoon
+              ? "100vh"
+              : listMenu[selectedMenuItem]?.label === "Referral"
+              ? "90vh"
+              : "82vh"
+          }
           px={"0 !"}
           mx={"0 !"}
           bgGradient={"linear(to-b, #333649 0%, #1F212E 100%)"}
@@ -188,6 +197,17 @@ export default function Footer() {
           borderColor={"#545978"}
           roundedTop={"xl"}
         >
+          {listMenu[selectedMenuItem]?.label === "Referral" && (
+            <Box
+              position={"absolute"}
+              right={3}
+              top={3}
+              zIndex={99}
+              onClick={onClose}
+            >
+              <Icon as={IconClose} right={0} position={"absolute"} w={"full"} />
+            </Box>
+          )}
           <DrawerHeader borderBottomWidth="1px" border={0} pt={2} pb={1}>
             {listMenu[selectedMenuItem]?.label === "Resources" && (
               <HeaderResource />
@@ -207,10 +227,10 @@ export default function Footer() {
           <DrawerFooter
             p={0}
             position={"fixed"}
-            bgGradient={"linear(to-b, #333649 0%, #1F212E 100%)"}
             w={"full"}
             rounded={"xl"}
             bottom={0}
+            backdropFilter={"blur(4.5px)"}
           >
             <RenderMenuItems checkActive={true} />
           </DrawerFooter>

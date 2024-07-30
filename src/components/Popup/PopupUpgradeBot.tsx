@@ -204,13 +204,25 @@ export default function PopupUpgradeBot({
                             }
                             fontWeight={"800"}
                           >
-                            {key === "BTC"
-                              ? //@ts-ignore
-                                numeralFormat(data?.btc_value)
-                              : listData.find(
-                                  (dataItem) => dataItem.resource_name === key
-                                )?.mining}
-                            /{numeralFormat(numericValue)}
+                            {item.mining < numericValue ||
+                            (key === "BTC" &&
+                              (data?.btc_value ?? 0) < numericValue) ? (
+                              <>
+                                {key === "BTC"
+                                  ? numeralFormat(data?.btc_value)
+                                  : numeralFormat(
+                                      Number(
+                                        listData.find(
+                                          (dataItem) =>
+                                            dataItem.resource_name === key
+                                        )?.mining
+                                      )
+                                    )}
+                                /{numeralFormat(numericValue)}
+                              </>
+                            ) : (
+                              numeralFormat(numericValue)
+                            )}
                           </Text>
                         </HStack>
                       </VStack>
@@ -282,6 +294,7 @@ export const CurrentPassive = ({
                 checkPassiveUplevel[item.resource_name] *
                   Math.pow(1 + 0.1, currentLevel)
               )}
+          /s
         </Text>
       </HStack>
       <Icon as={IconArrowRight} />
@@ -297,6 +310,7 @@ export const CurrentPassive = ({
                 checkPassiveUplevel[item.resource_name] *
                   Math.pow(1 + 0.1, currentLevel + 1)
               )}
+          /s
         </Text>
       </HStack>
     </HStack>

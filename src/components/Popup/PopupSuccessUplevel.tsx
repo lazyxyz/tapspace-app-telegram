@@ -78,7 +78,11 @@ export default function PopupSuccessUplevel({
               <Text textColor={"#D5FE4B"} fontSize={"24px"} fontWeight={900}>
                 LEVEL {level}
               </Text>
-              <CurrentPassive currentLevel={level - 1} item={miner} isBtc />
+              <CurrentPassive
+                currentLevel={level - 1}
+                item={miner}
+                isBtc={isBtc}
+              />
               <Box
                 position={"absolute"}
                 zIndex={-1}
@@ -139,7 +143,7 @@ export default function PopupSuccessUplevel({
               bgGradient={"linear(to-b, #0DD63E 0%, #00A65B 100%)"}
               onClick={onClose}
             >
-              Keep Upgrade
+              Keep Upgrading
             </Button>
           </ModalFooter>
         </ModalContent>

@@ -39,8 +39,6 @@ export default function ReferralDrawer() {
     queryKey: ["infoUser"],
   });
 
-  console.log(dataUser?.referred_users);
-
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
@@ -63,7 +61,11 @@ export default function ReferralDrawer() {
             <Box color={"#0FE0FD"} as="span">
               2%
             </Box>{" "}
-            TS-BTC/sec minted and all resources/tap.
+            TS-BTC/sec minted and{" "}
+            <Box color={"#0FE0FD"} as="span">
+              10%
+            </Box>{" "}
+            all resources/tap.
           </Text>
         </HStack>
 

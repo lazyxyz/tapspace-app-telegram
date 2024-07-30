@@ -147,11 +147,17 @@ const FloatingText = ({ text }: { text: string }) => (
     initial={{ opacity: 1, y: 0 }}
     animate={{ opacity: 0, y: -50 }}
     transition={{ duration: 1 }}
-    style={{ position: "absolute", bottom: "0", left: "0", zIndex: 10 }}
+    style={{
+      position: "absolute",
+      left: "25%",
+      top: "50%",
+      zIndex: 10,
+    }}
   >
     <Text
       color="white"
       textAlign="center"
+      fontSize={"xs"}
       fontWeight={900}
       textShadow="-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0px 1px 0px #13161F, 0px 0px 5px #D5FE4B"
     >

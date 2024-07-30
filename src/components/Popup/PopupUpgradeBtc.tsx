@@ -203,17 +203,25 @@ export default function PopupUpgradeBtc({
                             }
                             fontWeight={"800"}
                           >
-                            {key === "BTC"
-                              ? numeralFormat(Number(data?.btc_value))
-                              : numeralFormat(
-                                  Number(
-                                    listData.find(
-                                      (dataItem) =>
-                                        dataItem.resource_name === key
-                                    )?.mining
-                                  )
-                                )}
-                            /{numeralFormat(numericValue)}
+                            {listData[idx]?.mining < numericValue ||
+                            (key === "BTC" &&
+                              (data?.btc_value ?? 0) < numericValue) ? (
+                              <>
+                                {key === "BTC"
+                                  ? numeralFormat(data?.btc_value)
+                                  : numeralFormat(
+                                      Number(
+                                        listData.find(
+                                          (dataItem) =>
+                                            dataItem.resource_name === key
+                                        )?.mining
+                                      )
+                                    )}
+                                /{numeralFormat(numericValue)}
+                              </>
+                            ) : (
+                              numeralFormat(numericValue)
+                            )}
                           </Text>
                         </HStack>
                       </VStack>

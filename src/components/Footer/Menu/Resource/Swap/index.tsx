@@ -144,9 +144,9 @@ export default function Swap() {
   };
 
   return (
-    <VStack w={"full"}>
+    <VStack w={"full"} px={3}>
       <VStack position={"relative"} w={"full"}>
-        <Image src="/assets/bannerSwap.png" w={"full"} />
+        <Image src="/assets/bannerSwap.svg" w={"full"} py={3} />
 
         {/* Resource Selection 1 */}
         <HStack
@@ -318,7 +318,7 @@ export default function Swap() {
               <IoChevronDown />
             </HStack>
             <Text>
-              Balance: {numeralFormat(Number(selectedResource2?.mining)) ?? "0"}
+              Balance: {numeralFormat(Number(selectedResource2?.mining || 0))}
             </Text>
           </Stack>
         </HStack>
@@ -332,19 +332,55 @@ export default function Swap() {
         />
       </VStack>
 
-      <HStack justifyContent={"space-between"} w={"full"}>
-        <Text>Transaction Fee</Text>
-        <HStack textColor={"white"} fontWeight={"800"}>
-          <IconBitcoin w={"20px"} />
-          <Text>0.1 + 10% Output</Text>
-        </HStack>
-      </HStack>
+      {selectedResource1 && selectedResource2 && (
+        <Stack w={"full"}>
+          <HStack bg={"#333649"} p={3} rounded={"xl"} fontSize={"sm"}>
+            <Text fontWeight={"800"} color={"#DADFF4"}>
+              1 {selectedResource1.resource_name} ={" "}
+              {getConversionRate(
+                selectedResource1.resource_name,
+                selectedResource2.resource_name
+              )}{" "}
+              {selectedResource2.resource_name}
+            </Text>
+          </HStack>
+          <HStack justifyContent={"space-between"} w={"full"} pt={3}>
+            <Text fontSize={"sm"} textColor={"#BBC1DE"}>
+              Swap fee
+            </Text>
+            <HStack textColor={"white"} spacing={3} fontWeight={"800"}>
+              <HStack spacing={1}>
+                <IconBitcoin w={"20px"} />
+                <Text>0.1</Text>
+              </HStack>
+
+              <HStack spacing={1}>
+                <Image
+                  src={imageResources[selectedResource2?.resource_name || ""]}
+                  w={"20px"}
+                />
+                <Text>
+                  {numeralFormat(
+                    Number(
+                      calculateConvertedMining(
+                        selectedResource1,
+                        selectedResource2
+                      )
+                    ) * 0.1
+                  )}
+                </Text>
+              </HStack>
+            </HStack>
+          </HStack>
+        </Stack>
+      )}
 
       <Button
         w={"full"}
         rounded={"xl"}
         borderBottomWidth={3}
         py={5}
+        isDisabled={Number(inputValue) > Number(selectedResource1?.mining)}
         variant={"hover"}
         fontWeight={800}
         borderColor={"#0DD63E"}

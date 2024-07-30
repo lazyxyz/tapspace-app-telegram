@@ -83,7 +83,13 @@ export default function Leaderboard({
                 </Text>
               </Stack>
 
-              <Stack w={"full"} spacing={1} maxH={"400px"} overflow={"auto"}>
+              <Stack
+                w={"full"}
+                spacing={1}
+                maxH={"400px"}
+                overflow={"auto"}
+                zIndex={99999}
+              >
                 {data?.map((item: any, idx: number) => (
                   <HStack
                     key={idx}
