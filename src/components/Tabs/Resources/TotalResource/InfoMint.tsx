@@ -37,7 +37,11 @@ const calculateNewItemSecond = (
 };
 
 const InfoMint = ({ data, refetch }: any) => {
-  const { user } = useTelegram();
+  const { user, webApp } = useTelegram();
+  useEffect(() => {
+    if (webApp) {
+    }
+  }, [webApp]);
 
   const postDataToApi = async (data: any) => {
     const updatedResources = await systemService.updateMining({

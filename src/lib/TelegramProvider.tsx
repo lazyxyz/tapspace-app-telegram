@@ -23,6 +23,16 @@ export const TelegramProvider = ({
     if (app) {
       app.ready();
       setWebApp(app);
+
+      const handleBackButton = () => {
+        console.log("Back button pressed");
+      };
+
+      app.onBackButtonClicked(handleBackButton);
+
+      return () => {
+        app.offBackButtonClicked(handleBackButton);
+      };
     }
   }, []);
 
