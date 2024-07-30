@@ -40,6 +40,8 @@ const InfoMint = ({ data, refetch }: any) => {
   const { user, webApp } = useTelegram();
   useEffect(() => {
     if (webApp) {
+      //@ts-ignore
+      webApp.BackButton.show();
     }
   }, [webApp]);
 
