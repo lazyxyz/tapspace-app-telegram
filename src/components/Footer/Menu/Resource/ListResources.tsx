@@ -61,63 +61,63 @@ const ListResources = () => {
     return () => clearInterval(interval);
   }, [listData]);
 
-  return (
-    <Stack>
-      {data?.resources.map((item: any, idx: number) => (
-        <Stack
-          bg={"#13161F"}
-          w={"full"}
-          key={idx}
-          px={3}
-          py={4}
-          rounded={"xl"}
-          borderWidth={1}
-          borderBottomWidth={3}
-          borderColor={"#3F435A"}
-        >
-          <HStack justifyContent={"space-between"}>
-            <HStack>
-              <Box bg={"rgba(255, 255, 255, 0.12)"} p={2} rounded={"xl"}>
+  const memoizedResources = useMemo(() => {
+    return data?.resources.map((item: any, idx: number) => (
+      <Stack
+        key={idx}
+        bg={"#13161F"}
+        w={"full"}
+        px={3}
+        py={4}
+        rounded={"xl"}
+        borderWidth={1}
+        borderBottomWidth={3}
+        borderColor={"#3F435A"}
+      >
+        <HStack justifyContent={"space-between"}>
+          <HStack>
+            <Box bg={"rgba(255, 255, 255, 0.12)"} p={2} rounded={"xl"}>
+              <Image
+                src={imageResources[item?.resource_name]}
+                w={"56px"}
+                h={"56px"}
+              />
+            </Box>
+            <VStack align={"start"}>
+              <Stack spacing={0}>
+                <Text fontWeight={"800"}>{item.resource_name}</Text>
+                <Text fontSize={"xs"}>
+                  {Number(
+                    checkPassiveUplevel[item.resource_name] *
+                      Math.pow(1 + 0.1, item.level_resource)
+                  ).toFixed(5)}
+                  /s
+                </Text>
+              </Stack>
+              <HStack align={"center"} spacing={1}>
                 <Image
                   src={imageResources[item?.resource_name]}
-                  w={"56px"}
-                  h={"56px"}
+                  w={"16px"}
+                  h={"16px"}
                 />
-              </Box>
-              <VStack align={"start"}>
-                <Stack spacing={0}>
-                  <Text fontWeight={"800"}>{item.resource_name}</Text>
-                  <Text fontSize={"xs"}>
-                    {Number(
-                      checkPassiveUplevel[item.resource_name] *
-                        Math.pow(1 + 0.1, item.level_resource)
-                    ).toFixed(5)}
-                    /s
-                  </Text>
-                </Stack>
-                <HStack align={"center"} spacing={1}>
-                  <Image
-                    src={imageResources[item?.resource_name]}
-                    w={"16px"}
-                    h={"16px"}
-                  />
-                  <Text fontSize={"sm"} fontWeight={"800"}>
-                    {numeralFormat(item.mining)}
-                  </Text>
-                </HStack>
-              </VStack>
-            </HStack>
-            <BotResource
-              item={data.resources[idx]}
-              listData={listData}
-              data={data}
-              idx={idx}
-            />
+                <Text fontSize={"sm"} fontWeight={"800"}>
+                  {numeralFormat(item.mining)}
+                </Text>
+              </HStack>
+            </VStack>
           </HStack>
-        </Stack>
-      ))}
-    </Stack>
-  );
+          <BotResource
+            item={data.resources[idx]}
+            listData={listData}
+            data={data}
+            idx={idx}
+          />
+        </HStack>
+      </Stack>
+    ));
+  }, [data, listData]);
+
+  return <Stack>{memoizedResources}</Stack>;
 };
 
 const BotResource = ({ item, listData, data, idx }: any) => {

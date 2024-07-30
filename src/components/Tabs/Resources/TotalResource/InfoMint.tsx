@@ -4,6 +4,7 @@ import {
   Box,
   HStack,
   Image,
+  Link,
   Stack,
   useDisclosure,
   VStack,
@@ -12,6 +13,7 @@ import { motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { MemoizedMintItem } from "./MintItem";
 import Leaderboard from "@/components/Leaderboard";
+import NextLink from "next/link";
 
 export type MintItemType = {
   capacity: number;
@@ -283,6 +285,22 @@ const InfoMint = ({ data, refetch }: any) => {
             />
           </motion.div>
 
+          <Link
+            as={NextLink}
+            href="/universe"
+            bg={"rgba(255, 255, 255, 0.15)"}
+            borderWidth={1}
+            position={"absolute"}
+            bottom={"20%"}
+            right={"3%"}
+            borderBottomWidth={2}
+            rounded={"xl"}
+            borderColor={"rgba(255, 255, 255, 0.15)"}
+            onClick={onOpen}
+            p={1}
+          >
+            <Image src="/assets/leaderboard.png" w={"40px"} h={"40px"} />
+          </Link>
           <Box
             bg={"rgba(255, 255, 255, 0.15)"}
             borderWidth={1}
