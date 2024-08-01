@@ -1,5 +1,10 @@
 import HomePage from "@/components/Home";
+import TelegramScreen from "@/components/Telegram/TelegramScreen";
 
 export default function Home() {
-  return <HomePage />;
+  return (
+    <TelegramScreen showbackbutton={false}>
+      <HomePage />
+    </TelegramScreen>
+  );
 }
