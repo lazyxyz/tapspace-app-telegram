@@ -168,13 +168,7 @@ const InfoMint: React.FC<InfoMintProps> = ({ data, refetch }) => {
         const data = {
           telegram_id:
             Number(process.env.NEXT_PUBLIC_API_ID_TELEGRAM) || Number(user?.id),
-          mining_values: {
-            Aluminum: 0.22,
-            Copper: 0.1471359359184001,
-            Fiber: 0.09809062394560009,
-            Steel: 0.2236249578240034,
-            Titanium: 0.05934482748708805,
-          },
+          mining_values: miningValues,
         };
         emit("update_mining", data);
       } else {

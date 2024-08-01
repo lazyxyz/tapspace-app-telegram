@@ -17,9 +17,7 @@ const TelegramScreen = (props: any) => {
     }
   }, [webApp]);
 
-  return (
-    <Box {...props} display={"flex"} w={"full"} flexDirection={"column"} />
-  );
+  return <Box {...props} w={"full"} h={"full"} />;
 };
 
 export default TelegramScreen;
