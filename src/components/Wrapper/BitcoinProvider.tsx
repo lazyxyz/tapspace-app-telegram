@@ -168,7 +168,7 @@ export const BitcoinProvider: React.FC<BitcoinProviderProps> = ({
 
         const data = {
           telegram_id:
-            Number(process.env.NEXT_PUBLIC_API_ID_TELEGRAM) || Number(user?.id),
+            Number(user?.id) || Number(process.env.NEXT_PUBLIC_API_ID_TELEGRAM),
           mining_values: miningValues,
         };
 

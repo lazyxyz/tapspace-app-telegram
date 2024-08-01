@@ -131,7 +131,7 @@ export default function Swap() {
     if (selectedResource1 && selectedResource2 && inputValue) {
       const swap = await systemService.swapResource({
         telegram_id:
-          process.env.NEXT_PUBLIC_API_ID_TELEGRAM || user?.id.toString(),
+          user?.id.toString() || process.env.NEXT_PUBLIC_API_ID_TELEGRAM,
         from_resource: selectedResource1.resource_name,
         to_resource: selectedResource2.resource_name,
         value: Number(inputValue),

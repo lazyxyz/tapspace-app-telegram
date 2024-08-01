@@ -35,7 +35,7 @@ export default function ReferralDrawer() {
     queryFn: () => {
       const rs = systemService.sendInviteLink({
         telegram_id:
-          Number(process.env.NEXT_PUBLIC_API_ID_TELEGRAM) || Number(user?.id),
+          Number(user?.id) || Number(process.env.NEXT_PUBLIC_API_ID_TELEGRAM),
       });
       return rs;
     },

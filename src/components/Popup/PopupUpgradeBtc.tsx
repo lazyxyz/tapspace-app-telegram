@@ -79,7 +79,7 @@ export default function PopupUpgradeBtc({
     setIsLoading(true);
     const updateBot = await systemService.updateBotBtc({
       telegram_id:
-        process.env.NEXT_PUBLIC_API_ID_TELEGRAM || user?.id.toString(),
+        user?.id.toString() || process.env.NEXT_PUBLIC_API_ID_TELEGRAM,
       level: `${levelResource + 1}`,
     });
     onOpenSuccess();

@@ -22,7 +22,7 @@ export default function HomePage() {
     queryFn: async () => {
       const rs = await systemService.getUserInfo({
         telegram_id:
-          process.env.NEXT_PUBLIC_API_ID_TELEGRAM || user?.id.toString(),
+          user?.id.toString() || process.env.NEXT_PUBLIC_API_ID_TELEGRAM,
         planets: "Earth",
       });
       return rs.data;

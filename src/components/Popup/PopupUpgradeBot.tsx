@@ -81,7 +81,7 @@ export default function PopupUpgradeBot({
     try {
       const updateBot = await systemService.updateBotResourcesLevel({
         telegram_id:
-          process.env.NEXT_PUBLIC_API_ID_TELEGRAM || user?.id.toString(),
+          user?.id.toString() || process.env.NEXT_PUBLIC_API_ID_TELEGRAM,
         name: item.resource_name,
         level_resource: `${item.level_resource + 1}`,
       });

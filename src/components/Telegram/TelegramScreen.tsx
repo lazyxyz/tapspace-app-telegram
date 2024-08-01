@@ -2,7 +2,7 @@
 
 import { useTelegram } from "@/lib/TelegramProvider";
 import { Box } from "@chakra-ui/react";
-import { redirect, useRouter } from "next/navigation"; // Import the useRouter hook
+import { redirect, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import "./TelegramScreen.css";
 
@@ -16,14 +16,13 @@ const TelegramScreen = (props: any) => {
       webApp.BackButton.show();
       //@ts-ignore
       webApp.BackButton.onClick(() => {
-        redirect("/"); // Navigate to the home page when back button is clicked
+        router.push("/");
       });
     } else {
       //@ts-ignore
       webApp.BackButton.hide();
     }
 
-    // Cleanup function to remove the event listener when the component unmounts
     return () => {
       //@ts-ignore
       webApp.BackButton.offClick(() => {

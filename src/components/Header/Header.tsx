@@ -1,13 +1,14 @@
 "use client";
 
+import GenerateAvatar from "@/lib/GenerateAvatar";
 import { useTelegram } from "@/lib/TelegramProvider";
 import systemService from "@/services/system.service";
+import { numeralFormat } from "@/utils/utils";
 import {
   Box,
   Button,
   Drawer,
   DrawerBody,
-  DrawerCloseButton,
   DrawerContent,
   DrawerHeader,
   DrawerOverlay,
@@ -21,16 +22,14 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
-import { BarMenu, IconBitcoin, IconClose } from "../Icons";
-import GenerateAvatar from "@/lib/GenerateAvatar";
-import { numeralFormat } from "@/utils/utils";
-import Leaderboard from "../Leaderboard";
+import React from "react";
 import { FaVolumeOff } from "react-icons/fa";
-import { PiMusicNotesFill } from "react-icons/pi";
 import { IoReload } from "react-icons/io5";
-import { useBitcoin } from "../Wrapper/BitcoinProvider";
+import { PiMusicNotesFill } from "react-icons/pi";
+import { BarMenu, IconBitcoin, IconClose } from "../Icons";
+import Leaderboard from "../Leaderboard";
 
-export default function Header() {
+const Header = React.memo(function HeaderComponent() {
   const { user } = useTelegram();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -45,13 +44,15 @@ export default function Header() {
     queryFn: async () => {
       const rs = await systemService.getUserInfo({
         telegram_id:
-          process.env.NEXT_PUBLIC_API_ID_TELEGRAM || user?.id.toString(),
+          user?.id.toString() || process.env.NEXT_PUBLIC_API_ID_TELEGRAM,
         planets: "Earth",
       });
       return rs.data;
     },
     staleTime: Infinity,
   });
+
+  console.log("header");
 
   return (
     <>
@@ -102,7 +103,12 @@ export default function Header() {
                   onOpen();
                 }}
               >
-                <Image src="/assets/Trophy.png" w={"14px"} h={"14px"} />
+                <Image
+                  src="/assets/Trophy.png"
+                  alt="Trophy Icon"
+                  w={"14px"}
+                  h={"14px"}
+                />
                 <Text fontSize={"10px"} textColor={"#DADFF4"} fontWeight={600}>
                   #{data?.rank || "-"}
                 </Text>
@@ -133,9 +139,9 @@ export default function Header() {
       <Navbar isOpen={isOpenNavbar} onClose={onCloseNavbar} />
     </>
   );
-}
+});
 
-const Navbar = ({ isOpen, onClose }: any) => {
+const Navbar = React.memo(function NavbarComponent({ isOpen, onClose }: any) {
   return (
     <Drawer isOpen={isOpen} placement="left" size={"full"} onClose={onClose}>
       <DrawerOverlay />
@@ -211,4 +217,6 @@ const Navbar = ({ isOpen, onClose }: any) => {
       </DrawerContent>
     </Drawer>
   );
-};
+});
+
+export default Header;

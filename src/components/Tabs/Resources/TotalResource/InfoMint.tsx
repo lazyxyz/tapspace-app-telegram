@@ -167,7 +167,7 @@ const InfoMint: React.FC<InfoMintProps> = ({ data, refetch }) => {
       if (Object.keys(miningValues).length > 0) {
         const data = {
           telegram_id:
-            Number(process.env.NEXT_PUBLIC_API_ID_TELEGRAM) || Number(user?.id),
+            Number(user?.id) || Number(process.env.NEXT_PUBLIC_API_ID_TELEGRAM),
           mining_values: miningValues,
         };
         emit("update_mining", data);

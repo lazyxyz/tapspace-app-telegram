@@ -16,17 +16,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const [progress, setProgress] = useState(0);
   const [loadingComplete, setLoadingComplete] = useState(false);
   const [loading, setLoading] = useState(true);
-  const { data, error, isLoading, refetch } = useQuery({
-    queryKey: ["infoUser"],
-    queryFn: async () => {
-      const rs = await systemService.getUserInfo({
-        telegram_id:
-          process.env.NEXT_PUBLIC_API_ID_TELEGRAM || user?.id.toString(),
-        planets: "Earth",
-      });
-      return rs.data;
-    },
-  });
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -44,15 +33,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (!isLoading) {
-      setLoading(false);
-      const timer = setTimeout(() => {
-        setLoadingComplete(true);
-      }, 3000);
+    setLoading(false);
+    const timer = setTimeout(() => {
+      setLoadingComplete(true);
+    }, 3000);
 
-      return () => clearTimeout(timer);
-    }
-  }, [isLoading]);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <VStack

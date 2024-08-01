@@ -3,64 +3,67 @@
 import {
   Box,
   HStack,
-  Image,
   Link,
   Stack,
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import { motion } from "framer-motion";
 import NextLink from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import React, { useMemo, useState } from "react";
 import ReferralDrawer from "./Menu/Referral";
+import Image from "next/image";
 
-const MotionBox = motion(Box);
-const listMenu = [
-  {
-    label: "Home",
-    image: "resources.png",
-    status: true,
-    link: "/home",
-  },
-  {
-    label: "Miner",
-    image: "miner.png",
-    bgIncoming: "/assets/menu/bgSpaceship.png",
-    status: false,
-    link: "/miner",
-  },
-  {
-    label: "Spaceship",
-    image: "spaceship.png",
-    bgIncoming: "/assets/menu/bgSpaceship.png",
-    status: false,
-    link: "/spaceship",
-  },
-  {
-    label: "Universe",
-    image: "universe.png",
-    status: false,
-    bgIncoming: "/assets/menu/bgUniverse.png",
-    link: "/universe",
-  },
-  {
-    label: "Battles",
-    image: "Battles.png",
-    status: false,
-    bgIncoming: "/assets/battles.mp4",
-    link: "/battles",
-  },
-  {
-    label: "Referral",
-    image: "Referral.png",
-    drawerContent: (isOpen: boolean, onClose: () => void) => <ReferralDrawer />,
-    status: true,
-    link: "/referral",
-  },
-];
+const Footer = React.memo(function FooterComponent() {
+  const listMenu = useMemo(
+    () => [
+      {
+        label: "Home",
+        image: "resources.png",
+        status: true,
+        link: "/home",
+      },
+      {
+        label: "Miner",
+        image: "miner.png",
+        bgIncoming: "/assets/menu/bgSpaceship.png",
+        status: false,
+        link: "/miner",
+      },
+      {
+        label: "Spaceship",
+        image: "spaceship.png",
+        bgIncoming: "/assets/menu/bgSpaceship.png",
+        status: false,
+        link: "/spaceship",
+      },
+      {
+        label: "Universe",
+        image: "universe.png",
+        status: false,
+        bgIncoming: "/assets/menu/bgUniverse.png",
+        link: "/universe",
+      },
+      {
+        label: "Battles",
+        image: "Battles.png",
+        status: false,
+        bgIncoming: "/assets/battles.mp4",
+        link: "/battles",
+      },
+      {
+        label: "Referral",
+        image: "Referral.png",
+        drawerContent: (isOpen: boolean, onClose: () => void) => (
+          <ReferralDrawer />
+        ),
+        status: true,
+        link: "/referral",
+      },
+    ],
+    []
+  );
 
-export default function Footer() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedMenuItem, setSelectedMenuItem] = useState<number>(0);
   const [tab, setTab] = useState(false);
@@ -73,7 +76,11 @@ export default function Footer() {
 
   const pathName = usePathname();
 
-  const RenderMenuItems = ({ checkActive }: { checkActive?: boolean }) => {
+  const RenderMenuItems = React.memo(function RenderMenuItemsComponent({
+    checkActive,
+  }: {
+    checkActive?: boolean;
+  }) {
     return (
       <HStack w={"full"} spacing={0}>
         {listMenu.map((item, idx) => {
@@ -107,14 +114,14 @@ export default function Footer() {
               cursor="pointer"
             >
               <Stack align={"center"}>
-                <Image
-                  src={`/assets/menu/${item.image}`}
-                  position={"absolute"}
-                  top={-5}
-                  w={"44px"}
-                  h={"44px"}
-                  objectFit="contain"
-                />
+                <Box position={"absolute"} top={-5} w={"44px"} h={"44px"}>
+                  <Image
+                    src={`/assets/menu/${item.image}`}
+                    alt={item.label}
+                    fill
+                  />
+                </Box>
+
                 <Text
                   textColor={"white"}
                   mt={2}
@@ -129,9 +136,9 @@ export default function Footer() {
         })}
       </HStack>
     );
-  };
+  });
 
-  const HeaderReferral = () => {
+  const HeaderReferral = function HeaderReferralComponent() {
     return (
       <Stack
         pt={1}
@@ -163,4 +170,6 @@ export default function Footer() {
       <RenderMenuItems />
     </HStack>
   );
-}
+});
+
+export default Footer;
