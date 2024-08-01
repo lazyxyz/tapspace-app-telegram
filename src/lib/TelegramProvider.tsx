@@ -1,5 +1,3 @@
-"use client";
-
 import Script from "next/script";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { ITelegramUser, IWebApp } from "../../types/type";
@@ -25,6 +23,15 @@ export const TelegramProvider = ({
       setWebApp(app);
     }
   }, []);
+
+  useEffect(() => {
+    if (webApp) {
+      //@ts-ignore
+      webApp.headerColor("#333649");
+      //@ts-ignore
+      webApp.setHeaderColor("#333649");
+    }
+  }, [webApp]);
 
   const value = useMemo(() => {
     return webApp
