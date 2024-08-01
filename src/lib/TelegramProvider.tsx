@@ -29,8 +29,6 @@ export const TelegramProvider = ({
   useEffect(() => {
     if (webApp) {
       //@ts-ignore
-      webApp.headerColor("#333649");
-      //@ts-ignore
       webApp.setHeaderColor("#333649");
     }
   }, [webApp]);
