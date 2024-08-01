@@ -1,10 +1,12 @@
+import useSocket from "@/hooks/useSocket";
+import { VStack } from "@chakra-ui/react";
 import { useQueryClient } from "@tanstack/react-query";
 import React, {
   createContext,
+  ReactNode,
   useContext,
   useEffect,
   useState,
-  ReactNode,
 } from "react";
 
 interface ResourceRates {
@@ -36,6 +38,8 @@ interface BitcoinContextType {
   offlineEarnings: number;
   resources: ResourceRates;
   resetResources: () => void;
+  resourcesSocket: any;
+  isSocketConnected: boolean;
 }
 
 const BitcoinContext = createContext<BitcoinContextType>({
@@ -44,6 +48,8 @@ const BitcoinContext = createContext<BitcoinContextType>({
   offlineEarnings: 0,
   resources: {},
   resetResources: () => {},
+  resourcesSocket: [],
+  isSocketConnected: false,
 });
 
 export const useBitcoin = () => useContext(BitcoinContext);
@@ -64,14 +70,19 @@ export const BitcoinProvider: React.FC<BitcoinProviderProps> = ({
     }
     return initialResources;
   });
+  const [resourcesSocket, setResourcesSocket] = useState<any>([]);
+  const [isSocketConnected, setIsSocketConnected] = useState<boolean>(false);
+
   const [resourceLevels, setResourceLevels] = useState<ResourceRates>({});
+
+  const { emit, on } = useSocket();
 
   const queryClient = useQueryClient();
   const queryKey = [`infoUser`];
   const data = queryClient.getQueryData<QueryData>(queryKey);
 
   const referredUsersLength = data?.referred_users.length || 0;
-  const referralBonus = 1 + referredUsersLength * 0.02; // Tỷ lệ gia tăng dựa trên referred_users.length
+  const referralBonus = 1 + referredUsersLength * 0.02;
 
   useEffect(() => {
     if (data) {
@@ -117,16 +128,26 @@ export const BitcoinProvider: React.FC<BitcoinProviderProps> = ({
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setBitcoinValue((prevValue) => {
+      // Calculate new bitcoin value based on rate
+      setBitcoinValue(() => {
         const level = data?.resources ? data.resources[0]?.level_resource : 1;
         const growthRate = 0.2;
         const rate = 0.00002315 * Math.pow(1 + growthRate, level - 1);
-        const updatedValue = prevValue + rate;
-        localStorage.setItem("bitcoinValue", updatedValue.toString());
-        return updatedValue;
+
+        const dataBtc = {
+          telegram_id: process.env.NEXT_PUBLIC_API_ID_TELEGRAM,
+          mining_value: rate,
+        };
+
+        // emit("update_miningbtc", dataBtc);
+        // on("mining_update_response", (response: any) => {
+        //   setBitcoinValue(response.value);
+        // });
+        return rate;
       });
 
-      setResources((prevResources) => {
+      // Calculate new resources value based on rate
+      setResources(() => {
         const updatedResources: ResourceRates = {};
         for (const key in initialResourceRates) {
           const level = resourceLevels[key] || 1;
@@ -135,15 +156,31 @@ export const BitcoinProvider: React.FC<BitcoinProviderProps> = ({
             initialResourceRates[key] *
             Math.pow(1 + growthRate, level - 1) *
             referralBonus;
-          updatedResources[key] = (prevResources[key] || 0) + rate;
+          updatedResources[key] = rate;
         }
-        localStorage.setItem("resources", JSON.stringify(updatedResources));
+
+        // Emit data via socket
+        const miningValues = Object.fromEntries(
+          Object.entries(updatedResources).map(([key, value]) => [key, value])
+        );
+
+        const data = {
+          telegram_id: process.env.NEXT_PUBLIC_API_ID_TELEGRAM,
+          mining_values: miningValues,
+        };
+
+        emit("update_mining", data);
+        on("update_response", (response: any) => {
+          setResourcesSocket(response);
+          setIsSocketConnected(true);
+        });
+
         return updatedResources;
       });
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [resourceLevels, data, referralBonus]);
+  }, [resourceLevels, data, referralBonus, emit]);
 
   const resetBitcoinValue = () => {
     setBitcoinValue(0);
@@ -163,11 +200,13 @@ export const BitcoinProvider: React.FC<BitcoinProviderProps> = ({
   return (
     <BitcoinContext.Provider
       value={{
+        resourcesSocket,
         bitcoinValue,
         resetBitcoinValue,
         offlineEarnings,
         resources,
         resetResources,
+        isSocketConnected,
       }}
     >
       {children}

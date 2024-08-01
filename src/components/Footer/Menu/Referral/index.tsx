@@ -1,3 +1,4 @@
+"use client";
 import { IconCoppyLink } from "@/components/Icons";
 import GenerateAvatar from "@/lib/GenerateAvatar";
 import { useTelegram } from "@/lib/TelegramProvider";
@@ -57,7 +58,13 @@ export default function ReferralDrawer() {
   const countRef = dataUser?.referred_users.length;
 
   return (
-    <VStack justifyContent={"space-between"} h={"full"} pb={24} px={3}>
+    <VStack
+      justifyContent={"space-between"}
+      h={"full"}
+      pb={24}
+      px={3}
+      bgGradient={"linear(to-b, #333649 0%, #1F212E 100%)"}
+    >
       <Stack>
         <HStack bg={"#1F212E"} p={3} rounded={"xl"} my={2}>
           <Image src="/assets/menu/Referral.png" w={"24px"} h={"24px"} />
@@ -112,7 +119,7 @@ export default function ReferralDrawer() {
         </Text>
 
         <Stack overflow={"auto"} maxH={"200px"}>
-          {dataUser.referred_users?.map((item: string, idx: number) => (
+          {dataUser?.referred_users?.map((item: string, idx: number) => (
             <HStack spacing={3} key={idx}>
               <GenerateAvatar
                 borderRadius={"full"}

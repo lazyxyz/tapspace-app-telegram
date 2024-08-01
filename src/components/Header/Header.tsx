@@ -28,10 +28,12 @@ import Leaderboard from "../Leaderboard";
 import { FaVolumeOff } from "react-icons/fa";
 import { PiMusicNotesFill } from "react-icons/pi";
 import { IoReload } from "react-icons/io5";
+import { useBitcoin } from "../Wrapper/BitcoinProvider";
 
 export default function Header() {
   const { user } = useTelegram();
   const { isOpen, onOpen, onClose } = useDisclosure();
+
   const {
     isOpen: isOpenNavbar,
     onOpen: onOpenNavbar,
@@ -63,7 +65,6 @@ export default function Header() {
         zIndex={1999}
         borderBottomWidth={1}
         borderColor={"#34384B"}
-        roundedBottom={"lg"}
         px={2}
       >
         <HStack>

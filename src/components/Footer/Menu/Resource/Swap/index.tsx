@@ -1,3 +1,5 @@
+"use client";
+
 import { IconBitcoin } from "@/components/Icons";
 import PopupSuccessSwap from "@/components/Popup/PopupSuccessSwap";
 import SelectResources from "@/components/Popup/SelectResources";
@@ -67,8 +69,8 @@ export default function Swap() {
     } else if (modalType === "resource2") {
       setSelectedResource2(resource);
     }
-    setModalType(null); // Close the modal after selection
-    onClose(); // Close the modal
+    setModalType(null);
+    onClose();
   };
 
   const handleOpenSelectModal = (type: "resource1" | "resource2") => {
@@ -144,263 +146,280 @@ export default function Swap() {
   };
 
   return (
-    <VStack w={"full"} px={3}>
-      <VStack position={"relative"} w={"full"}>
-        <Image src="/assets/bannerSwap.svg" w={"full"} py={3} />
-
-        {/* Resource Selection 1 */}
-        <HStack
-          bg={"#13161F"}
-          w={"full"}
-          borderWidth={1}
-          borderBottomWidth={3}
-          borderColor={"#3F435A"}
-          p={3}
-          rounded={"xl"}
-          justifyContent={"space-between"}
-        >
-          <Stack>
-            <Text>Use</Text>
-            <HStack>
-              <Input
-                fontSize={"xl"}
-                textColor={"white"}
-                fontWeight={"800"}
-                border={0}
-                alignContent={"start"}
-                textAlign={"start"}
-                value={inputValue}
-                px={0}
-                focusBorderColor="transparent"
-                borderColor={"none"}
-                outline={"none"}
-                onChange={handleInputChange}
-                placeholder="Enter amount"
-                size="sm"
-                width="80px"
-                color="white"
-              />
-            </HStack>
-          </Stack>
-
-          <Stack align={"end"}>
-            <HStack
-              py={2}
-              px={4}
-              textColor={"white"}
-              borderWidth={1}
-              rounded={"3xl"}
-              justifyContent={"space-between"}
-              bg={"rgba(255, 255, 255, 0.05)"}
-              fontSize={"sm"}
-              w={"fit-content"}
-              onClick={() => handleOpenSelectModal("resource1")}
-            >
-              {selectedResource1 && (
-                <Image
-                  //@ts-ignore
-                  src={imageResources[selectedResource1.resource_name]}
-                  w={"20px"}
-                />
-              )}
-              <Text>
-                {selectedResource1
-                  ? selectedResource1.resource_name
-                  : "Select Resource"}
-              </Text>
-              <IoChevronDown />
-            </HStack>
-            <HStack>
-              <Text>
-                Balance:{" "}
-                {numeralFormat(
-                  resourceBalances[selectedResource1?.resource_name || ""]
-                ) ?? "0"}
-              </Text>
-              <Button
-                variant={"padding"}
-                px={0}
-                fontWeight={"800"}
-                textColor={"#D5FE4B"}
-                size="sm"
-                onClick={handleMax}
+    <VStack
+      w={"full"}
+      h={"full"}
+      spacing={0}
+      pb={24}
+      bgGradient={"linear(to-b, #333649 0%, #1F212E 100%)"}
+    >
+      <>
+        <VStack w={"full"} px={3}>
+          <Image src="/assets/bannerSwap.svg" w={"full"} py={3} />
+          {/* @ts-ignore */}
+          {data && data?.resources && (
+            <VStack position={"relative"} w={"full"}>
+              {/* Resource Selection 1 */}
+              <HStack
+                bg={"#13161F"}
+                w={"full"}
+                borderWidth={1}
+                borderBottomWidth={3}
+                borderColor={"#3F435A"}
+                p={3}
+                rounded={"xl"}
+                justifyContent={"space-between"}
               >
-                Max
-              </Button>
-            </HStack>
-          </Stack>
-        </HStack>
+                <Stack>
+                  <Text>Use</Text>
+                  <HStack>
+                    <Input
+                      fontSize={"xl"}
+                      textColor={"white"}
+                      fontWeight={"800"}
+                      border={0}
+                      alignContent={"start"}
+                      textAlign={"start"}
+                      value={inputValue}
+                      px={0}
+                      focusBorderColor="transparent"
+                      borderColor={"none"}
+                      outline={"none"}
+                      onChange={handleInputChange}
+                      placeholder="Enter amount"
+                      size="sm"
+                      width="80px"
+                      color="white"
+                    />
+                  </HStack>
+                </Stack>
 
-        {/* Swap Button */}
-        <Button
-          variant={"solid"}
-          onClick={handleSwap}
-          position="absolute"
-          bottom="20%"
-          left="50%"
-          transform="translate(-50%, -50%)"
-          zIndex={1}
-          px={3}
-          py={5}
-          _hover={{ bgGradient: "linear(to-b, #333649 0%, #1F212E 100%)" }}
-          borderWidth={2}
-          borderRadius="2xl"
-          borderColor={"#3F435A"}
-          bgGradient="linear(to-b, #333649 0%, #1F212E 100%)"
-          color="#D5FE4B"
-          fontSize={"xl"}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-          >
-            <path
-              d="M17 20V4M17 4L13 8M17 4L21 8M7 4V20M7 20L3 16M7 20L11 16"
-              stroke="#D5FE4B"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </Button>
-
-        {/* Resource Selection 2 */}
-        <HStack
-          bg={"#13161F"}
-          w={"full"}
-          borderWidth={1}
-          borderBottomWidth={3}
-          borderColor={"#3F435A"}
-          p={3}
-          rounded={"xl"}
-          justifyContent={"space-between"}
-        >
-          <Stack>
-            <Text>For</Text>
-            <Text fontSize={"xl"} textColor={"white"} fontWeight={"800"}>
-              {selectedResource2
-                ? calculateConvertedMining(
-                    selectedResource1,
-                    selectedResource2
-                  ).toFixed(2)
-                : "0"}
-            </Text>
-          </Stack>
-
-          <Stack align={"end"}>
-            <HStack
-              py={2}
-              px={4}
-              textColor={"white"}
-              borderWidth={1}
-              rounded={"3xl"}
-              justifyContent={"space-between"}
-              bg={"rgba(255, 255, 255, 0.05)"}
-              fontSize={"sm"}
-              w={"fit-content"}
-              onClick={() => handleOpenSelectModal("resource2")}
-            >
-              {selectedResource2 && (
-                <Image
-                  //@ts-ignore
-                  src={imageResources[selectedResource2.resource_name]}
-                  w={"20px"}
-                />
-              )}
-              <Text>
-                {selectedResource2
-                  ? selectedResource2.resource_name
-                  : "Select Resource"}
-              </Text>
-              <IoChevronDown />
-            </HStack>
-            <Text>
-              Balance: {numeralFormat(Number(selectedResource2?.mining || 0))}
-            </Text>
-          </Stack>
-        </HStack>
-
-        <SelectResources
-          isOpen={isOpen}
-          //@ts-ignore
-          resources={data?.resources || []}
-          onClose={onClose}
-          onSelect={handleSelect}
-        />
-      </VStack>
-
-      {selectedResource1 && selectedResource2 && (
-        <Stack w={"full"}>
-          <HStack bg={"#333649"} p={3} rounded={"xl"} fontSize={"sm"}>
-            <Text fontWeight={"800"} color={"#DADFF4"}>
-              1 {selectedResource1.resource_name} ={" "}
-              {getConversionRate(
-                selectedResource1.resource_name,
-                selectedResource2.resource_name
-              )}{" "}
-              {selectedResource2.resource_name}
-            </Text>
-          </HStack>
-          <HStack justifyContent={"space-between"} w={"full"} pt={3}>
-            <Text fontSize={"sm"} textColor={"#BBC1DE"}>
-              Swap fee
-            </Text>
-            <HStack textColor={"white"} spacing={3} fontWeight={"800"}>
-              <HStack spacing={1}>
-                <IconBitcoin w={"20px"} />
-                <Text>0.1</Text>
+                <Stack align={"end"}>
+                  <HStack
+                    py={2}
+                    px={4}
+                    textColor={"white"}
+                    borderWidth={1}
+                    rounded={"3xl"}
+                    justifyContent={"space-between"}
+                    bg={"rgba(255, 255, 255, 0.05)"}
+                    fontSize={"sm"}
+                    w={"fit-content"}
+                    onClick={() => handleOpenSelectModal("resource1")}
+                  >
+                    {selectedResource1 && (
+                      <Image
+                        //@ts-ignore
+                        src={imageResources[selectedResource1.resource_name]}
+                        w={"20px"}
+                      />
+                    )}
+                    <Text>
+                      {selectedResource1
+                        ? selectedResource1.resource_name
+                        : "Select Resource"}
+                    </Text>
+                    <IoChevronDown />
+                  </HStack>
+                  <HStack>
+                    <Text>
+                      Balance:{" "}
+                      {numeralFormat(
+                        resourceBalances[selectedResource1?.resource_name || ""]
+                      ) ?? "0"}
+                    </Text>
+                    <Button
+                      variant={"padding"}
+                      px={0}
+                      fontWeight={"800"}
+                      textColor={"#D5FE4B"}
+                      size="sm"
+                      onClick={handleMax}
+                    >
+                      Max
+                    </Button>
+                  </HStack>
+                </Stack>
               </HStack>
 
-              <HStack spacing={1}>
-                <Image
-                  src={imageResources[selectedResource2?.resource_name || ""]}
-                  w={"20px"}
-                />
-                <Text>
-                  {numeralFormat(
-                    Number(
-                      calculateConvertedMining(
-                        selectedResource1,
-                        selectedResource2
-                      )
-                    ) * 0.1
-                  )}
+              {/* Swap Button */}
+              <Button
+                variant={"solid"}
+                onClick={handleSwap}
+                position="absolute"
+                bottom="30%"
+                left="50%"
+                transform="translate(-50%, -50%)"
+                zIndex={1}
+                px={3}
+                py={5}
+                _hover={{
+                  bgGradient: "linear(to-b, #333649 0%, #1F212E 100%)",
+                }}
+                borderWidth={2}
+                borderRadius="2xl"
+                borderColor={"#3F435A"}
+                bgGradient="linear(to-b, #333649 0%, #1F212E 100%)"
+                color="#D5FE4B"
+                fontSize={"xl"}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <path
+                    d="M17 20V4M17 4L13 8M17 4L21 8M7 4V20M7 20L3 16M7 20L11 16"
+                    stroke="#D5FE4B"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </Button>
+
+              {/* Resource Selection 2 */}
+              <HStack
+                bg={"#13161F"}
+                w={"full"}
+                borderWidth={1}
+                borderBottomWidth={3}
+                borderColor={"#3F435A"}
+                p={3}
+                rounded={"xl"}
+                justifyContent={"space-between"}
+              >
+                <Stack>
+                  <Text>For</Text>
+                  <Text fontSize={"xl"} textColor={"white"} fontWeight={"800"}>
+                    {selectedResource2
+                      ? calculateConvertedMining(
+                          selectedResource1,
+                          selectedResource2
+                        ).toFixed(2)
+                      : "0"}
+                  </Text>
+                </Stack>
+
+                <Stack align={"end"}>
+                  <HStack
+                    py={2}
+                    px={4}
+                    textColor={"white"}
+                    borderWidth={1}
+                    rounded={"3xl"}
+                    justifyContent={"space-between"}
+                    bg={"rgba(255, 255, 255, 0.05)"}
+                    fontSize={"sm"}
+                    w={"fit-content"}
+                    onClick={() => handleOpenSelectModal("resource2")}
+                  >
+                    {selectedResource2 && (
+                      <Image
+                        //@ts-ignore
+                        src={imageResources[selectedResource2.resource_name]}
+                        w={"20px"}
+                      />
+                    )}
+                    <Text>
+                      {selectedResource2
+                        ? selectedResource2.resource_name
+                        : "Select Resource"}
+                    </Text>
+                    <IoChevronDown />
+                  </HStack>
+                  <Text>
+                    Balance:{" "}
+                    {numeralFormat(Number(selectedResource2?.mining || 0))}
+                  </Text>
+                </Stack>
+              </HStack>
+
+              <SelectResources
+                isOpen={isOpen}
+                //@ts-ignore
+                resources={data?.resources || []}
+                onClose={onClose}
+                onSelect={handleSelect}
+              />
+            </VStack>
+          )}
+
+          {selectedResource1 && selectedResource2 && (
+            <Stack w={"full"}>
+              <HStack bg={"#333649"} p={3} rounded={"xl"} fontSize={"sm"}>
+                <Text fontWeight={"800"} color={"#DADFF4"}>
+                  1 {selectedResource1.resource_name} ={" "}
+                  {getConversionRate(
+                    selectedResource1.resource_name,
+                    selectedResource2.resource_name
+                  )}{" "}
+                  {selectedResource2.resource_name}
                 </Text>
               </HStack>
-            </HStack>
-          </HStack>
-        </Stack>
-      )}
+              <HStack justifyContent={"space-between"} w={"full"} pt={3}>
+                <Text fontSize={"sm"} textColor={"#BBC1DE"}>
+                  Swap fee
+                </Text>
+                <HStack textColor={"white"} spacing={3} fontWeight={"800"}>
+                  <HStack spacing={1}>
+                    <IconBitcoin w={"20px"} />
+                    <Text>0.1</Text>
+                  </HStack>
 
-      <Button
-        w={"full"}
-        rounded={"xl"}
-        borderBottomWidth={3}
-        py={5}
-        isDisabled={Number(inputValue) > Number(selectedResource1?.mining)}
-        variant={"hover"}
-        fontWeight={800}
-        borderColor={"#0DD63E"}
-        bgGradient={"linear(to-b, #0DD63E 0%, #00A65B 100%)"}
-        onClick={onSwap}
-      >
-        {isLoading ? <Spinner size={"sm"} /> : " Swap now"}
-      </Button>
+                  <HStack spacing={1}>
+                    <Image
+                      src={
+                        imageResources[selectedResource2?.resource_name || ""]
+                      }
+                      w={"20px"}
+                    />
+                    <Text>
+                      {numeralFormat(
+                        Number(
+                          calculateConvertedMining(
+                            selectedResource1,
+                            selectedResource2
+                          )
+                        ) * 0.1
+                      )}
+                    </Text>
+                  </HStack>
+                </HStack>
+              </HStack>
+            </Stack>
+          )}
 
-      <PopupSuccessSwap
-        isOpen={isOpenSuccess}
-        onClose={onCloseSuccess}
-        from_resource={selectedResource1?.resource_name}
-        to_resource={selectedResource2?.resource_name}
-        value={Number(inputValue)}
-        result={calculateConvertedMining(
-          selectedResource1,
-          selectedResource2
-        ).toFixed(2)}
-      />
+          <Button
+            w={"full"}
+            rounded={"xl"}
+            borderBottomWidth={3}
+            py={5}
+            isDisabled={Number(inputValue) > Number(selectedResource1?.mining)}
+            variant={"hover"}
+            fontWeight={800}
+            borderColor={"#0DD63E"}
+            bgGradient={"linear(to-b, #0DD63E 0%, #00A65B 100%)"}
+            onClick={onSwap}
+          >
+            {isLoading ? <Spinner size={"sm"} /> : " Swap now"}
+          </Button>
+
+          <PopupSuccessSwap
+            isOpen={isOpenSuccess}
+            onClose={onCloseSuccess}
+            from_resource={selectedResource1?.resource_name}
+            to_resource={selectedResource2?.resource_name}
+            value={Number(inputValue)}
+            result={calculateConvertedMining(
+              selectedResource1,
+              selectedResource2
+            ).toFixed(2)}
+          />
+        </VStack>
+      </>
     </VStack>
   );
 }

@@ -8,7 +8,8 @@ import PopupClaimBitcoin from "../Popup/PopupClaimBitcoin";
 import PopupDailyRewards from "../Popup/PopupDailyRewards";
 import Preload from "../Preload";
 import InfoMint from "../Tabs/Resources/TotalResource/InfoMint";
-import { BitcoinProvider } from "../Wrapper/BitcoinProvider";
+import { BitcoinProvider, useBitcoin } from "../Wrapper/BitcoinProvider";
+import { VStack } from "@chakra-ui/react";
 
 export default function HomePage() {
   const { user } = useTelegram();
@@ -56,17 +57,9 @@ export default function HomePage() {
 
   return (
     <>
-      {!loadingComplete ? (
-        <Preload progress={progress} loading={loading} />
-      ) : (
-        <>
-          <BitcoinProvider>
-            <InfoMint data={data} refetch={refetch} />
-            <PopupDailyRewards data={data} />
-            <PopupClaimBitcoin data={data} />
-          </BitcoinProvider>
-        </>
-      )}
+      <InfoMint data={data} refetch={refetch} />
+      <PopupDailyRewards data={data} />
+      <PopupClaimBitcoin data={data} />
     </>
   );
 }

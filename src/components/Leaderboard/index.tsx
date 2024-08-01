@@ -1,7 +1,5 @@
 import GenerateAvatar from "@/lib/GenerateAvatar";
-import { useTelegram } from "@/lib/TelegramProvider";
 import systemService from "@/services/system.service";
-import { numeralFormat, useShortenedName } from "@/utils/utils";
 import {
   Box,
   HStack,
@@ -142,20 +140,19 @@ export default function Leaderboard({
                           >
                             {item.name}
                           </Text>
-                          <Text
-                            color={colorTop[idx]}
-                            fontSize={"10px"}
-                            fontWeight={800}
-                          >
-                            Level #
-                          </Text>
+
+                          <HStack spacing={1}>
+                            <IconBitcoin w={"16px"} h={"16px"} />
+                            <Text
+                              color={colorTop[idx]}
+                              fontSize={"10px"}
+                              fontWeight={800}
+                            >
+                              #{item.level}
+                            </Text>
+                          </HStack>
                         </Stack>
                       </HStack>
-                    </HStack>
-
-                    <HStack spacing={1}>
-                      <IconBitcoin w={"16px"} h={"16px"} />
-                      <Text fontWeight={800}>{numeralFormat(item.value)}</Text>
                     </HStack>
                   </HStack>
                 ))}

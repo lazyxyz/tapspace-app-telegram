@@ -1,6 +1,6 @@
-import { Center, Image, Stack, Text } from "@chakra-ui/react";
+import { Box, Center, Image, Stack, Text } from "@chakra-ui/react";
 
-export default function ComingSoon({ tab }: { tab: string }) {
+export default function ComingSoon({ tab, src }: { tab: string; src: string }) {
   const listContent: any = {
     Spaceship:
       "The ultimate hub for all your warship needs! Whether you're a seasoned captain or a new recruit, our features offer everything you need to dominate the space and planets.",
@@ -16,7 +16,51 @@ export default function ComingSoon({ tab }: { tab: string }) {
     Battles: "/assets/menu/Battles.png",
   };
   return (
-    <Stack h={"full"} bg={"rgba(0, 0, 0, 0.8)"} backdropFilter={"blur(4.5px)"}>
+    <Stack
+      h={"full"}
+      backdropFilter={"blur(4.5px)"}
+      position="relative"
+      overflow="hidden"
+    >
+      {src.endsWith("mp4") ? (
+        <Box
+          as="video"
+          src="/assets/battles.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          position="absolute"
+          top="0"
+          left="0"
+          width="100%"
+          height="100%"
+          objectFit="cover"
+          zIndex="-1"
+          pointerEvents="none"
+        />
+      ) : (
+        <Box
+          bgImage={`url(${src})`}
+          bgSize="cover"
+          position="absolute"
+          top="0"
+          left="0"
+          width="100%"
+          height="100%"
+          zIndex="-1"
+        />
+      )}
+      <Box
+        position="absolute"
+        top="0"
+        left="0"
+        width="100%"
+        height="100%"
+        bg={"rgba(0, 0, 0, 0.8)"}
+        backdropFilter="blur(4.5px)"
+        zIndex="-1"
+      />
       <Center h={"full"} textAlign={"center"}>
         <Stack align={"center"} px={6} pb={24}>
           <Image src={listImage[tab]} w={"48px"} h={"48px"} />

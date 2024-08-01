@@ -3,6 +3,7 @@ import { animate, motion, useMotionValue, useTransform } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { MintItemType } from "./InfoMint";
 import { imageResources, numeralFormat } from "@/utils/utils";
+import { useBitcoin } from "@/components/Wrapper/BitcoinProvider";
 
 interface FloatingTextProps {
   id: string;
@@ -12,8 +13,11 @@ const MintItem: React.FC<{
   item: MintItemType;
   accumulatedValues: { [key: string]: number };
 }> = ({ item, accumulatedValues }) => {
+  const { resourcesSocket, isSocketConnected } = useBitcoin();
+
   const calculatedValueMotion = useMotionValue(
-    accumulatedValues[item.resource_name] || 0
+    resourcesSocket?.resources &&
+      Number(resourcesSocket.resources[item.resource_name])
   );
   const calculatedCapacity = useMotionValue(item.calculatedValue);
   const [floatingTexts, setFloatingTexts] = useState<FloatingTextProps[]>([]);
@@ -23,10 +27,6 @@ const MintItem: React.FC<{
   );
 
   useEffect(() => {
-    animate(calculatedValueMotion, item.mining, {
-      duration: 0.2,
-      ease: "linear",
-    });
     animate(calculatedCapacity, item.calculatedValue, {
       duration: 0.2,
       ease: "linear",
@@ -43,7 +43,7 @@ const MintItem: React.FC<{
         );
       }, 1000);
     }
-  }, [item.mining, item.calculatedValue, item.floatingText]);
+  }, [resourcesSocket, item.calculatedValue, item.floatingText]);
 
   const progressValue = useTransform(
     calculatedCapacity,
@@ -56,6 +56,7 @@ const MintItem: React.FC<{
       : progressValue.get() < 50
       ? "#FDBF25"
       : "#0DD63E";
+
   return (
     <VStack w={"20%"} overflow={"hidden"}>
       <VStack
@@ -87,8 +88,9 @@ const MintItem: React.FC<{
               {item.resource_name}
             </Text>
             <Text as={motion.span} fontSize={"sm"} fontWeight={"800"}>
-              {/* @ts-ignore */}
-              {animatedValue}
+              {isSocketConnected &&
+                resourcesSocket?.resources &&
+                numeralFormat(resourcesSocket?.resources[item.resource_name])}
             </Text>
           </VStack>
         </VStack>

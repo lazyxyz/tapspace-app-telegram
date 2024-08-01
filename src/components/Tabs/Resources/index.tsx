@@ -6,9 +6,9 @@ import InfoMint from "./TotalResource/InfoMint";
 export default function Resources() {
   return (
     <VStack>
-      <Minting />
+      {/* <Minting />
       <Divider />
-      <InfoMint />
+      <InfoMint /> */}
     </VStack>
   );
 }

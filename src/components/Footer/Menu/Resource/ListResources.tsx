@@ -1,3 +1,5 @@
+"use client";
+
 import PopupUpgradeBot from "@/components/Popup/PopupUpgradeBot";
 import { MintItemType } from "@/components/Tabs/Resources/TotalResource/InfoMint";
 import useResourceCapacity from "@/hooks/useResourceCapacity";

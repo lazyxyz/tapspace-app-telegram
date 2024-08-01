@@ -99,7 +99,7 @@ export default function PopupClaimBitcoin({ data }: any) {
   return (
     <Box>
       <Modal
-        isOpen={isOpen}
+        isOpen={false}
         closeOnOverlayClick={false}
         isCentered
         onClose={onClose}

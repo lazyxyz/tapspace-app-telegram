@@ -1,3 +1,5 @@
+"use client";
+
 import PopupUpgradeBtc from "@/components/Popup/PopupUpgradeBtc";
 import {
   Box,
@@ -55,7 +57,7 @@ const FrequencyResource = () => {
         <HStack justifyContent={"space-between"}>
           <BitcoinDisplay
             levelBot={Number(botLevel)}
-            totalBit={data.btc_value}
+            totalBit={data?.btc_value}
           />
 
           <Box
