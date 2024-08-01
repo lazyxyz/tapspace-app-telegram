@@ -1,4 +1,5 @@
 import useSocket from "@/hooks/useSocket";
+import { useTelegram } from "@/lib/TelegramProvider";
 import { VStack } from "@chakra-ui/react";
 import { useQueryClient } from "@tanstack/react-query";
 import React, {
@@ -76,6 +77,7 @@ export const BitcoinProvider: React.FC<BitcoinProviderProps> = ({
   const [resourceLevels, setResourceLevels] = useState<ResourceRates>({});
 
   const { emit, on } = useSocket();
+  const { user } = useTelegram();
 
   const queryClient = useQueryClient();
   const queryKey = [`infoUser`];
@@ -165,7 +167,8 @@ export const BitcoinProvider: React.FC<BitcoinProviderProps> = ({
         );
 
         const data = {
-          telegram_id: process.env.NEXT_PUBLIC_API_ID_TELEGRAM,
+          telegram_id:
+            Number(process.env.NEXT_PUBLIC_API_ID_TELEGRAM) || Number(user?.id),
           mining_values: miningValues,
         };
 
