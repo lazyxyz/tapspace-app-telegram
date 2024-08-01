@@ -88,9 +88,9 @@ const MintItem: React.FC<{
               {item.resource_name}
             </Text>
             <Text as={motion.span} fontSize={"sm"} fontWeight={"800"}>
-              {isSocketConnected &&
-                resourcesSocket?.resources &&
-                numeralFormat(resourcesSocket?.resources[item.resource_name])}
+              {isSocketConnected && resourcesSocket?.resources
+                ? numeralFormat(resourcesSocket?.resources[item.resource_name])
+                : item.mining}
             </Text>
           </VStack>
         </VStack>
