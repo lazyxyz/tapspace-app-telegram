@@ -69,17 +69,19 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       {!loadingComplete ? (
         <Preload progress={progress} loading={loading} />
       ) : (
-        <BitcoinProvider>
+        <>
           <Box w={"full"} flex="0 0 auto">
             <Header />
           </Box>
-          <Box w="full" h={"full"} alignContent={"center"} flex="1 1 auto">
-            {children}
-          </Box>
+          <BitcoinProvider>
+            <Box w="full" h={"full"} alignContent={"center"} flex="1 1 auto">
+              {children}
+            </Box>
+          </BitcoinProvider>
           <Box w={"full"} flex="0 0 auto">
             <Footer />
           </Box>
-        </BitcoinProvider>
+        </>
       )}
     </VStack>
   );
