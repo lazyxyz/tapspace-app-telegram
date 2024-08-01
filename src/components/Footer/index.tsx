@@ -117,7 +117,7 @@ export default function Footer() {
                 />
                 <Text
                   textColor={"white"}
-                  mt={4}
+                  mt={2}
                   fontSize={"11px"}
                   fontWeight={"900"}
                 >
