@@ -52,8 +52,6 @@ const Header = React.memo(function HeaderComponent() {
     staleTime: Infinity,
   });
 
-  console.log("header");
-
   return (
     <>
       <HStack

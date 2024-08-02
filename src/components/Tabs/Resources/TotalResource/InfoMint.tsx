@@ -1,11 +1,12 @@
 import Leaderboard from "@/components/Leaderboard";
 import useSocket from "@/hooks/useSocket";
 import { useTelegram } from "@/lib/TelegramProvider";
-import { HStack, Stack, useDisclosure, VStack } from "@chakra-ui/react";
+import { Box, HStack, Stack, useDisclosure, VStack } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Socket } from "socket.io-client";
 import { MemoizedMintItem } from "./MintItem";
+import Image from "next/image";
 
 export type MintItemType = {
   capacity: number;
@@ -247,8 +248,6 @@ const InfoMint: React.FC<InfoMintProps> = ({ data, refetch }) => {
           </motion.div>
         </Stack>
       </VStack>
-
-      <Leaderboard isOpen={isOpen} onOpen={onOpen} onClose={onClose} />
     </>
   );
 };

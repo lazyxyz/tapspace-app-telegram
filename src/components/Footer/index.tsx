@@ -2,17 +2,21 @@
 
 import {
   Box,
-  HStack,
-  Link,
   Stack,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import NextLink from "next/link";
-import { usePathname } from "next/navigation";
-import React, { useMemo, useState } from "react";
-import ReferralDrawer from "./Menu/Referral";
 import Image from "next/image";
+import React, { useMemo, useState } from "react";
+import Leaderboard from "../Leaderboard";
+import ComingSoon from "./Menu/ComingSoon";
+import ReferralDrawer from "./Menu/Referral";
+import ResourcesDrawer from "./Menu/Resource";
 
 const Footer = React.memo(function FooterComponent() {
   const listMenu = useMemo(
@@ -20,44 +24,39 @@ const Footer = React.memo(function FooterComponent() {
       {
         label: "Home",
         image: "resources.png",
-        status: true,
+        panel: <></>,
         link: "/home",
       },
       {
         label: "Miner",
         image: "miner.png",
-        bgIncoming: "/assets/menu/bgSpaceship.png",
-        status: false,
+        panel: <ResourcesDrawer />,
         link: "/miner",
       },
       {
         label: "Spaceship",
         image: "spaceship.png",
-        bgIncoming: "/assets/menu/bgSpaceship.png",
-        status: false,
+        panel: (
+          <ComingSoon tab="Spaceship" src="/assets/menu/bgSpaceship.png" />
+        ),
         link: "/spaceship",
       },
       {
         label: "Universe",
         image: "universe.png",
-        status: false,
-        bgIncoming: "/assets/menu/bgUniverse.png",
+        panel: <ComingSoon tab="Universe" src="/assets/menu/bgUniverse.png" />,
         link: "/universe",
       },
       {
         label: "Battles",
         image: "Battles.png",
-        status: false,
-        bgIncoming: "/assets/battles.mp4",
+        panel: <ComingSoon tab="Battles" src="/assets/battles.mp4" />,
         link: "/battles",
       },
       {
         label: "Referral",
         image: "Referral.png",
-        drawerContent: (isOpen: boolean, onClose: () => void) => (
-          <ReferralDrawer />
-        ),
-        status: true,
+        panel: <ReferralDrawer />,
         link: "/referral",
       },
     ],
@@ -65,55 +64,61 @@ const Footer = React.memo(function FooterComponent() {
   );
 
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [selectedMenuItem, setSelectedMenuItem] = useState<number>(0);
-  const [tab, setTab] = useState(false);
+  const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
 
-  const handleMenuClick = (index: number) => {
-    setSelectedMenuItem(index);
-    setTab(false);
-    onOpen();
+  const handleTabChange = (index: number) => {
+    setSelectedTabIndex(index);
   };
 
-  const pathName = usePathname();
-
-  const RenderMenuItems = React.memo(function RenderMenuItemsComponent({
-    checkActive,
-  }: {
-    checkActive?: boolean;
-  }) {
-    return (
-      <HStack w={"full"} spacing={0}>
-        {listMenu.map((item, idx) => {
-          const isActive =
-            pathName === item.link ||
-            (pathName === "/" && item.link === "/home");
-
-          return (
-            <Link
+  return (
+    <Box position="fixed" bottom={0} w="full" zIndex={1000}>
+      <Tabs
+        onChange={handleTabChange}
+        index={selectedTabIndex}
+        variant="unstyled"
+        h="100vh"
+        display="flex"
+        flexDirection="column"
+      >
+        <TabPanels flex="1" overflow="auto">
+          {listMenu.map((item, idx) => (
+            <TabPanel key={idx} p={0} h="full">
+              {item.link !== "/home" ? item.panel : null}
+            </TabPanel>
+          ))}
+        </TabPanels>
+        <TabList
+          display="flex"
+          justifyContent="space-between"
+          borderTopRadius="2xl"
+        >
+          {listMenu.map((item, idx) => (
+            <Tab
+              key={idx}
+              width={"62.5px"}
+              flex="1"
+              textAlign="center"
+              p={4}
+              borderTopRadius="2xl"
+              bgGradient="linear(to-b, #333649 0%, #1F212E 100%)"
+              color={selectedTabIndex === idx ? "#7CEE22" : "#545978"}
+              _selected={{
+                color: "white",
+                fontWeight: "bold",
+                bgGradient: "linear(to-b, #0DD63E 0%, #00A65B 100%)",
+                borderColor: "#7CEE22",
+              }}
               display={"flex"}
               alignItems={"center"}
-              as={NextLink}
-              href={item.link || ""}
-              key={idx}
-              w={"full"}
               borderWidth={1}
               borderTopWidth={"3px"}
-              bgGradient={
-                isActive && idx === selectedMenuItem
-                  ? "linear(to-b, #0DD63E 0%, #00A65B 100%)"
-                  : "linear(to-b, #333649 0%, #1F212E 100%)"
-              }
-              borderColor={
-                isActive && idx === selectedMenuItem ? "#7CEE22" : "#545978"
-              }
+              borderColor={"#545978"}
               roundedTop={"2xl"}
               position={"relative"}
-              minH={"64px"}
+              maxH={"64px"}
               justifyContent={"center"}
-              onClick={() => handleMenuClick(idx)}
-              cursor="pointer"
             >
-              <Stack align={"center"}>
+              <Stack align="center">
                 <Box position={"absolute"} top={-5} w={"44px"} h={"44px"}>
                   <Image
                     src={`/assets/menu/${item.image}`}
@@ -121,7 +126,6 @@ const Footer = React.memo(function FooterComponent() {
                     fill
                   />
                 </Box>
-
                 <Text
                   textColor={"white"}
                   mt={2}
@@ -131,44 +135,36 @@ const Footer = React.memo(function FooterComponent() {
                   {item.label}
                 </Text>
               </Stack>
-            </Link>
-          );
-        })}
-      </HStack>
-    );
-  });
+            </Tab>
+          ))}
+        </TabList>
+      </Tabs>
 
-  const HeaderReferral = function HeaderReferralComponent() {
-    return (
-      <Stack
-        pt={1}
-        w={"full"}
-        align={"center"}
-        spacing={0}
-        justifyContent={"space-between"}
-      >
-        <Text fontSize={"lg"} fontWeight={800} textColor={"white"}>
-          Invite Friends
-        </Text>
-
-        <Text fontWeight={800} fontSize={"md"} textColor={"#BBC1DE"}>
-          Invite friends and get more rewards
-        </Text>
-      </Stack>
-    );
-  };
-
-  return (
-    <HStack
-      position={"fixed"}
-      bottom={0}
-      w={"full"}
-      justifyContent={"space-between"}
-      zIndex={1000}
-      spacing={0}
-    >
-      <RenderMenuItems />
-    </HStack>
+      {selectedTabIndex === 0 && (
+        <Box
+          w={"44px"}
+          h={"44px"}
+          position={"absolute"}
+          bottom={24}
+          right={4}
+          borderWidth={1}
+          borderBottom={"2px"}
+          borderColor={"rgba(255, 255, 255, 0.15)"}
+          bg={"rgba(255, 255, 255, 0.15)"}
+          rounded={"xl"}
+          onClick={onOpen}
+          zIndex={"9999"}
+        >
+          <Image
+            src={"/assets/leaderboard.png"}
+            alt="leaderboard"
+            width={"40"}
+            height={"40"}
+          />
+        </Box>
+      )}
+      <Leaderboard isOpen={isOpen} onOpen={onOpen} onClose={onClose} />
+    </Box>
   );
 });
 

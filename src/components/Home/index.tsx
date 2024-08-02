@@ -10,6 +10,7 @@ import Preload from "../Preload";
 import InfoMint from "../Tabs/Resources/TotalResource/InfoMint";
 import { BitcoinProvider, useBitcoin } from "../Wrapper/BitcoinProvider";
 import { VStack } from "@chakra-ui/react";
+import TelegramScreen from "../Telegram/TelegramScreen";
 
 export default function HomePage() {
   const { user } = useTelegram();
@@ -56,10 +57,10 @@ export default function HomePage() {
   }, [isLoading]);
 
   return (
-    <>
+    <TelegramScreen showbackbutton={false}>
       <InfoMint data={data} refetch={refetch} />
       <PopupDailyRewards data={data} />
       <PopupClaimBitcoin data={data} />
-    </>
+    </TelegramScreen>
   );
 }

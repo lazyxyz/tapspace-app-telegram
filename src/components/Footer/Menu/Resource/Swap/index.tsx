@@ -21,6 +21,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { IoChevronDown } from "react-icons/io5";
+import { MdOutlineArrowBackIos } from "react-icons/md";
 
 interface Resource {
   resource_name: string;
@@ -35,7 +36,7 @@ const conversionRates: { [key: string]: { [key: string]: number } } = {
   Titanium: { Steel: 8, Aluminum: 5, Copper: 3, Fiber: 2 },
 };
 
-export default function Swap() {
+export default function Swap({ onClose: onCloseTab }: any) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [modalType, setModalType] = useState<"resource1" | "resource2" | null>(
     null
@@ -150,9 +151,24 @@ export default function Swap() {
       w={"full"}
       h={"full"}
       spacing={0}
-      pb={24}
+      pt={20}
       bgGradient={"linear(to-b, #333649 0%, #1F212E 100%)"}
+      align={"start"}
     >
+      <HStack
+        spacing={1}
+        px={4}
+        align={"center"}
+        textColor={"#D5FE4B"}
+        onClick={onCloseTab}
+        cursor={"pointer"}
+      >
+        <MdOutlineArrowBackIos />
+        <Text fontSize={"lg"} fontWeight={800} variant={"unstyled"}>
+          Swap
+        </Text>
+      </HStack>
+
       <>
         <VStack w={"full"} px={3}>
           <Image src="/assets/bannerSwap.svg" w={"full"} py={3} />
