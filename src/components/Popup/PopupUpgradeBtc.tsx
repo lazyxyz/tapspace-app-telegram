@@ -166,8 +166,9 @@ export default function PopupUpgradeBtc({
                 spacing={4}
                 alignContent={"center"}
               >
-                {Object.entries(resourcesForNextLevel).map(
-                  ([key, value], idx) => {
+                {Object.entries(resourcesForNextLevel)
+                  .slice(0, 5)
+                  .map(([key, value], idx) => {
                     const numericValue = typeof value === "number" ? value : 0;
                     return (
                       <VStack
@@ -195,28 +196,22 @@ export default function PopupUpgradeBtc({
                           <Text
                             fontSize={"sm"}
                             textColor={
-                              listData[idx]?.mining < numericValue ||
-                              (key === "BTC" &&
-                                (data?.btc_value ?? 0) < numericValue)
+                              listData[idx]?.mining < numericValue
                                 ? "#EB303B"
                                 : ""
                             }
                             fontWeight={"800"}
                           >
-                            {listData[idx]?.mining < numericValue ||
-                            (key === "BTC" &&
-                              (data?.btc_value ?? 0) < numericValue) ? (
+                            {listData[idx]?.mining < numericValue ? (
                               <>
-                                {key === "BTC"
-                                  ? numeralFormat(data?.btc_value)
-                                  : numeralFormat(
-                                      Number(
-                                        listData.find(
-                                          (dataItem) =>
-                                            dataItem.resource_name === key
-                                        )?.mining
-                                      )
-                                    )}
+                                {numeralFormat(
+                                  Number(
+                                    listData.find(
+                                      (dataItem) =>
+                                        dataItem.resource_name === key
+                                    )?.mining
+                                  )
+                                )}
                                 /{numeralFormat(numericValue)}
                               </>
                             ) : (
@@ -226,8 +221,7 @@ export default function PopupUpgradeBtc({
                         </HStack>
                       </VStack>
                     );
-                  }
-                )}
+                  })}
               </SimpleGrid>
             </VStack>
           </ModalBody>

@@ -34,10 +34,7 @@ const FrequencyResource = () => {
   const isDisabled = useMemo(() => {
     return Object.entries(resourcesForNextLevel).some(([key, value], idx) => {
       const numericValue = typeof value === "number" ? value : 0;
-      const userValue =
-        key === "BTC"
-          ? data?.btc_value ?? 0
-          : data?.resources[idx]?.mining ?? 0;
+      const userValue = data?.resources[idx]?.mining ?? 0;
       return userValue < numericValue;
     });
   }, [resourcesForNextLevel, data?.resources, data]);
