@@ -36,7 +36,7 @@ export default function ResourcesDrawer() {
   };
 
   return (
-    <TelegramScreen showbackbutton={true}>
+    <>
       {!isOpen ? (
         <Stack
           w={"full"}
@@ -55,6 +55,6 @@ export default function ResourcesDrawer() {
       ) : (
         <Swap onClose={onClose} />
       )}
-    </TelegramScreen>
+    </>
   );
 }

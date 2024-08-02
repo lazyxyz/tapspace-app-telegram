@@ -18,6 +18,7 @@ import ComingSoon from "./Menu/ComingSoon";
 import ReferralDrawer from "./Menu/Referral";
 import ResourcesDrawer from "./Menu/Resource";
 import HomePage from "../Home";
+import TelegramScreen from "../Telegram/TelegramScreen";
 
 const Footer = React.memo(function FooterComponent() {
   const listMenu = useMemo(
@@ -84,7 +85,11 @@ const Footer = React.memo(function FooterComponent() {
         <TabPanels flex="1" overflow="auto">
           {listMenu.map((item, idx) => (
             <TabPanel key={idx} p={0} h="full">
-              {item.panel}
+              <TelegramScreen
+                showbackbutton={item.link === "/home" ? false : true}
+              >
+                {item.panel}
+              </TelegramScreen>
             </TabPanel>
           ))}
         </TabPanels>

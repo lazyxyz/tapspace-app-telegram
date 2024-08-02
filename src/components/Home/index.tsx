@@ -57,10 +57,10 @@ export default function HomePage() {
   }, [isLoading]);
 
   return (
-    <TelegramScreen showbackbutton={false}>
+    <>
       <InfoMint data={data} refetch={refetch} />
       <PopupDailyRewards data={data} />
       <PopupClaimBitcoin data={data} />
-    </TelegramScreen>
+    </>
   );
 }
