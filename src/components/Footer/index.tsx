@@ -86,7 +86,8 @@ const Footer = React.memo(function FooterComponent() {
           {listMenu.map((item, idx) => (
             <TabPanel key={idx} p={0} h="full">
               <TelegramScreen
-                showbackbutton={item.link === "/home" ? false : true}
+                showbackbutton={selectedTabIndex !== 0}
+                setSelectedTabIndex={setSelectedTabIndex}
               >
                 {item.panel}
               </TelegramScreen>

@@ -8,7 +8,6 @@ import "./TelegramScreen.css";
 
 const TelegramScreen = (props: any) => {
   const { webApp } = useTelegram();
-  const router = useRouter(); // Initialize the router
 
   useEffect(() => {
     if (props.showbackbutton) {
@@ -16,7 +15,7 @@ const TelegramScreen = (props: any) => {
       webApp.BackButton.show();
       //@ts-ignore
       webApp.BackButton.onClick(() => {
-        router.push("/");
+        props.setSelectedTabIndex(0);
       });
     } else {
       //@ts-ignore
@@ -26,10 +25,10 @@ const TelegramScreen = (props: any) => {
     return () => {
       //@ts-ignore
       webApp.BackButton.offClick(() => {
-        router.push("/");
+        props.setSelectedTabIndex(0);
       });
     };
-  }, [webApp, props.showbackbutton, router]);
+  }, [webApp, props.showbackbutton, props.setSelectedTabIndex]);
 
   return <Box {...props} w={"full"} h={"full"} />;
 };
