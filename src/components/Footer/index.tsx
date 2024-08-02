@@ -17,6 +17,7 @@ import Leaderboard from "../Leaderboard";
 import ComingSoon from "./Menu/ComingSoon";
 import ReferralDrawer from "./Menu/Referral";
 import ResourcesDrawer from "./Menu/Resource";
+import HomePage from "../Home";
 
 const Footer = React.memo(function FooterComponent() {
   const listMenu = useMemo(
@@ -24,7 +25,7 @@ const Footer = React.memo(function FooterComponent() {
       {
         label: "Home",
         image: "resources.png",
-        panel: <></>,
+        panel: <HomePage />,
         link: "/home",
       },
       {
@@ -76,14 +77,14 @@ const Footer = React.memo(function FooterComponent() {
         onChange={handleTabChange}
         index={selectedTabIndex}
         variant="unstyled"
-        h="100vh"
+        h={"100vh"}
         display="flex"
         flexDirection="column"
       >
         <TabPanels flex="1" overflow="auto">
           {listMenu.map((item, idx) => (
             <TabPanel key={idx} p={0} h="full">
-              {item.link !== "/home" ? item.panel : null}
+              {item.panel}
             </TabPanel>
           ))}
         </TabPanels>

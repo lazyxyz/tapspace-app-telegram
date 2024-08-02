@@ -64,10 +64,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <Box w="full" h={"full"} alignContent={"center"} flex="1 1 auto">
               {children}
             </Box>
+            <Box w={"full"} flex="0 0 auto">
+              <Footer />
+            </Box>
           </BitcoinProvider>
-          <Box w={"full"} flex="0 0 auto">
-            <Footer />
-          </Box>
         </>
       )}
     </VStack>

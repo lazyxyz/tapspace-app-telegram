@@ -203,7 +203,14 @@ const InfoMint: React.FC<InfoMintProps> = ({ data, refetch }) => {
 
   return (
     <>
-      <VStack w="full" h="full" px={2} justifyContent="flex-start" pt={2}>
+      <VStack
+        w="full"
+        h="full"
+        px={2}
+        justifyContent="flex-start"
+        overflow={"hidden"}
+        pt={"70px"}
+      >
         <HStack w={"full"}>
           {listData.map((item) => (
             <MemoizedMintItem
