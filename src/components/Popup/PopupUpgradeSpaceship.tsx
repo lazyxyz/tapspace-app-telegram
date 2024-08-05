@@ -3,8 +3,8 @@ import { useTelegram } from "@/lib/TelegramProvider";
 import systemService from "@/services/system.service";
 import {
   checkPassiveUplevel,
-  convertLevelToNumber,
   imageResources,
+  imageSkills,
   numeralFormat,
 } from "@/utils/utils";
 import {
@@ -29,20 +29,15 @@ import {
 import { useCallback, useMemo, useState } from "react";
 import { BsLightningChargeFill } from "react-icons/bs";
 import { IconArrowRight, IconClose } from "../Icons";
-import { useBitcoin } from "../Wrapper/BitcoinProvider";
 import { queryClient } from "../Wrapper/QueryClientProvider";
 import PopupSuccessUplevel from "./PopupSuccessUplevel";
+import useResourcesSpaceship from "@/hooks/useUpdateResources";
 
 interface PopupUpgradeBotProps {
   isOpen: boolean;
   onOpen: () => void;
   onClose: () => void;
-  item: {
-    resource_name: string;
-    level_resource: string;
-    mining: number;
-  };
-  levelResource: any;
+  item: { level: number; pro_spaceship_name: string };
   isDisabled: any;
   data: any;
 }
@@ -53,12 +48,10 @@ interface ResourceCapacity {
   };
 }
 
-export default function PopupUpgradeBot({
+export default function PopupUpgradeSpacship({
   isOpen,
-  onOpen,
   onClose,
   item,
-  levelResource,
   isDisabled,
   data,
 }: PopupUpgradeBotProps) {
@@ -74,12 +67,13 @@ export default function PopupUpgradeBot({
   const handleClaim = useCallback(async () => {
     setIsLoading(true);
     try {
-      const updateBot = await systemService.updateBotResourcesLevel({
+      const updateBot = await systemService.updatePropertiesSpaceship({
         telegram_id:
           user?.id.toString() || process.env.NEXT_PUBLIC_API_ID_TELEGRAM,
-        name: item.resource_name,
-        level_resource: `${item.level_resource + 1}`,
+        name: item.pro_spaceship_name,
+        level: `${item.level + 1}`,
       });
+
       onOpenSuccess();
 
       setIsLoading(false);
@@ -99,9 +93,24 @@ export default function PopupUpgradeBot({
     }
   }, [item, onClose, queryClient]);
 
-  const currentLevel = Number(item.level_resource);
+  const currentLevel = Number(item.level);
   const nextLevel = currentLevel + 1;
-  const resourceCapacity = useResourceCapacity(Number(nextLevel));
+
+  const resourceSpaceship = useResourcesSpaceship(Number(nextLevel));
+  const isDisabled2 = useMemo(() => {
+    return Object.entries(resourceSpaceship as any).some(([key, value]) => {
+      const numericValue = typeof value === "number" ? value : 0;
+      const mining = data?.resources.find(
+        (dataItem: any) => dataItem.resource_name === key
+      )?.mining;
+      return (
+        mining < numericValue ||
+        (key === "TS-BTC" && (data?.btc_value ?? 0) < numericValue)
+      );
+    });
+  }, [data, resourceSpaceship]);
+
+  console.log(isDisabled2);
 
   return (
     <Box>
@@ -125,24 +134,28 @@ export default function PopupUpgradeBot({
           >
             <Icon as={IconClose} right={0} position={"absolute"} w={"full"} />
           </Box>
-          <ModalBody>
+          <ModalBody px={2}>
             <VStack spacing={5} w={"full"} rounded={"xl"} position={"relative"}>
               <Stack align={"center"}>
                 <Text fontSize={"lg"} textColor={"white"} fontWeight={800}>
-                  Upgrade Miner
+                  Upgrade Spaceship
                 </Text>
                 <Box
                   bg={"rgba(255, 255, 255, 0.15)"}
-                  py={4}
-                  px={6}
+                  p={2}
                   rounded={"xl"}
                   borderWidth={1}
                 >
-                  <Image src="/assets/botGirl.png" w={"46px"} h={"64px"} />
+                  <Image
+                    src={imageSkills[item.pro_spaceship_name]}
+                    w={"64px"}
+                    rounded={"xl"}
+                    h={"64px"}
+                  />
                 </Box>
 
                 <Text fontSize={"sm"} fontWeight={700} textColor={"#DADFF4"}>
-                  {item.resource_name} Miner
+                  {item.pro_spaceship_name}
                 </Text>
 
                 <HStack
@@ -155,19 +168,18 @@ export default function PopupUpgradeBot({
                   <Text textColor={"#D5FE4B"}>Level {currentLevel + 1}</Text>
                 </HStack>
 
-                <CurrentPassive currentLevel={currentLevel} item={item} />
+                {/* <CurrentPassive currentLevel={currentLevel} item={item} /> */}
               </Stack>
+
               <SimpleGrid
                 w={"full"}
-                columns={2}
-                spacing={4}
+                columns={3}
+                spacing={2}
                 alignContent={"center"}
               >
-                {Object.entries(resourceCapacity[`lv${nextLevel}`])
-                  .filter(
-                    ([key]) => key === item.resource_name || key === "TS-BTC"
-                  )
-                  .map(([key, value], idx) => {
+                {Object.entries(resourceSpaceship as any).map(
+                  ([key, value], idx) => {
+                    const mining = data?.resources[idx]?.mining;
                     const numericValue = typeof value === "number" ? value : 0;
                     return (
                       <VStack
@@ -178,11 +190,12 @@ export default function PopupUpgradeBot({
                         borderColor={"#3F435A"}
                         borderWidth={1}
                         borderBottomWidth={3}
+                        spacing={1}
                       >
                         <Image
                           src={imageResources[key]}
-                          w={"44px"}
-                          h={"44px"}
+                          w={"32px"}
+                          h={"32px"}
                         />
                         <Text fontSize={"sm"} fontWeight={600}>
                           {key}
@@ -191,7 +204,7 @@ export default function PopupUpgradeBot({
                           <Text
                             fontSize={"sm"}
                             textColor={
-                              item.mining < numericValue ||
+                              mining < numericValue ||
                               (key === "TS-BTC" &&
                                 (data?.btc_value ?? 0) < numericValue)
                                 ? "#EB303B"
@@ -199,7 +212,7 @@ export default function PopupUpgradeBot({
                             }
                             fontWeight={"800"}
                           >
-                            {item.mining < numericValue ||
+                            {mining < numericValue ||
                             (key === "TS-BTC" &&
                               (data?.btc_value ?? 0) < numericValue) ? (
                               <>
@@ -222,7 +235,8 @@ export default function PopupUpgradeBot({
                         </HStack>
                       </VStack>
                     );
-                  })}
+                  }
+                )}
               </SimpleGrid>
             </VStack>
           </ModalBody>
@@ -233,7 +247,7 @@ export default function PopupUpgradeBot({
               rounded={"xl"}
               borderBottomWidth={3}
               py={5}
-              isDisabled={isDisabled}
+              isDisabled={!isDisabled2}
               _hover={{ bgGradient: "linear(to-b, #0DD63E 0%, #00A65B 100%)" }}
               fontWeight={800}
               borderColor={"#0DD63E"}
@@ -286,7 +300,7 @@ export const CurrentPassive = ({
           {isBtc
             ? (0.00002315 * Math.pow(1 + 0.2, currentLevel)).toFixed(7)
             : numeralFormat(
-                checkPassiveUplevel[item.resource_name] *
+                checkPassiveUplevel[item.pro_spaceship_name] *
                   Math.pow(1 + 0.1, currentLevel)
               )}
           /s
@@ -302,7 +316,7 @@ export const CurrentPassive = ({
           {isBtc
             ? (0.00002315 * Math.pow(1 + 0.2, currentLevel + 1)).toFixed(7)
             : numeralFormat(
-                checkPassiveUplevel[item.resource_name] *
+                checkPassiveUplevel[item.pro_spaceship_name] *
                   Math.pow(1 + 0.1, currentLevel + 1)
               )}
           /s

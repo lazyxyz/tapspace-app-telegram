@@ -19,16 +19,19 @@ import ReferralDrawer from "./Menu/Referral";
 import ResourcesDrawer from "./Menu/Resource";
 import HomePage from "../Home";
 import TelegramScreen from "../Telegram/TelegramScreen";
+import Spaceship from "./Menu/Spaceship";
+import Store from "./Menu/Store";
 
 const Footer = React.memo(function FooterComponent() {
   const listMenu = useMemo(
     () => [
       {
-        label: "Home",
-        image: "resources.png",
+        label: "Universe",
+        image: "universe.png",
         panel: <HomePage />,
         link: "/home",
       },
+
       {
         label: "Miner",
         image: "miner.png",
@@ -38,16 +41,14 @@ const Footer = React.memo(function FooterComponent() {
       {
         label: "Spaceship",
         image: "spaceship.png",
-        panel: (
-          <ComingSoon tab="Spaceship" src="/assets/menu/bgSpaceship.png" />
-        ),
+        panel: <Spaceship />,
         link: "/spaceship",
       },
       {
-        label: "Universe",
-        image: "universe.png",
-        panel: <ComingSoon tab="Universe" src="/assets/menu/bgUniverse.png" />,
-        link: "/universe",
+        label: "Store",
+        image: "resources.png",
+        panel: <Store />,
+        link: "/store",
       },
       {
         label: "Battles",

@@ -41,7 +41,7 @@ const useResourceCapacity = (numLevel: number) => {
         Copper: baseValues.Copper * fibSequence[lv + 1],
         Fiber: baseValues.Fiber * fibSequence[lv + 1],
         Titanium: baseValues.Titanium * fibSequence[lv + 1],
-        BTC: btcSequence[lv - 1],
+        "TS-BTC": btcSequence[lv - 1],
       };
     }
     return requirements;

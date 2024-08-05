@@ -16,20 +16,30 @@ export const numeralFormat = (
       }) + "M"
     );
   } else if (price >= 1e3) {
-    return price?.toLocaleString(undefined, { maximumFractionDigits: 0 });
+    return price?.toLocaleString(undefined, {
+      maximumFractionDigits: 0,
+    });
   } else {
     return price?.toLocaleString();
   }
 };
 
 export const imageResources: any = {
-  BTC: "/bitcoin.svg",
+  "TS-BTC": "/bitcoin.svg",
   Bitcoin: "/bitcoin.svg",
   Aluminum: "/assets/resources/Alu.png",
   Copper: "/assets/resources/Copper.png",
   Fiber: "/assets/resources/Fiber.png",
   Steel: "/assets/resources/Steel.png",
   Titanium: "/assets/resources/Titan.png",
+};
+
+export const imageSkills: any = {
+  Health_point: "/assets/skills/hp.png",
+  Firerate: "/assets/skills/firerate.png",
+  Shield: "/assets/skills/shield.png",
+  Damage: "/assets/skills/damage.png",
+  Engine: "/assets/skills/engine.png",
 };
 
 export const checkPassiveUplevel: any = {

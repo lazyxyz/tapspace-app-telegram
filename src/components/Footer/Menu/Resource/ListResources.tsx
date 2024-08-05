@@ -1,7 +1,7 @@
 "use client";
 
 import PopupUpgradeBot from "@/components/Popup/PopupUpgradeBot";
-import { MintItemType } from "@/components/Tabs/Resources/TotalResource/InfoMint";
+import { useBitcoin } from "@/components/Wrapper/BitcoinProvider";
 import useResourceCapacity from "@/hooks/useResourceCapacity";
 import {
   checkPassiveUplevel,
@@ -19,110 +19,70 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 
-const ListResources = () => {
+export default function ListResources() {
   const { data } = useQuery<any>({
     queryKey: ["infoUser"],
   });
 
-  const [listData, setListData] = useState<MintItemType[]>(() => {
-    if (typeof window !== "undefined") {
-      const savedListData = localStorage.getItem("listData");
-      if (savedListData) {
-        return JSON.parse(savedListData) as MintItemType[];
-      } else {
-        //@ts-ignore
-        const initialData = data?.resources.map((item: any) => ({
-          ...item,
-          calculatedValue: item.capacity,
-        }));
-        localStorage.setItem("listData", JSON.stringify(initialData));
-        return initialData;
-      }
-    }
-    return [];
-  });
+  const { resourcesSocket } = useBitcoin();
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const allFull = listData.every(
-        (item) => item.calculatedValue >= item.capacity
-      );
-
-      if (allFull) {
-        clearInterval(interval);
-        return;
-      }
-      const savedListData = localStorage.getItem("listData");
-      if (savedListData) {
-        setListData(JSON.parse(savedListData) as MintItemType[]);
-      }
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [listData]);
-
-  const memoizedResources = useMemo(() => {
-    return data?.resources.map((item: any, idx: number) => (
-      <Stack
-        key={idx}
-        bg={"#13161F"}
-        w={"full"}
-        px={3}
-        py={4}
-        rounded={"xl"}
-        borderWidth={1}
-        borderBottomWidth={3}
-        borderColor={"#3F435A"}
-      >
-        <HStack justifyContent={"space-between"}>
-          <HStack>
-            <Box bg={"rgba(255, 255, 255, 0.12)"} p={2} rounded={"xl"}>
+  return data?.resources.map((item: any, idx: number) => (
+    <Stack
+      key={idx}
+      bg={"#13161F"}
+      w={"full"}
+      px={3}
+      py={4}
+      rounded={"xl"}
+      borderWidth={1}
+      borderBottomWidth={3}
+      borderColor={"#3F435A"}
+    >
+      <HStack justifyContent={"space-between"}>
+        <HStack>
+          <Box bg={"rgba(255, 255, 255, 0.12)"} p={2} rounded={"xl"}>
+            <Image
+              src={imageResources[item?.resource_name]}
+              w={"56px"}
+              h={"56px"}
+            />
+          </Box>
+          <VStack align={"start"}>
+            <Stack spacing={0}>
+              <Text fontWeight={"800"}>{item.resource_name}</Text>
+              <Text fontSize={"xs"}>
+                {Number(
+                  checkPassiveUplevel[item.resource_name] *
+                    Math.pow(1 + 0.1, item.level_resource)
+                ).toFixed(5)}
+                /s
+              </Text>
+            </Stack>
+            <HStack align={"center"} spacing={1}>
               <Image
                 src={imageResources[item?.resource_name]}
-                w={"56px"}
-                h={"56px"}
+                w={"16px"}
+                h={"16px"}
               />
-            </Box>
-            <VStack align={"start"}>
-              <Stack spacing={0}>
-                <Text fontWeight={"800"}>{item.resource_name}</Text>
-                <Text fontSize={"xs"}>
-                  {Number(
-                    checkPassiveUplevel[item.resource_name] *
-                      Math.pow(1 + 0.1, item.level_resource)
-                  ).toFixed(5)}
-                  /s
-                </Text>
-              </Stack>
-              <HStack align={"center"} spacing={1}>
-                <Image
-                  src={imageResources[item?.resource_name]}
-                  w={"16px"}
-                  h={"16px"}
-                />
-                <Text fontSize={"sm"} fontWeight={"800"}>
-                  {numeralFormat(item.mining)}
-                </Text>
-              </HStack>
-            </VStack>
-          </HStack>
-          <BotResource
-            item={data.resources[idx]}
-            listData={listData}
-            data={data}
-            idx={idx}
-          />
+              <Text fontSize={"sm"} fontWeight={"800"}>
+                {resourcesSocket?.resources
+                  ? numeralFormat(
+                      resourcesSocket.resources[item.resource_name] || 0
+                    )
+                  : "-"}
+              </Text>
+            </HStack>
+          </VStack>
         </HStack>
-      </Stack>
-    ));
-  }, [data, listData]);
+        <BotResource item={data.resources[idx]} data={data} idx={idx} />
+      </HStack>
+    </Stack>
+  ));
+}
 
-  return <Stack>{memoizedResources}</Stack>;
-};
-
-const BotResource = ({ item, listData, data, idx }: any) => {
+const BotResource = ({ item, data, idx }: any) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const currentLevel = Number(item.level_resource);
@@ -162,6 +122,7 @@ const BotResource = ({ item, listData, data, idx }: any) => {
         rounded={"xl"}
         left={2.5}
         top={-2}
+        whiteSpace={"pre"}
       >
         Level {data?.resources[idx].level_resource}
       </Text>
@@ -188,12 +149,9 @@ const BotResource = ({ item, listData, data, idx }: any) => {
         onClose={onClose}
         item={item}
         data={data}
-        listData={listData}
         levelResource={data?.resources[idx].level_resource}
         isDisabled={isDisabled}
       />
     </Box>
   );
 };
-
-export default ListResources;

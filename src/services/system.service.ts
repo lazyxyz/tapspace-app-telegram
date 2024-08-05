@@ -27,6 +27,14 @@ const updateBotResourcesLevel = async (body: {
   return await client.post("Update/update/bot_resource_level", body);
 };
 
+const updatePropertiesSpaceship = async (body: {
+  telegram_id: any;
+  name: string;
+  level: string;
+}) => {
+  return await client.post("Update/update/properties_spaceship", body);
+};
+
 const updateMining = async (body: {
   telegram_id: any;
   mining_values: {
@@ -60,6 +68,7 @@ const systemService = {
   updateBotBtc,
   updateTokenBtc,
   updateBotResourcesLevel,
+  updatePropertiesSpaceship,
   updateMining,
 
   swapResource,

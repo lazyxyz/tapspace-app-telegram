@@ -1,12 +1,9 @@
-import Leaderboard from "@/components/Leaderboard";
-import useSocket from "@/hooks/useSocket";
+import { useEffect, useCallback, useState } from "react";
 import { useTelegram } from "@/lib/TelegramProvider";
-import { Box, HStack, Stack, useDisclosure, VStack } from "@chakra-ui/react";
+import useSocket from "@/hooks/useSocket";
+import { HStack, Stack, VStack } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Socket } from "socket.io-client";
 import { MemoizedMintItem } from "./MintItem";
-import Image from "next/image";
 
 export type MintItemType = {
   capacity: number;
@@ -23,11 +20,6 @@ interface InfoMintProps {
   refetch: () => void;
 }
 
-interface BackButton {
-  isVisible: boolean;
-  show?: () => void;
-}
-
 const calculateNewItemSecond = (
   currentItemSecond: number,
   levelBot: number
@@ -40,18 +32,10 @@ const calculateNewItemSecond = (
 };
 
 const InfoMint: React.FC<InfoMintProps> = ({ data, refetch }) => {
-  const { user, webApp } = useTelegram();
-
+  const { user } = useTelegram();
+  const { emit } = useSocket();
   const [listData, setListData] = useState<MintItemType[]>([]);
-  const [accumulatedValues, setAccumulatedValues] = useState<{
-    [key: string]: number;
-  }>({});
   const [levelBot, setLevelBot] = useState<number>(1);
-  const [totalItems, setTotalItems] = useState<number>(0);
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [dataSocket, setDataSocket] = useState<any>([]);
-
-  const { emit, on, connected } = useSocket();
 
   const initializeListData = useCallback(() => {
     if (data && typeof window !== "undefined") {
@@ -59,18 +43,41 @@ const InfoMint: React.FC<InfoMintProps> = ({ data, refetch }) => {
         const storedCalculatedValue = localStorage.getItem(
           `calculatedValue_${item.resource_name}`
         );
+        const storedLastUpdate = localStorage.getItem(
+          `lastUpdate_${item.resource_name}`
+        );
+
+        let calculatedValue = item.capacity;
+        if (storedCalculatedValue && storedLastUpdate) {
+          const lastUpdate = new Date(storedLastUpdate);
+          const currentTime = new Date();
+          const timeDifference = Math.floor(
+            (currentTime.getTime() - lastUpdate.getTime()) / 1000
+          ); // tính bằng giây
+
+          const incrementValue = calculateNewItemSecond(
+            item.frequency_mining,
+            levelBot
+          );
+          const maxCapacity = item.capacity;
+
+          // Cập nhật giá trị dựa trên thời gian đã trôi qua
+          calculatedValue = Math.min(
+            maxCapacity,
+            parseFloat(storedCalculatedValue) + incrementValue * timeDifference
+          );
+        }
+
         return {
           ...item,
-          calculatedValue: storedCalculatedValue
-            ? parseFloat(storedCalculatedValue)
-            : item.capacity,
-          capaticyLevel: "",
+          calculatedValue,
         };
       });
+
       setListData(initialData);
       localStorage.setItem("listData", JSON.stringify(initialData));
     }
-  }, [data]);
+  }, [data, levelBot]);
 
   useEffect(() => {
     initializeListData();
@@ -87,10 +94,14 @@ const InfoMint: React.FC<InfoMintProps> = ({ data, refetch }) => {
             `calculatedValue_${item.resource_name}`,
             Math.min(updatedValue, item.capacity).toString()
           );
+          // Cập nhật thời gian cập nhật cuối cùng
+          localStorage.setItem(
+            `lastUpdate_${item.resource_name}`,
+            new Date().toISOString()
+          );
           return {
             ...item,
             calculatedValue: Math.min(updatedValue, item.capacity),
-            floatingText: undefined,
           };
         }
         return item;
@@ -98,23 +109,7 @@ const InfoMint: React.FC<InfoMintProps> = ({ data, refetch }) => {
     );
   }, [levelBot]);
 
-  const addToAccumulatedValues = useCallback(() => {
-    setAccumulatedValues((prevValues) => {
-      const updatedAccumulatedValues = { ...prevValues };
-      listData.forEach((item) => {
-        if (!updatedAccumulatedValues[item.resource_name]) {
-          updatedAccumulatedValues[item.resource_name] = 0;
-        }
-        if (item.calculatedValue > 0 && item.calculatedValue < item.capacity) {
-          updatedAccumulatedValues[item.resource_name] +=
-            calculateNewItemSecond(item.frequency_mining, levelBot);
-        }
-      });
-      return updatedAccumulatedValues;
-    });
-  }, [listData, levelBot]);
-
-  const resetTimer = useCallback(() => {
+  useEffect(() => {
     const allFull = listData.every(
       (item) => item.calculatedValue >= item.capacity
     );
@@ -127,58 +122,61 @@ const InfoMint: React.FC<InfoMintProps> = ({ data, refetch }) => {
     return () => clearInterval(timerId);
   }, [listData, updateListData]);
 
-  useEffect(() => {
-    const cleanupTimer = resetTimer();
-    return cleanupTimer;
-  }, [resetTimer]);
-
   const handleClick = useCallback(() => {
-    try {
-      setListData((prevListData) =>
-        prevListData.map((item) => {
-          if (item.calculatedValue > 0) {
-            const updatedValue =
-              item.calculatedValue -
-              calculateNewItemSecond(item.frequency_mining, levelBot);
-            localStorage.setItem(
-              `calculatedValue_${item.resource_name}`,
-              Math.max(updatedValue, 0).toString()
-            );
-            return {
-              ...item,
-              calculatedValue: Math.max(updatedValue, 0),
-              floatingText: `+${calculateNewItemSecond(
-                item.frequency_mining,
-                levelBot
-              )}`,
-            };
-          }
-          return item;
-        })
-      );
-
-      const miningValues: { [key: string]: number } = {};
-
-      listData.forEach((item) => {
+    setListData((prevListData) =>
+      prevListData.map((item) => {
         if (item.calculatedValue > 0) {
-          miningValues[item.resource_name] = item.frequency_mining;
-        }
-      });
+          const increment = calculateNewItemSecond(
+            item.frequency_mining,
+            levelBot
+          );
+          const updatedValue = Math.max(item.calculatedValue - increment, 0);
 
-      if (Object.keys(miningValues).length > 0) {
-        const data = {
-          telegram_id:
-            Number(user?.id) || Number(process.env.NEXT_PUBLIC_API_ID_TELEGRAM),
-          mining_values: miningValues,
-        };
-        emit("update_mining", data);
-      } else {
-        console.log("No valid resources to update.");
+          localStorage.setItem(
+            `calculatedValue_${item.resource_name}`,
+            updatedValue.toString()
+          );
+
+          localStorage.setItem(
+            `lastUpdate_${item.resource_name}`,
+            new Date().toISOString()
+          );
+
+          return {
+            ...item,
+            calculatedValue: updatedValue,
+            floatingText: `+${increment.toFixed(2)}`,
+          };
+        }
+        return item;
+      })
+    );
+
+    const miningValues: { [key: string]: number } = {};
+
+    listData.forEach((item) => {
+      if (item.calculatedValue > 0) {
+        miningValues[item.resource_name] = item.frequency_mining;
       }
-    } catch (error) {
-      console.error("Error in handleClickSocket:", error);
+    });
+
+    if (Object.keys(miningValues).length > 0) {
+      const data = {
+        telegram_id:
+          Number(user?.id) || Number(process.env.NEXT_PUBLIC_API_ID_TELEGRAM),
+        mining_values: miningValues,
+      };
+      emit("update_mining", data);
+    } else {
+      console.log("No valid resources to update.");
     }
-  }, [listData, levelBot, connected]);
+
+    setTimeout(() => {
+      setListData((prevListData) =>
+        prevListData.map((item) => ({ ...item, floatingText: undefined }))
+      );
+    }, 1000);
+  }, [listData, levelBot, emit, user]);
 
   const clickVariants = {
     click: {
@@ -190,16 +188,6 @@ const InfoMint: React.FC<InfoMintProps> = ({ data, refetch }) => {
       transition: { duration: 0.05, ease: "easeInOut" },
     },
   };
-
-  const handleImageClick = useCallback(
-    (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      const rect = event.currentTarget.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const y = event.clientY - rect.top;
-      handleClick();
-    },
-    [handleClick]
-  );
 
   return (
     <>
@@ -213,11 +201,7 @@ const InfoMint: React.FC<InfoMintProps> = ({ data, refetch }) => {
       >
         <HStack w={"full"}>
           {listData.map((item) => (
-            <MemoizedMintItem
-              key={item.resource_name}
-              item={item}
-              accumulatedValues={accumulatedValues}
-            />
+            <MemoizedMintItem key={item.resource_name} item={item} />
           ))}
         </HStack>
         <Stack
@@ -229,13 +213,15 @@ const InfoMint: React.FC<InfoMintProps> = ({ data, refetch }) => {
           pb={24}
         >
           <motion.div
-            onClick={handleImageClick}
+            onClick={handleClick}
             initial="normal"
             variants={clickVariants}
             whileTap="click"
             style={{
               display: "inline-block",
               position: "relative",
+              userSelect: "none",
+              WebkitUserSelect: "none",
             }}
           >
             <motion.img

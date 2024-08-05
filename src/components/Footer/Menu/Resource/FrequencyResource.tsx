@@ -77,6 +77,7 @@ const FrequencyResource = () => {
               rounded={"xl"}
               left={2.5}
               top={-2}
+              whiteSpace={"pre"}
             >
               Level {botLevel}
             </Text>

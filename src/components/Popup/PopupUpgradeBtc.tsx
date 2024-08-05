@@ -132,7 +132,7 @@ export default function PopupUpgradeBtc({
             >
               <Stack align={"center"}>
                 <Text fontSize={"lg"} textColor={"white"} fontWeight={800}>
-                  Upgrade BTC
+                  Upgrade TS-BTC
                 </Text>
                 <Box
                   bg={"rgba(255, 255, 255, 0.15)"}
@@ -145,7 +145,7 @@ export default function PopupUpgradeBtc({
                 </Box>
 
                 <Text fontSize={"sm"} fontWeight={700} textColor={"#DADFF4"}>
-                  BTC
+                  TS-BTC
                 </Text>
 
                 <HStack

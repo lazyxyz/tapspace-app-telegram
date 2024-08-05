@@ -71,7 +71,9 @@ export default function Preload({ progress, loading }: any) {
       </Box>
 
       <Stack spacing={0} align="center" pb={6}>
-        <Text fontSize="sm">Powered by</Text>
+        <Text fontSize="sm" textColor="white">
+          Powered by
+        </Text>
         <Text fontWeight={800} fontSize="sm" textColor="white">
           Grindy Technologies
         </Text>

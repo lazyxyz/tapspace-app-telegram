@@ -106,7 +106,7 @@ export default function ReferralDrawer() {
               {countRef * 2}%
             </Text>
             <Text fontSize={"xs"} textColor={"#ECEFF9"} fontWeight={800}>
-              All resources/tap
+              TS-BTC minted/sec
             </Text>
           </Stack>
         </HStack>
@@ -124,7 +124,7 @@ export default function ReferralDrawer() {
               {countRef * 10}%
             </Text>
             <Text fontSize={"xs"} textColor={"#ECEFF9"} fontWeight={800}>
-              Capacity/resources
+              All resources/tap
             </Text>
           </Stack>
         </HStack>

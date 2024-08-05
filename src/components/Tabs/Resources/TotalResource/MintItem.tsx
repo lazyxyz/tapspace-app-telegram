@@ -11,8 +11,7 @@ interface FloatingTextProps {
 }
 const MintItem: React.FC<{
   item: MintItemType;
-  accumulatedValues: { [key: string]: number };
-}> = ({ item, accumulatedValues }) => {
+}> = ({ item }) => {
   const { resourcesSocket, isSocketConnected } = useBitcoin();
 
   const calculatedValueMotion = useMotionValue(
@@ -43,7 +42,7 @@ const MintItem: React.FC<{
         );
       }, 1000);
     }
-  }, [resourcesSocket, item.calculatedValue, item.floatingText]);
+  }, [item.calculatedValue, item.floatingText]);
 
   const progressValue = useTransform(
     calculatedCapacity,
