@@ -235,7 +235,7 @@ const InfoMint: React.FC<InfoMintProps> = ({ data, refetch }) => {
               }}
               style={{
                 display: "inline-block",
-                filter: "drop-shadow(0px 4px 50px rgba(239, 103, 244, 0.5))",
+                filter: "drop-shadow(<0px 4px 50px> rgba(239, 103, 244, 0.5))",
               }}
             />
           </motion.div>

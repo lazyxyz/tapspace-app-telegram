@@ -48,6 +48,15 @@ const updateMining = async (body: {
   return await client.post("Update/update/mining", body);
 };
 
+const buyResources = async (body: {
+  telegram_id: any;
+  resource_name: string;
+  value_btc: number;
+  value_resource: number;
+}) => {
+  return await client.post("Storage/storage", body);
+};
+
 const swapResource = async (body: {
   telegram_id: any;
   from_resource: string;
@@ -71,6 +80,7 @@ const systemService = {
   updatePropertiesSpaceship,
   updateMining,
 
+  buyResources,
   swapResource,
 
   sendInviteLink,

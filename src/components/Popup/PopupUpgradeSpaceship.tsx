@@ -247,7 +247,7 @@ export default function PopupUpgradeSpacship({
               rounded={"xl"}
               borderBottomWidth={3}
               py={5}
-              isDisabled={!isDisabled2}
+              isDisabled={isDisabled2}
               _hover={{ bgGradient: "linear(to-b, #0DD63E 0%, #00A65B 100%)" }}
               fontWeight={800}
               borderColor={"#0DD63E"}

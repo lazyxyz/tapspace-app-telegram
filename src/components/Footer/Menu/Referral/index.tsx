@@ -46,6 +46,29 @@ export default function ReferralDrawer() {
     queryKey: ["infoUser"],
   });
 
+  const { webApp } = useTelegram();
+  const toast = useToast();
+
+  const handleLinkClick = () => {
+    if (webApp && data?.data.invite_link) {
+      try {
+        //@ts-ignore
+        webApp.openTelegramLink(data.data.invite_link);
+      } catch (error) {
+        toast({
+          status: "error",
+          title: "Failed",
+          description: String(error),
+          position: "top-right",
+          isClosable: true,
+          duration: 3000,
+        });
+      }
+    } else {
+      console.error("Telegram Web App not initialized or invite link missing");
+    }
+  };
+
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
@@ -206,9 +229,8 @@ export default function ReferralDrawer() {
         )}
 
         <HStack w={"full"}>
-          <Link
-            as={NextLink}
-            href={"https://t.me/tap_space_bot?start?startapp=1348241702"}
+          <Text
+            onClick={handleLinkClick}
             w={"full"}
             rounded={"xl"}
             borderBottomWidth={3}
@@ -220,7 +242,7 @@ export default function ReferralDrawer() {
             bgGradient={"linear(to-b, #0DD63E 0%, #00A65B 100%)"}
           >
             Invite a friend
-          </Link>
+          </Text>
 
           <MotionButton
             borderWidth={1}
