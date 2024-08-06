@@ -53,7 +53,7 @@ export default function ReferralDrawer() {
     if (webApp && data?.data.invite_link) {
       try {
         //@ts-ignore
-        webApp.openTelegramLink(data.data.invite_link);
+        webApp.openLink(data.data.invite_link);
       } catch (error) {
         toast({
           status: "error",
