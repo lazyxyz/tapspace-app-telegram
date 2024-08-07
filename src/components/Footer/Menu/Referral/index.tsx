@@ -53,7 +53,26 @@ export default function ReferralDrawer() {
     if (webApp && data?.data.invite_link) {
       try {
         //@ts-ignore
-        webApp.openLink(data.data.invite_link);
+        webApp.showPopup({
+          title: "Share with Friends",
+          message: "Choose friends to share this content with.",
+          buttons: [
+            {
+              id: "share",
+              type: "default",
+              text: "Share",
+              action: () => {
+                //@ts-ignore
+                webApp.openTelegramLink(data?.data.invite_link);
+              },
+            },
+            {
+              id: "cancel",
+              type: "cancel",
+              text: "Cancel",
+            },
+          ],
+        });
       } catch (error) {
         toast({
           status: "error",
