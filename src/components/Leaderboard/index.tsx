@@ -128,7 +128,7 @@ export default function Leaderboard({
                           h={"36px"}
                           jazzicon={{
                             diameter: 31,
-                            seed: item.name,
+                            seed: item?.name || "",
                           }}
                         />
 
@@ -138,11 +138,16 @@ export default function Leaderboard({
                             fontWeight={800}
                             noOfLines={1}
                           >
-                            {item.name}
+                            {item.name || "Unnamed"}
                           </Text>
 
                           <HStack spacing={1}>
-                            <IconBitcoin w={"16px"} h={"16px"} />
+                            <Image
+                              src="/assets/Trophy.png"
+                              alt="Trophy Icon"
+                              w={"14px"}
+                              h={"14px"}
+                            />
                             <Text
                               color={colorTop[idx]}
                               fontSize={"10px"}

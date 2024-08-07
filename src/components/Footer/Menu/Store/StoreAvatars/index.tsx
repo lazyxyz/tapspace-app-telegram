@@ -1,4 +1,5 @@
 import { IconBitcoin } from "@/components/Icons";
+import { ImageWithFallback } from "@/components/ImageFallback";
 import {
   Box,
   Button,
@@ -8,8 +9,6 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import Image from "next/image";
-import React from "react";
 
 export default function StorageAvatar() {
   return (
@@ -23,11 +22,11 @@ export default function StorageAvatar() {
       >
         <Stack align={"center"} w={"40%"}>
           <Box>
-            <Image
+            <ImageWithFallback
               src={"/assets/avatar/avatar.png"}
               alt=""
-              width={102}
-              height={140}
+              width={"102px"}
+              height={"140px"}
               style={{
                 filter: "drop-shadow(0px 0px 7px rgba(38, 177, 255, 0.65))",
               }}
@@ -71,11 +70,11 @@ export default function StorageAvatar() {
             rounded={"xl"}
             w={"full"}
           >
-            <Image
+            <ImageWithFallback
               src={"/assets/avatar/avatar.png"}
               alt=""
-              width={32}
-              height={44}
+              width={"32px"}
+              height={"44px"}
               style={{
                 filter: "drop-shadow(0px 0px 7px rgba(38, 177, 255, 0.65))",
               }}

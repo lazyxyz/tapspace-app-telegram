@@ -32,11 +32,13 @@ const FrequencyResource = () => {
   const resourcesForNextLevel = resourceCapacity[`lv${nextLevel}`] || {};
 
   const isDisabled = useMemo(() => {
-    return Object.entries(resourcesForNextLevel).some(([key, value], idx) => {
-      const numericValue = typeof value === "number" ? value : 0;
-      const userValue = data?.resources[idx]?.mining ?? 0;
-      return userValue < numericValue;
-    });
+    return Object.entries(resourcesForNextLevel)
+      .slice(0, 5)
+      .some(([key, value], idx) => {
+        const numericValue = typeof value === "number" ? value : 0;
+        const userValue = data?.resources[idx]?.mining ?? 0;
+        return userValue < numericValue;
+      });
   }, [resourcesForNextLevel, data?.resources, data]);
 
   return (

@@ -16,6 +16,34 @@ export const numeralFormat = (
       }) + "M"
     );
   } else if (price >= 1e3) {
+    return (
+      (price / 1e3).toLocaleString(undefined, {
+        maximumFractionDigits: 1,
+      }) + "K"
+    );
+  } else {
+    return price?.toLocaleString();
+  }
+};
+
+export const numeralFormatResources = (
+  price: number,
+  decimal = 2,
+  roundingFunction = Math.floor
+) => {
+  if (price >= 1e9) {
+    return (
+      (price / 1e9).toLocaleString(undefined, {
+        maximumFractionDigits: 2,
+      }) + "B"
+    );
+  } else if (price >= 1e6) {
+    return (
+      (price / 1e6).toLocaleString(undefined, {
+        maximumFractionDigits: 2,
+      }) + "M"
+    );
+  } else if (price >= 1e3) {
     return price?.toLocaleString(undefined, {
       maximumFractionDigits: 0,
     });

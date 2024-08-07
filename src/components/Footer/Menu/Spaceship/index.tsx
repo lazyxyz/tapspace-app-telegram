@@ -1,3 +1,4 @@
+import { ImageWithFallback } from "@/components/ImageFallback";
 import PopupUpgradeSpacship from "@/components/Popup/PopupUpgradeSpaceship";
 import { imageSkills } from "@/utils/utils";
 import {
@@ -11,21 +12,12 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
-import Image from "next/image";
-import React, { useState, useMemo } from "react";
+import { useState } from "react";
 import { FaCartShopping } from "react-icons/fa6";
-import useSpaceshipRequirements from "@/hooks/useUpdateResources";
 
 interface Item {
   level: number;
   pro_spaceship_name: string;
-}
-
-interface Props {
-  data: {
-    properties_spaceship: Item[];
-  };
-  imageSkills: Record<string, string>;
 }
 
 export default function Spaceship() {
@@ -36,7 +28,6 @@ export default function Spaceship() {
     queryKey: ["infoUser"],
   });
 
- 
   return (
     <VStack
       h={"full"}
@@ -65,7 +56,7 @@ export default function Spaceship() {
         >
           <Stack zIndex={99}>
             <Text fontWeight={800}>THE EGG</Text>
-            <Image
+            <ImageWithFallback
               src={"/assets/spaceship.png"}
               alt="spaceship.png"
               width={75}
@@ -100,9 +91,9 @@ export default function Spaceship() {
               borderColor={"#3F435A"}
             >
               <Box rounded={"xl"} overflow={"hidden"}>
-                <Image
-                  width={44}
-                  height={44}
+                <ImageWithFallback
+                  width={"44px"}
+                  height={"44px"}
                   alt=""
                   src={imageSkills[item.pro_spaceship_name]}
                 />
@@ -158,7 +149,7 @@ const Header = () => {
         Upgrade
       </Text>
 
-      <HStack textColor={"#D5FE4B"}>
+      {/* <HStack textColor={"#D5FE4B"}>
         <Icon as={FaCartShopping} fontSize={"xl"} />
         <Text
           onClick={onOpen}
@@ -170,7 +161,7 @@ const Header = () => {
         >
           Store
         </Text>
-      </HStack>
+      </HStack> */}
     </HStack>
   );
 };

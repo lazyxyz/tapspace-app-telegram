@@ -7,6 +7,7 @@ import {
   checkPassiveUplevel,
   imageResources,
   numeralFormat,
+  numeralFormatResources,
 } from "@/utils/utils";
 import {
   Box,
@@ -28,58 +29,62 @@ export default function ListResources() {
 
   const { resourcesSocket } = useBitcoin();
 
-  return data?.resources.map((item: any, idx: number) => (
-    <Stack
-      key={idx}
-      bg={"#13161F"}
-      w={"full"}
-      px={3}
-      py={4}
-      rounded={"xl"}
-      borderWidth={1}
-      borderBottomWidth={3}
-      borderColor={"#3F435A"}
-    >
-      <HStack justifyContent={"space-between"}>
-        <HStack>
-          <Box bg={"rgba(255, 255, 255, 0.12)"} p={2} rounded={"xl"}>
-            <Image
-              src={imageResources[item?.resource_name]}
-              w={"56px"}
-              h={"56px"}
-            />
-          </Box>
-          <VStack align={"start"}>
-            <Stack spacing={0}>
-              <Text fontWeight={"800"}>{item.resource_name}</Text>
-              <Text fontSize={"xs"}>
-                {Number(
-                  checkPassiveUplevel[item.resource_name] *
-                    Math.pow(1 + 0.1, item.level_resource)
-                ).toFixed(5)}
-                /s
-              </Text>
-            </Stack>
-            <HStack align={"center"} spacing={1}>
-              <Image
-                src={imageResources[item?.resource_name]}
-                w={"16px"}
-                h={"16px"}
-              />
-              <Text fontSize={"sm"} fontWeight={"800"}>
-                {resourcesSocket?.resources
-                  ? numeralFormat(
-                      resourcesSocket.resources[item.resource_name] || 0
-                    )
-                  : "-"}
-              </Text>
+  return (
+    <Stack>
+      {data?.resources.map((item: any, idx: number) => (
+        <Stack
+          key={idx}
+          bg={"#13161F"}
+          w={"full"}
+          px={3}
+          py={4}
+          rounded={"xl"}
+          borderWidth={1}
+          borderBottomWidth={3}
+          borderColor={"#3F435A"}
+        >
+          <HStack justifyContent={"space-between"}>
+            <HStack>
+              <Box bg={"rgba(255, 255, 255, 0.12)"} p={2} rounded={"xl"}>
+                <Image
+                  src={imageResources[item?.resource_name]}
+                  w={"56px"}
+                  h={"56px"}
+                />
+              </Box>
+              <VStack align={"start"}>
+                <Stack spacing={0}>
+                  <Text fontWeight={"800"}>{item.resource_name}</Text>
+                  <Text fontSize={"xs"}>
+                    {Number(
+                      checkPassiveUplevel[item.resource_name] *
+                        Math.pow(1 + 0.1, item.level_resource)
+                    ).toFixed(5)}
+                    /s
+                  </Text>
+                </Stack>
+                <HStack align={"center"} spacing={1}>
+                  <Image
+                    src={imageResources[item?.resource_name]}
+                    w={"16px"}
+                    h={"16px"}
+                  />
+                  <Text fontSize={"sm"} fontWeight={"800"}>
+                    {resourcesSocket?.resources
+                      ? numeralFormatResources(
+                          resourcesSocket.resources[item.resource_name] || 0
+                        )
+                      : "-"}
+                  </Text>
+                </HStack>
+              </VStack>
             </HStack>
-          </VStack>
-        </HStack>
-        <BotResource item={data.resources[idx]} data={data} idx={idx} />
-      </HStack>
+            <BotResource item={data.resources[idx]} data={data} idx={idx} />
+          </HStack>
+        </Stack>
+      ))}
     </Stack>
-  ));
+  );
 }
 
 const BotResource = ({ item, data, idx }: any) => {

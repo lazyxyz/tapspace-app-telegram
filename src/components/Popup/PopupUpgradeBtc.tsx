@@ -1,11 +1,7 @@
 import useResourceCapacity from "@/hooks/useResourceCapacity";
 import { useTelegram } from "@/lib/TelegramProvider";
 import systemService from "@/services/system.service";
-import {
-  checkPassiveUplevel,
-  imageResources,
-  numeralFormat,
-} from "@/utils/utils";
+import { imageResources, numeralFormat } from "@/utils/utils";
 import {
   Box,
   Button,
@@ -24,13 +20,11 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useCallback, useMemo, useState } from "react";
-import { BsArrowRight, BsLightningChargeFill } from "react-icons/bs";
-import { useBitcoin } from "../Wrapper/BitcoinProvider";
-import PopupSuccessUplevel from "./PopupSuccessUplevel";
+import { useQuery } from "@tanstack/react-query";
+import { useCallback, useState } from "react";
 import { IconArrowRight, IconClose } from "../Icons";
 import { queryClient } from "../Wrapper/QueryClientProvider";
+import PopupSuccessUplevel from "./PopupSuccessUplevel";
 import { CurrentPassive } from "./PopupUpgradeBot";
 
 interface PopupUpgradeBotProps {
@@ -53,19 +47,6 @@ export default function PopupUpgradeBtc({
   levelResource,
   isInsufficientResources,
 }: PopupUpgradeBotProps) {
-  const { bitcoinValue, resources, resetBitcoinValue, resetResources } =
-    useBitcoin();
-
-  const [claiming, setClaiming] = useState<boolean>(false);
-  const [claimAmount, setClaimAmount] = useState<number>(0);
-  const [totalCoin, setTotalCoin] = useState<number>(() => {
-    if (typeof window !== "undefined") {
-      const savedTotal = localStorage.getItem("totalCoin");
-      return savedTotal ? parseFloat(savedTotal) : 0;
-    }
-    return 0;
-  });
-
   const { user } = useTelegram();
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -95,10 +76,6 @@ export default function PopupUpgradeBtc({
   const nextLevel = currentLevel + 1;
   const resourceCapacity = useResourceCapacity(nextLevel);
 
-  const { data } = useQuery<any>({
-    queryKey: ["infoUser"],
-  });
-
   const resourcesForNextLevel = resourceCapacity[`lv${nextLevel}`] || {};
 
   return (
@@ -125,7 +102,8 @@ export default function PopupUpgradeBtc({
           <ModalBody p={0}>
             <VStack
               spacing={5}
-              p={4}
+              py={4}
+              px={2}
               w={"full"}
               rounded={"xl"}
               position={"relative"}
@@ -163,7 +141,7 @@ export default function PopupUpgradeBtc({
               <SimpleGrid
                 w={"full"}
                 columns={3}
-                spacing={4}
+                spacing={2}
                 alignContent={"center"}
               >
                 {Object.entries(resourcesForNextLevel)

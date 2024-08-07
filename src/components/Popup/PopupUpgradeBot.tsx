@@ -3,7 +3,6 @@ import { useTelegram } from "@/lib/TelegramProvider";
 import systemService from "@/services/system.service";
 import {
   checkPassiveUplevel,
-  convertLevelToNumber,
   imageResources,
   numeralFormat,
 } from "@/utils/utils";
@@ -26,10 +25,9 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { BsLightningChargeFill } from "react-icons/bs";
 import { IconArrowRight, IconClose } from "../Icons";
-import { useBitcoin } from "../Wrapper/BitcoinProvider";
 import { queryClient } from "../Wrapper/QueryClientProvider";
 import PopupSuccessUplevel from "./PopupSuccessUplevel";
 

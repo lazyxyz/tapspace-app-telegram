@@ -1,21 +1,15 @@
 "use client";
 import { IconCoppyLink } from "@/components/Icons";
-import TelegramScreen from "@/components/Telegram/TelegramScreen";
 import GenerateAvatar from "@/lib/GenerateAvatar";
 import { useTelegram } from "@/lib/TelegramProvider";
 import systemService from "@/services/system.service";
 import {
   Alert,
-  AlertDescription,
-  AlertIcon,
-  AlertTitle,
   Box,
   Button,
   CloseButton,
   HStack,
-  Icon,
   Image,
-  Link,
   Stack,
   Text,
   useToast,
@@ -23,9 +17,7 @@ import {
 } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import NextLink from "next/link";
-import React, { useState } from "react";
-import { BiCheck } from "react-icons/bi";
+import { useState } from "react";
 
 const MotionButton = motion(Button);
 const MotionBox = motion(Box);

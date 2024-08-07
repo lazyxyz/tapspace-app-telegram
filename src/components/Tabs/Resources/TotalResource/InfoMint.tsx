@@ -4,6 +4,8 @@ import useSocket from "@/hooks/useSocket";
 import { HStack, Stack, VStack } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { MemoizedMintItem } from "./MintItem";
+import PopupDailyRewards from "@/components/Popup/PopupDailyRewards";
+import PopupClaimBitcoin from "@/components/Popup/PopupClaimBitcoin";
 
 export type MintItemType = {
   capacity: number;
@@ -241,6 +243,9 @@ const InfoMint: React.FC<InfoMintProps> = ({ data, refetch }) => {
           </motion.div>
         </Stack>
       </VStack>
+
+      <PopupDailyRewards data={data} />
+      <PopupClaimBitcoin data={data} />
     </>
   );
 };

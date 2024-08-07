@@ -2,7 +2,11 @@ import { Box, Image, Stack, Text, VStack } from "@chakra-ui/react";
 import { animate, motion, useMotionValue, useTransform } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { MintItemType } from "./InfoMint";
-import { imageResources, numeralFormat } from "@/utils/utils";
+import {
+  imageResources,
+  numeralFormat,
+  numeralFormatResources,
+} from "@/utils/utils";
 import { useBitcoin } from "@/components/Wrapper/BitcoinProvider";
 
 interface FloatingTextProps {
@@ -88,8 +92,10 @@ const MintItem: React.FC<{
             </Text>
             <Text as={motion.span} fontSize={"sm"} fontWeight={"800"}>
               {isSocketConnected && resourcesSocket?.resources
-                ? numeralFormat(resourcesSocket?.resources[item.resource_name])
-                : numeralFormat(item.mining)}
+                ? numeralFormatResources(
+                    resourcesSocket?.resources[item.resource_name]
+                  )
+                : numeralFormatResources(item.mining)}
             </Text>
           </VStack>
         </VStack>

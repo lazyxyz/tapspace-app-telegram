@@ -92,8 +92,9 @@ export default function StoreResources() {
           </Text>
 
           <Image src={item.image || ""} />
+
           <HStack spacing={1}>
-            <IconBitcoin />
+            <IconBitcoin w={"20px"} h={"20px"} />
             <Text fontWeight={800}>{item.value}</Text>
           </HStack>
         </Stack>
