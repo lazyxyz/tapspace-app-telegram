@@ -134,17 +134,17 @@ export const BitcoinProvider: React.FC<BitcoinProviderProps> = ({
       setBitcoinValue(() => {
         const level = data?.resources ? data.resources[0]?.level_resource : 1;
         const growthRate = 0.2;
-        const rate = 0.00002315 * Math.pow(1 + growthRate, level - 1);
+        const rate = 0.00002315 * 5 * Math.pow(1 + growthRate, level - 1);
 
         const dataBtc = {
           telegram_id: process.env.NEXT_PUBLIC_API_ID_TELEGRAM,
           mining_value: rate,
         };
 
-        // emit("update_miningbtc", dataBtc);
-        // on("mining_update_response", (response: any) => {
-        //   setBitcoinValue(response.value);
-        // });
+        emit("update_miningbtc", dataBtc);
+        on("mining_update_response", (response: any) => {
+          setBitcoinValue(response.value);
+        });
         return rate;
       });
 
@@ -156,6 +156,7 @@ export const BitcoinProvider: React.FC<BitcoinProviderProps> = ({
           const growthRate = 0.1;
           const rate =
             initialResourceRates[key] *
+            5 *
             Math.pow(1 + growthRate, level - 1) *
             referralBonus;
           updatedResources[key] = rate;
