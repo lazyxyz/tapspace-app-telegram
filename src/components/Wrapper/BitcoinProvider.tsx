@@ -59,18 +59,23 @@ export const BitcoinProvider: React.FC<BitcoinProviderProps> = ({
   const referralBonus = 1 + referredUsersLength * 0.02;
 
   useEffect(() => {
-    if (data) {
-      const levels: ResourceRates = {};
-      data.resources.forEach((resource: Resource) => {
-        levels[resource.resource_name] = resource.level_resource || 1;
-      });
-      setResourceLevels(levels);
-    }
-  }, [data]);
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden") {
+        const lastVisitTime = Date.now().toString();
+        localStorage.setItem("lastVisitTime", lastVisitTime);
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
 
   useEffect(() => {
     const savedValue = localStorage.getItem("bitcoinValue");
-    const lastClaimTime = localStorage.getItem("lastClaimTime");
+    const lastClaimTime = localStorage.getItem("lastVisitTime");
     const savedResources = localStorage.getItem("resources");
 
     if (savedValue) {
@@ -93,27 +98,17 @@ export const BitcoinProvider: React.FC<BitcoinProviderProps> = ({
         parseInt(lastClaimTime, 10) * (lastClaimTime.length === 10 ? 1000 : 1);
       const timeDifference = (currentTime - lastClaimTimeParsed) / 1000;
 
-      const level = data?.resources ? data.resources[0]?.level_resource : 1;
+      const passiveBtc = data?.frequency_miining;
 
-      const rate = 0.00011575 * Math.pow(1 + 0.2, level - 1);
-
-      const offlineBitcoinEarnings = timeDifference * rate;
+      const offlineBitcoinEarnings = timeDifference * passiveBtc;
       setOfflineEarnings(parseFloat(offlineBitcoinEarnings.toFixed(8)));
 
-      const updatedResources: ResourceRates = { ...resources };
+      const listData = data?.resources.reduce((acc: any, item: any) => {
+        acc[item.resource_name] = item.passive * timeDifference;
+        return acc;
+      }, {});
 
-      for (const key in initialResourceRates) {
-        const level = resourceLevels[key] || 1;
-        const growthRate = 0.1;
-        const rate =
-          initialResourceRates[key] *
-          Math.pow(1 + growthRate, level - 1) *
-          referralBonus;
-        updatedResources[key] =
-          timeDifference * rate +
-          (savedResources ? JSON.parse(savedResources)[key] : 0);
-      }
-      setResources(updatedResources);
+      setResources(listData);
     }
   }, [referralBonus, resourceLevels, data?.resources]);
 

@@ -1,3 +1,5 @@
+import { useTelegram } from "@/lib/TelegramProvider";
+import systemService from "@/services/system.service";
 import { imageResources, numeralFormat } from "@/utils/utils";
 import {
   Box,
@@ -16,17 +18,15 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import { useCallback, useEffect, useState } from "react";
-import { useBitcoin } from "../Wrapper/BitcoinProvider";
-import systemService from "@/services/system.service";
 import { useQueryClient } from "@tanstack/react-query";
-import { useTelegram } from "@/lib/TelegramProvider";
+import { useEffect, useState } from "react";
+import { useBitcoin } from "../Wrapper/BitcoinProvider";
 
 export default function PopupClaimBitcoin({ data }: any) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { user } = useTelegram();
 
-  const { resources, offlineEarnings } = useBitcoin();
+  const { resources, offlineEarnings, resetBitcoinValue }: any = useBitcoin();
 
   const [claiming, setClaiming] = useState(false);
   const [claimAmount, setClaimAmount] = useState(0);
@@ -45,49 +45,46 @@ export default function PopupClaimBitcoin({ data }: any) {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleClaim = useCallback(async () => {
-    setIsLoading(true);
-    //@ts-ignore
-    const claimValue = parseFloat(offlineEarnings);
+  const handleClaim = async () => {
+    if (resources) {
+      setIsLoading(true);
+      //@ts-ignore
+      const claimValue = parseFloat(offlineEarnings);
 
-    setClaimAmount(claimValue);
-    setClaiming(true);
+      setClaimAmount(claimValue);
+      setClaiming(true);
 
-    setTotalCoin((prevTotal) => {
-      const newTotal = prevTotal + claimValue;
-      localStorage.setItem("totalCoin", newTotal.toString());
-      return newTotal;
-    });
+      setTotalCoin((prevTotal) => {
+        const newTotal = prevTotal + claimValue;
+        localStorage.setItem("totalCoin", newTotal.toString());
+        return newTotal;
+      });
 
-    const updateBtc = await systemService.updateTokenBtc({
-      telegram_id:
-        user?.id.toString() || process.env.NEXT_PUBLIC_API_ID_TELEGRAM,
-      btc_value: claimValue,
-    });
+      const updateBtc = await systemService.updateTokenBtc({
+        telegram_id:
+          user?.id.toString() || process.env.NEXT_PUBLIC_API_ID_TELEGRAM,
+        btc_value: claimValue,
+      });
 
-    const updatedResources = await systemService.updateMining({
-      telegram_id:
-        user?.id.toString() || process.env.NEXT_PUBLIC_API_ID_TELEGRAM,
-      mining_values: {
-        Steel: 1,
-        Aluminum: 1,
-        Copper: 1,
-        Fiber: 1,
-        Titanium: 1,
-      },
-    });
+      const updatedResources = await systemService.updateMining({
+        telegram_id:
+          user?.id.toString() || process.env.NEXT_PUBLIC_API_ID_TELEGRAM,
+        mining_values: resources,
+      });
 
-    onClose();
-    setIsLoading(false);
-    queryClient.refetchQueries({
-      queryKey: ["infoUser"],
-    });
-  }, [queryClient]);
+      onClose();
+      resetBitcoinValue();
+      setIsLoading(false);
+      queryClient.refetchQueries({
+        queryKey: ["infoUser"],
+      });
+    }
+  };
 
   return (
     <Box>
       <Modal
-        isOpen={false}
+        isOpen={isOpen}
         closeOnOverlayClick={false}
         isCentered
         onClose={onClose}
@@ -141,9 +138,9 @@ export default function PopupClaimBitcoin({ data }: any) {
                       </Text>
                       <HStack spacing={1}>
                         <Text fontSize={"sm"} fontWeight={"800"}>
-                          {/* {resources[key]
+                          {resources && resources[key]
                             ? numeralFormat(resources[key])
-                            : numeralFormat(Number(offlineEarnings.toFixed(5)))} */}
+                            : numeralFormat(Number(offlineEarnings.toFixed(5)))}
                         </Text>
                       </HStack>
                     </VStack>
