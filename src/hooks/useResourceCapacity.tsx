@@ -8,7 +8,7 @@ const baseValues = {
   Titanium: 180,
 };
 
-const baseBTC = 0.5;
+const baseBTC = 0.1;
 
 const fibonacci = (n: number) => {
   let fibSequence = [0, 1];

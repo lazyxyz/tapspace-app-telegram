@@ -23,12 +23,14 @@ import { queryClient } from "../Wrapper/QueryClientProvider";
 import useCustomToast from "@/hooks/useCustomToast";
 import { Toaster, toast } from "sonner";
 import { imageResources } from "@/utils/utils";
+import { useBitcoin } from "../Wrapper/BitcoinProvider";
 
 interface PopupUpgradeBotProps {
   isOpen: boolean;
   onOpen: () => void;
   onClose: () => void;
   item: any;
+  total: number;
 }
 
 export default function PopupBuyResources({
@@ -36,10 +38,12 @@ export default function PopupBuyResources({
   onOpen,
   onClose,
   item,
+  total,
 }: PopupUpgradeBotProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   const { user } = useTelegram();
+  const { bitcoinValue } = useBitcoin();
 
   const handleBuyResources = async () => {
     setIsLoading(true);
@@ -112,7 +116,7 @@ export default function PopupBuyResources({
             <VStack py={0}>
               <Image src={item?.image} alt="" />
               <Text fontSize={"20px"} fontWeight={800} textColor={"white"}>
-                {item?.value} {item?.label}
+                {total} {item?.label}
               </Text>
 
               <HStack spacing={1}>
@@ -131,12 +135,19 @@ export default function PopupBuyResources({
               borderBottomWidth={3}
               py={5}
               variant={"hover"}
+              isDisabled={bitcoinValue < 0.1}
               fontWeight={800}
               borderColor={"#0DD63E"}
               bgGradient={"linear(to-b, #0DD63E 0%, #00A65B 100%)"}
               onClick={handleBuyResources}
             >
-              {isLoading ? <Spinner size={"sm"} /> : "Purchase"}
+              {isLoading ? (
+                <Spinner size={"sm"} />
+              ) : bitcoinValue < 0.1 ? (
+                "Insuffician BTC"
+              ) : (
+                "Purchase"
+              )}
             </Button>
           </ModalFooter>
 

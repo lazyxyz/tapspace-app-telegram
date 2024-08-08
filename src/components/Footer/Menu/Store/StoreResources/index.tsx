@@ -11,47 +11,54 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 export default function StoreResources() {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const { data }: any = useQuery({
+    queryKey: ["infoUser"],
+  });
+
   const [item, setItem] = useState();
+  const [total, setTotal] = useState(0);
 
   const listResources = [
     {
       label: "Steel",
-      value: 500,
+      value: 5000,
       image: "/assets/resources/material-steel.png",
       color: "#BBC1DE",
     },
     {
       label: "Aluminum",
-      value: 312.5,
+      value: 3125,
       image: "/assets/resources/material-alu.png",
       color: "white",
     },
     {
       label: "Copper",
-      value: 187.5,
+      value: 1875,
       image: "/assets/resources/material-copper.png",
       color: "#FDBF25",
     },
     {
       label: "Fiber",
-      value: 125,
+      value: 1250,
       image: "/assets/resources/material-fiber.png",
       color: "#D5FE4B",
     },
     {
       label: "Titanium",
-      value: 62.5,
+      value: 625,
       image: "/assets/resources/material-titan.png",
       color: "#1EA2ED",
     },
   ];
 
-  const handleBuyResources = (item: any) => {
+  const handleBuyResources = (item: any, idx: number) => {
     onOpen();
     setItem(item);
+    setTotal(Number(data?.resources[idx].level_resource) * item.value);
   };
 
   return (
@@ -66,13 +73,13 @@ export default function StoreResources() {
           borderWidth={1}
           borderBottomWidth={3}
           borderColor={"#3F435A"}
-          onClick={() => handleBuyResources(item)}
+          onClick={() => handleBuyResources(item, idx)}
           spacing={0}
         >
           <Text fontWeight={800}>
             <Box as="span" color={item.color}>
               {" "}
-              {item.value}{" "}
+              {Number(data?.resources[idx].level_resource) * item.value}{" "}
             </Box>
             {item.label}
           </Text>
@@ -101,6 +108,7 @@ export default function StoreResources() {
         onClose={onClose}
         onOpen={onOpen}
         item={item}
+        total={total}
       />
     </SimpleGrid>
   );

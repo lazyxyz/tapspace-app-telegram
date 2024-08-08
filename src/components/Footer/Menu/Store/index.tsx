@@ -9,6 +9,8 @@ import {
 } from "@chakra-ui/react";
 import StoreResources from "./StoreResources";
 import StorageAvatar from "./StoreAvatars";
+import { useQuery } from "@tanstack/react-query";
+import { useBitcoin } from "@/components/Wrapper/BitcoinProvider";
 
 export default function Store() {
   const TABS = [
