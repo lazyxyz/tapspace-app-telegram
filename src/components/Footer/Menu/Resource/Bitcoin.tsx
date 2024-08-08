@@ -1,44 +1,37 @@
-import React, { memo, useEffect, useState } from "react";
-import { HStack, VStack, Box, Text, Image, Stack } from "@chakra-ui/react";
-import { motion, useMotionValue, useTransform, animate } from "framer-motion";
+import { useBitcoin } from "@/components/Wrapper/BitcoinProvider";
+import { Box, HStack, Image, Stack, Text, VStack } from "@chakra-ui/react";
+import { animate, motion, useMotionValue, useTransform } from "framer-motion";
+import { useEffect, useState } from "react";
 
-const BitcoinDisplay = ({
-  levelBot,
-  totalBit,
-}: {
-  levelBot: number;
-  totalBit: number;
-}) => {
-  const [bitcoinValue, setBitcoinValue] = useState(() => {
-    if (typeof window !== "undefined") {
-      const savedValue = localStorage.getItem("bitcoinValue");
-      return savedValue ? parseFloat(savedValue) : 0;
-    }
-    return 0;
-  });
+const BitcoinDisplay = ({ passive }: { totalBit: number; passive: number }) => {
+  const { bitcoinValue } = useBitcoin();
 
-  const bitcoinValueMotion = useMotionValue(bitcoinValue);
+  const bitcoinValueMotion = useMotionValue(0);
+  const [isBitcoinLoaded, setIsBitcoinLoaded] = useState(false);
 
   const animatedValue = useTransform(bitcoinValueMotion, (value) =>
-    (value + totalBit).toFixed(7)
+    value.toFixed(7)
   );
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      const updatedValue = bitcoinValue + 0.00002315;
-      localStorage.setItem("bitcoinValue", updatedValue.toString());
+    if (bitcoinValue !== undefined) {
+      bitcoinValueMotion.set(bitcoinValue);
+      setIsBitcoinLoaded(true);
+    }
+  }, [bitcoinValue, bitcoinValueMotion]);
 
+  useEffect(() => {
+    if (!isBitcoinLoaded) return;
+
+    const interval = setInterval(() => {
+      const updatedValue = bitcoinValue + passive;
       animate(bitcoinValueMotion, updatedValue, {
         duration: 0.2,
       });
-
-      setBitcoinValue(updatedValue);
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [bitcoinValue, bitcoinValueMotion]);
-
-  const bitcoinValuePerSecond = 0.00002315 * levelBot;
+  }, [bitcoinValue, bitcoinValueMotion, passive, isBitcoinLoaded]);
 
   return (
     <HStack>
@@ -48,7 +41,7 @@ const BitcoinDisplay = ({
       <VStack align={"start"}>
         <Stack spacing={0}>
           <Text fontWeight={"800"}>TS-BTC</Text>
-          <Text fontSize={"xs"}>{bitcoinValuePerSecond.toFixed(8)}/s</Text>
+          <Text fontSize={"xs"}>{passive}/s</Text>
         </Stack>
         <HStack spacing={1}>
           <Image src="/bitcoin.svg" w={"16px"} h={"16px"} />

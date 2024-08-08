@@ -1,16 +1,6 @@
-import {
-  Button,
-  HStack,
-  Link,
-  Stack,
-  Text,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { HStack, Stack, Text, useDisclosure } from "@chakra-ui/react";
 import FrequencyResource from "./FrequencyResource";
 import ListResources from "./ListResources";
-import { FaChevronLeft } from "react-icons/fa";
-import NextLink from "next/link";
-import TelegramScreen from "@/components/Telegram/TelegramScreen";
 import Swap from "./Swap";
 
 export default function ResourcesDrawer() {

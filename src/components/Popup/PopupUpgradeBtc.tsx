@@ -20,7 +20,6 @@ import {
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import { useQuery } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
 import { IconArrowRight, IconClose } from "../Icons";
 import { queryClient } from "../Wrapper/QueryClientProvider";
@@ -38,6 +37,7 @@ interface PopupUpgradeBotProps {
   levelResource: any;
   isInsufficientResources: boolean;
 }
+
 
 export default function PopupUpgradeBtc({
   isOpen,

@@ -21,6 +21,7 @@ import HomePage from "../Home";
 import TelegramScreen from "../Telegram/TelegramScreen";
 import Spaceship from "./Menu/Spaceship";
 import Store from "./Menu/Store";
+import { ImageWithFallback } from "../ImageFallback";
 
 const Footer = React.memo(function FooterComponent() {
   const listMenu = useMemo(
@@ -128,10 +129,11 @@ const Footer = React.memo(function FooterComponent() {
             >
               <Stack align="center">
                 <Box position={"absolute"} top={-5} w={"44px"} h={"44px"}>
-                  <Image
+                  <ImageWithFallback
+                    w={"44px"}
+                    h={"44px"}
                     src={`/assets/menu/${item.image}`}
                     alt={item.label}
-                    fill
                   />
                 </Box>
                 <Text

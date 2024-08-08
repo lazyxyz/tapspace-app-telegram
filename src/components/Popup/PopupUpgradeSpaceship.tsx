@@ -298,7 +298,7 @@ export const CurrentPassive = ({
 
         <Text fontWeight={800}>
           {isBtc
-            ? (0.00002315 * Math.pow(1 + 0.2, currentLevel)).toFixed(7)
+            ? (0.00011575 * Math.pow(1 + 0.2, currentLevel)).toFixed(7)
             : numeralFormat(
                 checkPassiveUplevel[item.pro_spaceship_name] *
                   Math.pow(1 + 0.1, currentLevel)
@@ -314,7 +314,7 @@ export const CurrentPassive = ({
 
         <Text fontWeight={800}>
           {isBtc
-            ? (0.00002315 * Math.pow(1 + 0.2, currentLevel + 1)).toFixed(7)
+            ? (0.00011575 * Math.pow(1 + 0.2, currentLevel + 1)).toFixed(7)
             : numeralFormat(
                 checkPassiveUplevel[item.pro_spaceship_name] *
                   Math.pow(1 + 0.1, currentLevel + 1)

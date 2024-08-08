@@ -8,6 +8,7 @@ import {
   numeralFormatResources,
 } from "@/utils/utils";
 import { useBitcoin } from "@/components/Wrapper/BitcoinProvider";
+import { ImageWithFallback } from "@/components/ImageFallback";
 
 interface FloatingTextProps {
   id: string;
@@ -75,7 +76,7 @@ const MintItem: React.FC<{
       >
         <VStack spacing={0} py={1}>
           <Box p={1} rounded={"xl"}>
-            <Image
+            <ImageWithFallback
               w={"24px"}
               h={"24px"}
               src={imageResources[item.resource_name]}

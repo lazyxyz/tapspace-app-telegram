@@ -12,7 +12,7 @@ export type MintItemType = {
   resource_name: string;
   calculatedValue: number;
   floatingText?: string;
-  frequency_mining: number;
+  multitap: number;
   image?: string;
   mining: number;
 };
@@ -58,7 +58,7 @@ const InfoMint: React.FC<InfoMintProps> = ({ data, refetch }) => {
           ); // tính bằng giây
 
           const incrementValue = calculateNewItemSecond(
-            item.frequency_mining,
+            item.multitap,
             levelBot
           );
           const maxCapacity = item.capacity;
@@ -91,7 +91,7 @@ const InfoMint: React.FC<InfoMintProps> = ({ data, refetch }) => {
         if (item.calculatedValue < item.capacity) {
           const updatedValue =
             item.calculatedValue +
-            calculateNewItemSecond(item.frequency_mining, levelBot);
+            calculateNewItemSecond(item.multitap, levelBot);
           localStorage.setItem(
             `calculatedValue_${item.resource_name}`,
             Math.min(updatedValue, item.capacity).toString()
@@ -128,10 +128,7 @@ const InfoMint: React.FC<InfoMintProps> = ({ data, refetch }) => {
     setListData((prevListData) =>
       prevListData.map((item) => {
         if (item.calculatedValue > 0) {
-          const increment = calculateNewItemSecond(
-            item.frequency_mining,
-            levelBot
-          );
+          const increment = calculateNewItemSecond(item.multitap, levelBot);
           const updatedValue = Math.max(item.calculatedValue - increment, 0);
 
           localStorage.setItem(
@@ -158,7 +155,7 @@ const InfoMint: React.FC<InfoMintProps> = ({ data, refetch }) => {
 
     listData.forEach((item) => {
       if (item.calculatedValue > 0) {
-        miningValues[item.resource_name] = item.frequency_mining;
+        miningValues[item.resource_name] = item.multitap;
       }
     });
 

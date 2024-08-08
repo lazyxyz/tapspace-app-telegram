@@ -1,20 +1,16 @@
-import React, { useState } from "react";
+import { IconBitcoin } from "@/components/Icons";
+import PopupBuyResources from "@/components/Popup/PopupBuyResources";
+import { Toaster, toast } from "sonner";
 import {
   Box,
   HStack,
   Image,
   SimpleGrid,
   Stack,
-  Tab,
-  TabList,
-  TabPanels,
-  Tabs,
   Text,
   useDisclosure,
-  VStack,
 } from "@chakra-ui/react";
-import { IconBitcoin } from "@/components/Icons";
-import PopupBuyResources from "@/components/Popup/PopupBuyResources";
+import { useState } from "react";
 export default function StoreResources() {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -95,7 +91,7 @@ export default function StoreResources() {
 
           <HStack spacing={1}>
             <IconBitcoin w={"20px"} h={"20px"} />
-            <Text fontWeight={800}>{item.value}</Text>
+            <Text fontWeight={800}>0.1</Text>
           </HStack>
         </Stack>
       ))}

@@ -311,10 +311,12 @@ export default function Swap({ onClose: onCloseTab }: any) {
                   <Text>For</Text>
                   <Text fontSize={"xl"} textColor={"white"} fontWeight={"800"}>
                     {selectedResource2
-                      ? calculateConvertedMining(
-                          selectedResource1,
-                          selectedResource2
-                        ).toFixed(2)
+                      ? numeralFormat(
+                          calculateConvertedMining(
+                            selectedResource1,
+                            selectedResource2
+                          )
+                        )
                       : "0"}
                   </Text>
                 </Stack>

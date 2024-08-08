@@ -25,14 +25,9 @@ import { useTelegram } from "@/lib/TelegramProvider";
 export default function PopupClaimBitcoin({ data }: any) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { user } = useTelegram();
-  const {
-    bitcoinValue,
-    //@ts-ignore
-    offlineEarnings,
-    resources,
-    resetBitcoinValue,
-    resetResources,
-  } = useBitcoin();
+
+  const { resources, offlineEarnings } = useBitcoin();
+
   const [claiming, setClaiming] = useState(false);
   const [claimAmount, setClaimAmount] = useState(0);
   const queryClient = useQueryClient();
@@ -53,7 +48,8 @@ export default function PopupClaimBitcoin({ data }: any) {
   const handleClaim = useCallback(async () => {
     setIsLoading(true);
     //@ts-ignore
-    const claimValue = parseFloat(bitcoinValue + offlineEarnings);
+    const claimValue = parseFloat(offlineEarnings);
+
     setClaimAmount(claimValue);
     setClaiming(true);
 
@@ -73,28 +69,20 @@ export default function PopupClaimBitcoin({ data }: any) {
       telegram_id:
         user?.id.toString() || process.env.NEXT_PUBLIC_API_ID_TELEGRAM,
       mining_values: {
-        Steel: resources["Steel"],
-        Aluminum: resources["Aluminum"],
-        Copper: resources["Copper"],
-        Fiber: resources["Fiber"],
-        Titanium: resources["Titanium"],
+        Steel: 1,
+        Aluminum: 1,
+        Copper: 1,
+        Fiber: 1,
+        Titanium: 1,
       },
     });
 
     onClose();
-    resetBitcoinValue();
-    resetResources();
     setIsLoading(false);
     queryClient.refetchQueries({
       queryKey: ["infoUser"],
     });
-  }, [
-    bitcoinValue,
-    offlineEarnings,
-    resetBitcoinValue,
-    resetResources,
-    queryClient,
-  ]);
+  }, [queryClient]);
 
   return (
     <Box>
@@ -153,9 +141,9 @@ export default function PopupClaimBitcoin({ data }: any) {
                       </Text>
                       <HStack spacing={1}>
                         <Text fontSize={"sm"} fontWeight={"800"}>
-                          {resources[key]
+                          {/* {resources[key]
                             ? numeralFormat(resources[key])
-                            : numeralFormat(Number(bitcoinValue.toFixed(5)))}
+                            : numeralFormat(Number(offlineEarnings.toFixed(5)))} */}
                         </Text>
                       </HStack>
                     </VStack>

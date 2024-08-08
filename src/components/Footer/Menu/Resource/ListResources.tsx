@@ -2,6 +2,7 @@
 
 import PopupUpgradeBot from "@/components/Popup/PopupUpgradeBot";
 import { useBitcoin } from "@/components/Wrapper/BitcoinProvider";
+import { queryClient } from "@/components/Wrapper/QueryClientProvider";
 import useResourceCapacity from "@/hooks/useResourceCapacity";
 import {
   checkPassiveUplevel,
@@ -58,7 +59,7 @@ export default function ListResources() {
                   <Text fontSize={"xs"}>
                     {Number(
                       checkPassiveUplevel[item.resource_name] *
-                        Math.pow(1 + 0.1, item.level_resource)
+                        Math.pow(1 + 0.1, item.level_resource - 1)
                     ).toFixed(5)}
                     /s
                   </Text>
@@ -114,7 +115,12 @@ const BotResource = ({ item, data, idx }: any) => {
       borderColor={!isDisabled ? "#D5FE4B" : "transparent"}
       p={2}
       rounded={"xl"}
-      onClick={() => onOpen()}
+      onClick={() => {
+        onOpen(),
+          queryClient.refetchQueries({
+            queryKey: ["infoUser"],
+          });
+      }}
     >
       <Image src="/bot.svg" w={"56px"} h={"56px"} />
       <Text

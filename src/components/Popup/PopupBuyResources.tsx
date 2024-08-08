@@ -13,12 +13,16 @@ import {
   HStack,
   useToast,
   Spinner,
+  CheckboxIcon,
 } from "@chakra-ui/react";
 import { IconBitcoin, IconClose } from "../Icons";
 import { useState } from "react";
 import systemService from "@/services/system.service";
 import { useTelegram } from "@/lib/TelegramProvider";
 import { queryClient } from "../Wrapper/QueryClientProvider";
+import useCustomToast from "@/hooks/useCustomToast";
+import { Toaster, toast } from "sonner";
+import { imageResources } from "@/utils/utils";
 
 interface PopupUpgradeBotProps {
   isOpen: boolean;
@@ -36,7 +40,6 @@ export default function PopupBuyResources({
   const [isLoading, setIsLoading] = useState(false);
 
   const { user } = useTelegram();
-  const toast = useToast();
 
   const handleBuyResources = async () => {
     setIsLoading(true);
@@ -50,28 +53,26 @@ export default function PopupBuyResources({
       });
 
       setIsLoading(false);
-      toast({
-        status: "success",
-        title: "Success",
-        description: String(`Buy ${item.value} ${item.label} compelete`),
-        position: "top-right",
-        isClosable: true,
-        duration: 3000,
-      });
-      onClose();
+      toast.custom((t) => (
+        <HStack rounded={"xl"} spacing={1} align={"center"} overflow={"hidden"}>
+          <Image
+            src={imageResources[item.label]}
+            alt="Success"
+            boxSize="20px"
+            objectFit="cover"
+            mr={1}
+          />
+          <Text
+            fontWeight={800}
+            fontSize={"sm"}
+          >{`Buy ${item.value} ${item.label} complete`}</Text>
+        </HStack>
+      ));
       queryClient.refetchQueries({
         queryKey: ["infoUser"],
       });
     } catch (error) {
       setIsLoading(false);
-      toast({
-        status: "error",
-        title: "Failed",
-        description: String(error),
-        position: "top-right",
-        isClosable: true,
-        duration: 3000,
-      });
     }
   };
 
@@ -117,7 +118,6 @@ export default function PopupBuyResources({
             <Button
               w={"full"}
               rounded={"xl"}
-              isDisabled={isLoading}
               borderBottomWidth={3}
               py={5}
               variant={"hover"}
@@ -129,6 +129,24 @@ export default function PopupBuyResources({
               {isLoading ? <Spinner size={"sm"} /> : "Purchase"}
             </Button>
           </ModalFooter>
+
+          <Toaster
+            position="bottom-left"
+            dir="ltr"
+            icons={{
+              success: <CheckboxIcon />,
+            }}
+            toastOptions={{
+              style: {
+                background: "rgba(13, 214, 62, 0.2)",
+                color: "#FFFFFF",
+                borderColor: "transparent",
+                padding: "12px",
+                backdropFilter: "blur(25px)",
+                borderRadius: "12px",
+              },
+            }}
+          />
         </ModalContent>
       </Modal>
     </Box>

@@ -1,6 +1,8 @@
 "use client";
 
 import PopupUpgradeBtc from "@/components/Popup/PopupUpgradeBtc";
+import { queryClient } from "@/components/Wrapper/QueryClientProvider";
+import useResourceCapacity from "@/hooks/useResourceCapacity";
 import {
   Box,
   Button,
@@ -12,9 +14,8 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
-import BitcoinDisplay from "./Bitcoin";
 import { useMemo } from "react";
-import useResourceCapacity from "@/hooks/useResourceCapacity";
+import BitcoinDisplay from "./Bitcoin";
 interface QueryData {
   bot_level?: string;
 }
@@ -55,8 +56,8 @@ const FrequencyResource = () => {
       >
         <HStack justifyContent={"space-between"}>
           <BitcoinDisplay
-            levelBot={Number(botLevel)}
             totalBit={data?.btc_value}
+            passive={data?.frequency_miining}
           />
 
           <Box
@@ -66,7 +67,12 @@ const FrequencyResource = () => {
             position={"relative"}
             p={2}
             rounded={"xl"}
-            onClick={() => onOpen()}
+            onClick={() => {
+              onOpen(),
+                queryClient.refetchQueries({
+                  queryKey: ["infoUser"],
+                });
+            }}
           >
             <Image src="/bot.svg" w={"56px"} h={"56px"} />
             <Text

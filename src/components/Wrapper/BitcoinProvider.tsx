@@ -1,6 +1,5 @@
 import useSocket from "@/hooks/useSocket";
 import { useTelegram } from "@/lib/TelegramProvider";
-import { VStack } from "@chakra-ui/react";
 import { useQueryClient } from "@tanstack/react-query";
 import React, {
   createContext,
@@ -9,10 +8,12 @@ import React, {
   useEffect,
   useState,
 } from "react";
-
-interface ResourceRates {
-  [key: string]: number;
-}
+import {
+  BitcoinContextType,
+  QueryData,
+  Resource,
+  ResourceRates,
+} from "../../../types/typeResources";
 
 const initialResourceRates: ResourceRates = {
   Steel: 0.16,
@@ -21,27 +22,6 @@ const initialResourceRates: ResourceRates = {
   Fiber: 0.04,
   Titanium: 0.02,
 };
-
-interface Resource {
-  resource_name: string;
-  level_resource: number;
-}
-
-interface QueryData {
-  btc_value: number;
-  resources: Resource[];
-  referred_users: string[];
-}
-
-interface BitcoinContextType {
-  bitcoinValue: number;
-  resetBitcoinValue: () => void;
-  offlineEarnings: number;
-  resources: ResourceRates;
-  resetResources: () => void;
-  resourcesSocket: any;
-  isSocketConnected: boolean;
-}
 
 const BitcoinContext = createContext<BitcoinContextType>({
   bitcoinValue: 0,
@@ -52,7 +32,6 @@ const BitcoinContext = createContext<BitcoinContextType>({
   resourcesSocket: [],
   isSocketConnected: false,
 });
-
 export const useBitcoin = () => useContext(BitcoinContext);
 
 interface BitcoinProviderProps {
@@ -64,16 +43,9 @@ export const BitcoinProvider: React.FC<BitcoinProviderProps> = ({
 }) => {
   const [bitcoinValue, setBitcoinValue] = useState<number>(0);
   const [offlineEarnings, setOfflineEarnings] = useState<number>(0);
-  const [resources, setResources] = useState<ResourceRates>(() => {
-    const initialResources: ResourceRates = {};
-    for (const key in initialResourceRates) {
-      initialResources[key] = 0;
-    }
-    return initialResources;
-  });
+  const [resources, setResources] = useState<ResourceRates>({});
   const [resourcesSocket, setResourcesSocket] = useState<any>([]);
   const [isSocketConnected, setIsSocketConnected] = useState<boolean>(false);
-
   const [resourceLevels, setResourceLevels] = useState<ResourceRates>({});
 
   const { emit, on } = useSocket();
@@ -81,7 +53,7 @@ export const BitcoinProvider: React.FC<BitcoinProviderProps> = ({
 
   const queryClient = useQueryClient();
   const queryKey = [`infoUser`];
-  const data = queryClient.getQueryData<QueryData>(queryKey);
+  const data: any = queryClient.getQueryData<QueryData>(queryKey);
 
   const referredUsersLength = data?.referred_users.length || 0;
   const referralBonus = 1 + referredUsersLength * 0.02;
@@ -89,7 +61,7 @@ export const BitcoinProvider: React.FC<BitcoinProviderProps> = ({
   useEffect(() => {
     if (data) {
       const levels: ResourceRates = {};
-      data.resources.forEach((resource) => {
+      data.resources.forEach((resource: Resource) => {
         levels[resource.resource_name] = resource.level_resource || 1;
       });
       setResourceLevels(levels);
@@ -97,94 +69,95 @@ export const BitcoinProvider: React.FC<BitcoinProviderProps> = ({
   }, [data]);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const savedValue = localStorage.getItem("bitcoinValue");
-      const lastClaimTime = localStorage.getItem("lastClaimTime");
-      const savedResources = localStorage.getItem("resources");
+    const savedValue = localStorage.getItem("bitcoinValue");
+    const lastClaimTime = localStorage.getItem("lastClaimTime");
+    const savedResources = localStorage.getItem("resources");
 
-      if (savedValue) {
-        setBitcoinValue(parseFloat(savedValue));
-      }
-
-      if (savedResources) {
-        setResources(JSON.parse(savedResources));
-      }
-
-      if (lastClaimTime) {
-        const currentTime = Date.now();
-        const timeDifference =
-          (currentTime - parseInt(lastClaimTime, 10)) / 1000;
-        const offlineBitcoinEarnings = timeDifference * 0.00002315;
-        setOfflineEarnings(parseFloat(offlineBitcoinEarnings.toFixed(4)));
-
-        const updatedResources: ResourceRates = {};
-        for (const key in initialResourceRates) {
-          updatedResources[key] =
-            timeDifference * initialResourceRates[key] * referralBonus +
-            (savedResources ? JSON.parse(savedResources)[key] : 0);
-        }
-        setResources(updatedResources);
-      }
+    if (savedValue) {
+      setBitcoinValue(parseFloat(savedValue));
     }
-  }, [referralBonus]);
+
+    if (savedResources) {
+      setResources(JSON.parse(savedResources));
+    } else {
+      const initialResources: ResourceRates = {};
+      for (const key in initialResourceRates) {
+        initialResources[key] = 0;
+      }
+      setResources(initialResources);
+    }
+
+    if (lastClaimTime) {
+      const currentTime = Date.now();
+      const lastClaimTimeParsed =
+        parseInt(lastClaimTime, 10) * (lastClaimTime.length === 10 ? 1000 : 1);
+      const timeDifference = (currentTime - lastClaimTimeParsed) / 1000;
+
+      const level = data?.resources ? data.resources[0]?.level_resource : 1;
+
+      const rate = 0.00011575 * Math.pow(1 + 0.2, level - 1);
+
+      const offlineBitcoinEarnings = timeDifference * rate;
+      setOfflineEarnings(parseFloat(offlineBitcoinEarnings.toFixed(8)));
+
+      const updatedResources: ResourceRates = { ...resources };
+
+      for (const key in initialResourceRates) {
+        const level = resourceLevels[key] || 1;
+        const growthRate = 0.1;
+        const rate =
+          initialResourceRates[key] *
+          Math.pow(1 + growthRate, level - 1) *
+          referralBonus;
+        updatedResources[key] =
+          timeDifference * rate +
+          (savedResources ? JSON.parse(savedResources)[key] : 0);
+      }
+      setResources(updatedResources);
+    }
+  }, [referralBonus, resourceLevels, data?.resources]);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      // Calculate new bitcoin value based on rate
-      setBitcoinValue(() => {
-        const level = data?.resources ? data.resources[0]?.level_resource : 1;
-        const growthRate = 0.2;
-        const rate = 0.00002315 * 5 * Math.pow(1 + growthRate, level - 1);
-
+      const updateBitcoinValue = async () => {
         const dataBtc = {
-          telegram_id: process.env.NEXT_PUBLIC_API_ID_TELEGRAM,
-          mining_value: rate,
+          telegram_id:
+            Number(user?.id) || process.env.NEXT_PUBLIC_API_ID_TELEGRAM,
+          mining_value: data?.frequency_miining,
         };
 
         emit("update_miningbtc", dataBtc);
         on("mining_update_response", (response: any) => {
           setBitcoinValue(response.value);
         });
-        return rate;
-      });
+      };
 
-      // Calculate new resources value based on rate
-      setResources(() => {
-        const updatedResources: ResourceRates = {};
-        for (const key in initialResourceRates) {
-          const level = resourceLevels[key] || 1;
-          const growthRate = 0.1;
-          const rate =
-            initialResourceRates[key] *
-            5 *
-            Math.pow(1 + growthRate, level - 1) *
-            referralBonus;
-          updatedResources[key] = rate;
-        }
+      const updateResources = async () => {
+        const listData = data?.resources.reduce((acc: any, item: any) => {
+          acc[item.resource_name] = item.passive;
+          return acc;
+        }, {});
 
-        // Emit data via socket
-        const miningValues = Object.fromEntries(
-          Object.entries(updatedResources).map(([key, value]) => [key, value])
-        );
-
-        const data = {
+        const data2 = {
           telegram_id:
             Number(user?.id) || Number(process.env.NEXT_PUBLIC_API_ID_TELEGRAM),
-          mining_values: miningValues,
+          mining_values: listData,
         };
 
-        emit("update_mining", data);
+        emit("update_mining", data2);
         on("update_response", (response: any) => {
           setResourcesSocket(response);
           setIsSocketConnected(true);
+          localStorage.setItem("resources", JSON.stringify(response));
         });
+      };
 
-        return updatedResources;
-      });
+      updateBitcoinValue();
+      updateResources();
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [resourceLevels, data, referralBonus, emit]);
+  }, [resourceLevels, data, referralBonus, emit, on, user?.id]);
 
   const resetBitcoinValue = () => {
     setBitcoinValue(0);

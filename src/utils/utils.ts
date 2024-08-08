@@ -26,11 +26,7 @@ export const numeralFormat = (
   }
 };
 
-export const numeralFormatResources = (
-  price: number,
-  decimal = 2,
-  roundingFunction = Math.floor
-) => {
+export const numeralFormatResources = (price: number) => {
   if (price >= 1e9) {
     return (
       (price / 1e9).toLocaleString(undefined, {
@@ -45,7 +41,7 @@ export const numeralFormatResources = (
     );
   } else if (price >= 1e3) {
     return price?.toLocaleString(undefined, {
-      maximumFractionDigits: 0,
+      maximumFractionDigits: 2,
     });
   } else {
     return price?.toLocaleString();
@@ -63,7 +59,7 @@ export const imageResources: any = {
 };
 
 export const imageSkills: any = {
-  Health_point: "/assets/skills/hp.png",
+  "Health Point": "/assets/skills/hp.png",
   Firerate: "/assets/skills/firerate.png",
   Shield: "/assets/skills/shield.png",
   Damage: "/assets/skills/damage.png",

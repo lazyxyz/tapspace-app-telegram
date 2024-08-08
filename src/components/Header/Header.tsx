@@ -50,6 +50,7 @@ const Header = React.memo(function HeaderComponent() {
       return rs.data;
     },
     staleTime: Infinity,
+    refetchInterval: 30000,
   });
 
   return (
