@@ -53,7 +53,7 @@ export default function PopupBuyResources({
           user?.id || Number(process.env.NEXT_PUBLIC_API_ID_TELEGRAM),
         resource_name: item.label,
         value_btc: 0.1,
-        value_resource: item.value,
+        value_resource: total,
       });
 
       setIsLoading(false);
@@ -79,7 +79,7 @@ export default function PopupBuyResources({
           <Text
             fontWeight={800}
             fontSize={"sm"}
-          >{`Buy ${item.value} ${item.label} complete`}</Text>
+          >{`Buy ${total} ${item.label} complete`}</Text>
         </HStack>
       ));
       queryClient.refetchQueries({
@@ -135,7 +135,7 @@ export default function PopupBuyResources({
               borderBottomWidth={3}
               py={5}
               variant={"hover"}
-              isDisabled={bitcoinValue < 0.1}
+              isDisabled={isLoading}
               fontWeight={800}
               borderColor={"#0DD63E"}
               bgGradient={"linear(to-b, #0DD63E 0%, #00A65B 100%)"}
