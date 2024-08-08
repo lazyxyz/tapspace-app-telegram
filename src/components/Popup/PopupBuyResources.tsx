@@ -54,7 +54,17 @@ export default function PopupBuyResources({
 
       setIsLoading(false);
       toast.custom((t) => (
-        <HStack rounded={"xl"} spacing={1} align={"center"} overflow={"hidden"}>
+        <HStack
+          color="#FFFFFF"
+          borderColor="transparent"
+          padding="12px"
+          borderRadius="12px"
+          rounded={"xl"}
+          spacing={1}
+          align={"center"}
+          overflow={"hidden"}
+          backdropFilter="blur(25px)"
+        >
           <Image
             src={imageResources[item.label]}
             alt="Success"
@@ -139,9 +149,6 @@ export default function PopupBuyResources({
             toastOptions={{
               style: {
                 background: "rgba(13, 214, 62, 0.2)",
-                color: "#FFFFFF",
-                borderColor: "transparent",
-                padding: "12px",
                 backdropFilter: "blur(25px)",
                 borderRadius: "12px",
               },
