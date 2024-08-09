@@ -85,6 +85,23 @@ const InfoMint: React.FC<InfoMintProps> = ({ data, refetch }) => {
     initializeListData();
   }, [initializeListData]);
 
+  const [imageHeight, setImageHeight] = useState("auto");
+
+  useEffect(() => {
+    const updateSize = () => {
+      const screenHeight = window.innerHeight;
+      if (screenHeight <= 650) {
+        setImageHeight(`${screenHeight / 2.2}px`);
+      }
+    };
+
+    updateSize();
+
+    window.addEventListener("resize", updateSize);
+
+    return () => window.removeEventListener("resize", updateSize);
+  }, []);
+
   const updateListData = useCallback(() => {
     setListData((prevListData) =>
       prevListData.map((item) => {
@@ -235,6 +252,7 @@ const InfoMint: React.FC<InfoMintProps> = ({ data, refetch }) => {
               style={{
                 display: "inline-block",
                 filter: "drop-shadow(<0px 4px 50px> rgba(239, 103, 244, 0.5))",
+                height: imageHeight,
               }}
             />
           </motion.div>

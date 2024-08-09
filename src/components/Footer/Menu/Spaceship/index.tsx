@@ -51,10 +51,9 @@ export default function Spaceship() {
           position={"relative"}
           w={"full"}
           justifyContent={"center"}
-          h={"210px"}
           spacing={4}
         >
-          <Stack zIndex={99}>
+          <Stack zIndex={99} py={6}>
             <Text fontWeight={800}>THE EGG</Text>
             <ImageWithFallback
               src={"/assets/spaceship.png"}
@@ -76,7 +75,7 @@ export default function Spaceship() {
         </VStack>
       </VStack>
 
-      <Stack w={"full"} pt={4}>
+      <Stack w={"full"} pt={4} overflow={"auto"}>
         {data?.properties_spaceship.map((item: Item) => {
           return (
             <HStack

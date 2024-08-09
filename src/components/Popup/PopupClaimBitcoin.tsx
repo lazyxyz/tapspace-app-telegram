@@ -45,6 +45,18 @@ export default function PopupClaimBitcoin({ data }: any) {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    const updateSize = () => {
+      const screenHeight = window.innerHeight;
+    };
+
+    updateSize();
+
+    window.addEventListener("resize", updateSize);
+
+    return () => window.removeEventListener("resize", updateSize);
+  }, []);
+
   const handleClaim = async () => {
     if (resources) {
       setIsLoading(true);

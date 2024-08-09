@@ -38,7 +38,6 @@ interface PopupUpgradeBotProps {
   isInsufficientResources: boolean;
 }
 
-
 export default function PopupUpgradeBtc({
   isOpen,
   onOpen,
