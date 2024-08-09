@@ -1,6 +1,7 @@
 "use client";
 
 import { IconBitcoin } from "@/components/Icons";
+import { ImageWithFallback } from "@/components/ImageFallback";
 import PopupSuccessSwap from "@/components/Popup/PopupSuccessSwap";
 import SelectResources from "@/components/Popup/SelectResources";
 import { queryClient } from "@/components/Wrapper/QueryClientProvider";
@@ -43,7 +44,7 @@ export default function Swap({ onClose: onCloseTab }: any) {
   );
 
   const { user } = useTelegram();
-  const { data } = useQuery({
+  const { data }: any = useQuery({
     queryKey: ["infoUser"],
   });
 
@@ -171,8 +172,7 @@ export default function Swap({ onClose: onCloseTab }: any) {
 
       <>
         <VStack w={"full"} px={3}>
-          <Image src="/assets/bannerSwap.svg" w={"full"} py={3} />
-          {/* @ts-ignore */}
+          <ImageWithFallback src="/assets/bannerSwap.svg" w={"full"} py={3} /> 
           {data && data?.resources && (
             <VStack position={"relative"} w={"full"}>
               {/* Resource Selection 1 */}

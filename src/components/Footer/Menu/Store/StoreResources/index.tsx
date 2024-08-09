@@ -25,31 +25,31 @@ export default function StoreResources() {
   const listResources = [
     {
       label: "Steel",
-      value: 5000,
+      value: 500,
       image: "/assets/resources/material-steel.png",
       color: "#BBC1DE",
     },
     {
       label: "Aluminum",
-      value: 3125,
+      value: 312,
       image: "/assets/resources/material-alu.png",
       color: "white",
     },
     {
       label: "Copper",
-      value: 1875,
+      value: 188,
       image: "/assets/resources/material-copper.png",
       color: "#FDBF25",
     },
     {
       label: "Fiber",
-      value: 1250,
+      value: 125,
       image: "/assets/resources/material-fiber.png",
       color: "#D5FE4B",
     },
     {
       label: "Titanium",
-      value: 625,
+      value: 62,
       image: "/assets/resources/material-titan.png",
       color: "#1EA2ED",
     },

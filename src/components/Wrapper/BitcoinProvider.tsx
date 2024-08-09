@@ -43,7 +43,13 @@ export const BitcoinProvider: React.FC<BitcoinProviderProps> = ({
 }) => {
   const [bitcoinValue, setBitcoinValue] = useState<number>(0);
   const [offlineEarnings, setOfflineEarnings] = useState<number>(0);
-  const [resources, setResources] = useState<ResourceRates>({});
+  const [resources, setResources] = useState<ResourceRates>({
+    Steel: 8,
+    Aluminum: 5,
+    Copper: 3,
+    Fiber: 2,
+    Titanium: 1,
+  });
   const [resourcesSocket, setResourcesSocket] = useState<any>([]);
   const [isSocketConnected, setIsSocketConnected] = useState<boolean>(false);
   const [resourceLevels, setResourceLevels] = useState<ResourceRates>({});

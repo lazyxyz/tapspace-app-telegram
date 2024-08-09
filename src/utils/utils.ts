@@ -26,7 +26,7 @@ export const numeralFormat = (
   }
 };
 
-export const numeralFormatResources = (price: number) => {
+export const numeralFormatResources = (price: number, decimal?: number) => {
   if (price >= 1e9) {
     return (
       (price / 1e9).toLocaleString(undefined, {
@@ -41,7 +41,7 @@ export const numeralFormatResources = (price: number) => {
     );
   } else if (price >= 1e3) {
     return price?.toLocaleString(undefined, {
-      maximumFractionDigits: 2,
+      maximumFractionDigits: decimal || 0,
     });
   } else {
     return price?.toLocaleString();

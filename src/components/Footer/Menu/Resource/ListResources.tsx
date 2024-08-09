@@ -7,7 +7,6 @@ import useResourceCapacity from "@/hooks/useResourceCapacity";
 import {
   checkPassiveUplevel,
   imageResources,
-  numeralFormat,
   numeralFormatResources,
 } from "@/utils/utils";
 import {
@@ -73,7 +72,8 @@ export default function ListResources() {
                   <Text fontSize={"sm"} fontWeight={"800"}>
                     {resourcesSocket?.resources
                       ? numeralFormatResources(
-                          resourcesSocket.resources[item.resource_name] || 0
+                          resourcesSocket.resources[item.resource_name] || 0,
+                          2
                         )
                       : "-"}
                   </Text>
