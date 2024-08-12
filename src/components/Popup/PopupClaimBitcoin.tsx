@@ -150,9 +150,13 @@ export default function PopupClaimBitcoin({ data }: any) {
                       </Text>
                       <HStack spacing={1}>
                         <Text fontSize={"sm"} fontWeight={"800"}>
-                          {resources && resources[key]
-                            ? numeralFormat(resources[key])
-                            : numeralFormat(Number(offlineEarnings.toFixed(5)))}
+                          {resources && resources[key] ? (
+                            numeralFormat(resources[key])
+                          ) : offlineEarnings ? (
+                            numeralFormat(Number(offlineEarnings.toFixed(5)))
+                          ) : (
+                            <Spinner size={"xs"} />
+                          )}
                         </Text>
                       </HStack>
                     </VStack>

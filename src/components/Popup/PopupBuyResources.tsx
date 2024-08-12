@@ -135,19 +135,12 @@ export default function PopupBuyResources({
               borderBottomWidth={3}
               py={5}
               variant={"hover"}
-              isDisabled={isLoading}
               fontWeight={800}
               borderColor={"#0DD63E"}
               bgGradient={"linear(to-b, #0DD63E 0%, #00A65B 100%)"}
               onClick={handleBuyResources}
             >
-              {isLoading ? (
-                <Spinner size={"sm"} />
-              ) : bitcoinValue < 0.1 ? (
-                "Insuffician BTC"
-              ) : (
-                "Purchase"
-              )}
+              {isLoading ? <Spinner size={"sm"} /> : "Purchase"}
             </Button>
           </ModalFooter>
 

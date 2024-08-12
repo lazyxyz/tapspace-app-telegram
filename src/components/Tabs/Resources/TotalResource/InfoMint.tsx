@@ -1,7 +1,7 @@
 import { useEffect, useCallback, useState } from "react";
 import { useTelegram } from "@/lib/TelegramProvider";
 import useSocket from "@/hooks/useSocket";
-import { HStack, Stack, VStack } from "@chakra-ui/react";
+import { HStack, Stack, useDisclosure, VStack } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { MemoizedMintItem } from "./MintItem";
 import PopupDailyRewards from "@/components/Popup/PopupDailyRewards";
@@ -204,6 +204,8 @@ const InfoMint: React.FC<InfoMintProps> = ({ data, refetch }) => {
       transition: { duration: 0.05, ease: "easeInOut" },
     },
   };
+
+  const { isOpen, onOpen } = useDisclosure();
 
   return (
     <>
