@@ -2,7 +2,6 @@
 
 import { useTelegram } from "@/lib/TelegramProvider";
 import { Box } from "@chakra-ui/react";
-import { redirect, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import "./TelegramScreen.css";
 

@@ -38,6 +38,8 @@ export default function ReferralDrawer() {
     queryKey: ["infoUser"],
   });
 
+  console.log(data);
+
   const { webApp } = useTelegram();
   const toast = useToast();
 
@@ -45,26 +47,9 @@ export default function ReferralDrawer() {
     if (webApp && data?.data.invite_link) {
       try {
         //@ts-ignore
-        webApp.showPopup({
-          title: "Share with Friends",
-          message: "Choose friends to share this content with.",
-          buttons: [
-            {
-              id: "share",
-              type: "default",
-              text: "Share",
-              action: () => {
-                //@ts-ignore
-                webApp.openTelegramLink(data?.data.invite_link);
-              },
-            },
-            {
-              id: "cancel",
-              type: "cancel",
-              text: "Cancel",
-            },
-          ],
-        });
+        webApp.openTelegramLink(
+          "https://t.me/share/url?url=https://t.me/catizenbot/gameapp?startapp=rp_1365932&text=%F0%9F%92%B0Catizen%3A%20Unleash%2C%20Play%2C%20Earn%20-%20Where%20Every%20Game%20Leads%20to%20an%20Airdrop%20Adventure!%0A%F0%9F%8E%81Let%27s%20play-to-earn%20airdrop%20right%20now!"
+        );
       } catch (error) {
         toast({
           status: "error",
@@ -83,7 +68,9 @@ export default function ReferralDrawer() {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
-    window.navigator.clipboard.writeText(String(data?.data.invite_link));
+    window.navigator.clipboard.writeText(
+      String(data?.data.invite_link + `&text=${data?.data.message_content}`)
+    );
     setCopied(true);
     setTimeout(() => {
       setCopied(false);
