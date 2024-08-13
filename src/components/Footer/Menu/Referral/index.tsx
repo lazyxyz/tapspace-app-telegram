@@ -48,7 +48,7 @@ export default function ReferralDrawer() {
       try {
         //@ts-ignore
         webApp.openTelegramLink(
-          "https://t.me/share/url?url=https://t.me/catizenbot/gameapp?startapp=rp_1365932&text=%F0%9F%92%B0Catizen%3A%20Unleash%2C%20Play%2C%20Earn%20-%20Where%20Every%20Game%20Leads%20to%20an%20Airdrop%20Adventure!%0A%F0%9F%8E%81Let%27s%20play-to-earn%20airdrop%20right%20now!"
+          `https://t.me/share/tap_space_bot?start=${user?.id}&text=${data?.data.message_content}`
         );
       } catch (error) {
         toast({
