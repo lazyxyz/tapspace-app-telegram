@@ -48,7 +48,9 @@ export default function ReferralDrawer() {
       try {
         //@ts-ignore
         webApp.openTelegramLink(
-          `https://t.me/share/tap_space_bot?start=${user?.id}&text=${data?.data.message_content}`
+          `https://t.me/share/url?url=${String(
+            data?.data.invite_link + `&text=${data?.data.message_content}`
+          )}`
         );
       } catch (error) {
         toast({
