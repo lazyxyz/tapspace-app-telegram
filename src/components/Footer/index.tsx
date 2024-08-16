@@ -48,7 +48,7 @@ const Footer = React.memo(function FooterComponent() {
       {
         label: "Store",
         image: "resources.png",
-        panel: <Store />,
+        panel: <ComingSoon tab="Store" src="/assets/menu/bgStore.png" />,
         link: "/store",
       },
       {

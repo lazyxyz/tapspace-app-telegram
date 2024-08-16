@@ -7,10 +7,8 @@ import {
   Tabs,
   VStack,
 } from "@chakra-ui/react";
-import StoreResources from "./StoreResources";
 import StorageAvatar from "./StoreAvatars";
-import { useQuery } from "@tanstack/react-query";
-import { useBitcoin } from "@/components/Wrapper/BitcoinProvider";
+import StoreResources from "./StoreResources";
 
 export default function Store() {
   const TABS = [
@@ -42,7 +40,7 @@ export default function Store() {
       pt={16}
       bgGradient={"linear(to-b, #333649 0%, #1F212E 100%)"}
     >
-      <Tabs variant="unstyled" display="flex" flexDirection="column" w={"full"}>
+      {/* <Tabs variant="unstyled" display="flex" flexDirection="column" w={"full"}>
         <TabList
           px={3}
           display="flex"
@@ -93,7 +91,7 @@ export default function Store() {
             </TabPanel>
           ))}
         </TabPanels>
-      </Tabs>
+      </Tabs> */}
     </VStack>
   );
 }

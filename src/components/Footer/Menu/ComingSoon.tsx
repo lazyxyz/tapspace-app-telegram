@@ -1,19 +1,17 @@
-import TelegramScreen from "@/components/Telegram/TelegramScreen";
 import { Box, Center, Image, Stack, Text } from "@chakra-ui/react";
 
 export default function ComingSoon({ tab, src }: { tab: string; src: string }) {
   const listContent: any = {
     Spaceship:
       "The ultimate hub for all your warship needs! Whether you're a seasoned captain or a new recruit, our features offer everything you need to dominate the space and planets.",
-    Universe:
-      "Brace yourself for an epic adventure where every battle and conquest unlocks new discoveries. Stay tuned for more details!",
+    Store: "",
     Battles:
       "Prepare your resources and warships, hone your skills, and get ready to conquer the universe. Stay tuned for more details!",
   };
 
   const listImage: any = {
     Spaceship: "/assets/menu/spaceship.png",
-    Universe: "/assets/menu/universe.png",
+    Store: "/assets/menu/resources.png",
     Battles: "/assets/menu/Battles.png",
   };
   return (
