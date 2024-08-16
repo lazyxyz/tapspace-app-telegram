@@ -61,7 +61,7 @@ export const imageResources: any = {
 export const imageSkills: any = {
   "Health Point": "/assets/skills/hp.png",
   Firerate: "/assets/skills/firerate.png",
-  Shield: "/assets/skills/shield.png",
+  Defense: "/assets/skills/shield.png",
   Damage: "/assets/skills/damage.png",
   Engine: "/assets/skills/engine.png",
 };
