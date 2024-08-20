@@ -142,18 +142,12 @@ export default function Leaderboard({
                           </Text>
 
                           <HStack spacing={1}>
-                            <Image
-                              src="/assets/Trophy.png"
-                              alt="Trophy Icon"
-                              w={"14px"}
-                              h={"14px"}
-                            />
                             <Text
                               color={colorTop[idx]}
                               fontSize={"10px"}
                               fontWeight={800}
                             >
-                              #{item.level}
+                              Level {item.level}
                             </Text>
                           </HStack>
                         </Stack>
