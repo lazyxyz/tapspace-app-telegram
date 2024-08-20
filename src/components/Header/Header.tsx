@@ -94,7 +94,7 @@ const Header = React.memo(function HeaderComponent() {
             />
             <Stack spacing={0}>
               <Text fontSize={"sm"} textColor={"white"} fontWeight={"800"}>
-                {user?.username || "Unnamed"}
+                {user?.first_name || "Unnamed" + user?.last_name}
               </Text>
               <HStack
                 spacing={0}
