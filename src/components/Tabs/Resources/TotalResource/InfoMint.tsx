@@ -1,11 +1,11 @@
-import { useEffect, useCallback, useState } from "react";
-import { useTelegram } from "@/lib/TelegramProvider";
-import useSocket from "@/hooks/useSocket";
-import { HStack, Stack, useDisclosure, VStack } from "@chakra-ui/react";
-import { motion } from "framer-motion";
-import { MemoizedMintItem } from "./MintItem";
-import PopupDailyRewards from "@/components/Popup/PopupDailyRewards";
 import PopupClaimBitcoin from "@/components/Popup/PopupClaimBitcoin";
+import PopupDailyRewards from "@/components/Popup/PopupDailyRewards";
+import useSocket from "@/hooks/useSocket";
+import { useTelegram } from "@/lib/TelegramProvider";
+import { HStack, Stack, VStack } from "@chakra-ui/react";
+import { motion } from "framer-motion";
+import { useCallback, useEffect, useState } from "react";
+import { MemoizedMintItem } from "./MintItem";
 
 export type MintItemType = {
   capacity: number;
@@ -141,58 +141,70 @@ const InfoMint: React.FC<InfoMintProps> = ({ data, refetch }) => {
     return () => clearInterval(timerId);
   }, [listData, updateListData]);
 
-  const handleClick = useCallback(() => {
-    setListData((prevListData) =>
-      prevListData.map((item) => {
-        if (item.calculatedValue > 0) {
-          const increment = calculateNewItemSecond(item.multitap, levelBot);
-          const updatedValue = Math.max(item.calculatedValue - increment, 0);
-
-          localStorage.setItem(
-            `calculatedValue_${item.resource_name}`,
-            updatedValue.toString()
-          );
-
-          localStorage.setItem(
-            `lastUpdate_${item.resource_name}`,
-            new Date().toISOString()
-          );
-
-          return {
-            ...item,
-            calculatedValue: updatedValue,
-            floatingText: `+${increment.toFixed(2)}`,
-          };
-        }
-        return item;
-      })
-    );
-
-    const miningValues: { [key: string]: number } = {};
-
-    listData.forEach((item) => {
-      if (item.calculatedValue > 0) {
-        miningValues[item.resource_name] = item.multitap;
-      }
-    });
-
-    if (Object.keys(miningValues).length > 0) {
-      const data = {
-        telegram_id:
-          Number(user?.id) || Number(process.env.NEXT_PUBLIC_API_ID_TELEGRAM),
-        mining_values: miningValues,
-      };
-      emit("update_mining", data);
-    } else {
-      console.log("No valid resources to update.");
-    }
-
-    setTimeout(() => {
+  const handleMultitap = useCallback(
+    (touches: number) => {
       setListData((prevListData) =>
-        prevListData.map((item) => ({ ...item, floatingText: undefined }))
+        prevListData.map((item) => {
+          if (item.calculatedValue > 0) {
+            const increment =
+              calculateNewItemSecond(item.multitap, levelBot) * touches;
+            const updatedValue = Math.max(item.calculatedValue - increment, 0);
+
+            localStorage.setItem(
+              `calculatedValue_${item.resource_name}`,
+              updatedValue.toString()
+            );
+
+            localStorage.setItem(
+              `lastUpdate_${item.resource_name}`,
+              new Date().toISOString()
+            );
+
+            return {
+              ...item,
+              calculatedValue: updatedValue,
+              floatingText: `+${increment.toFixed(2)}`,
+            };
+          }
+          return item;
+        })
       );
-    }, 1000);
-  }, [listData, levelBot, emit, user]);
+
+      const miningValues: { [key: string]: number } = {};
+
+      listData.forEach((item) => {
+        if (item.calculatedValue > 0) {
+          miningValues[item.resource_name] = item.multitap * touches;
+        }
+      });
+
+      if (Object.keys(miningValues).length > 0) {
+        const data = {
+          telegram_id:
+            Number(user?.id) || Number(process.env.NEXT_PUBLIC_API_ID_TELEGRAM),
+          mining_values: miningValues,
+        };
+        emit("update_mining", data);
+      } else {
+        console.log("No valid resources to update.");
+      }
+
+      setTimeout(() => {
+        setListData((prevListData) =>
+          prevListData.map((item) => ({ ...item, floatingText: undefined }))
+        );
+      }, 1000);
+    },
+    [listData, levelBot, emit, user]
+  );
+
+  const handleTouchStart = useCallback(
+    (event: React.TouchEvent) => {
+      const touches = event.touches.length;
+      handleMultitap(touches);
+    },
+    [handleMultitap]
+  );
 
   const clickVariants = {
     click: {
@@ -204,8 +216,6 @@ const InfoMint: React.FC<InfoMintProps> = ({ data, refetch }) => {
       transition: { duration: 0.05, ease: "easeInOut" },
     },
   };
-
-  const { isOpen, onOpen } = useDisclosure();
 
   return (
     <>
@@ -231,7 +241,7 @@ const InfoMint: React.FC<InfoMintProps> = ({ data, refetch }) => {
           pb={24}
         >
           <motion.div
-            onClick={handleClick}
+            onTouchStart={handleTouchStart}
             initial="normal"
             variants={clickVariants}
             whileTap="click"
