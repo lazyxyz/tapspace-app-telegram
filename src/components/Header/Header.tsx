@@ -111,8 +111,14 @@ const Header = React.memo(function HeaderComponent() {
                   onOpen();
                 }}
               >
+                <Image
+                  src="/assets/Trophy.png"
+                  alt="Trophy Icon"
+                  w={"14px"}
+                  h={"14px"}
+                />
                 <Text fontSize={"10px"} textColor={"#DADFF4"} fontWeight={600}>
-                  Level {data?.rank || "-"}
+                  #{data?.rank || "-"}
                 </Text>
               </HStack>
             </Stack>
