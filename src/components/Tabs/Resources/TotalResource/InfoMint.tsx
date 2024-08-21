@@ -2,10 +2,16 @@ import PopupClaimBitcoin from "@/components/Popup/PopupClaimBitcoin";
 import PopupDailyRewards from "@/components/Popup/PopupDailyRewards";
 import useSocket from "@/hooks/useSocket";
 import { useTelegram } from "@/lib/TelegramProvider";
-import { HStack, Stack, VStack } from "@chakra-ui/react";
+import { Button, HStack, Stack, Text, VStack } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
 import { MemoizedMintItem } from "./MintItem";
+import {
+  TonConnectButton,
+  useTonAddress,
+  useTonConnectUI,
+} from "@tonconnect/ui-react";
+import { IconWallet } from "@/components/Icons";
 
 export type MintItemType = {
   capacity: number;
@@ -141,70 +147,58 @@ const InfoMint: React.FC<InfoMintProps> = ({ data, refetch }) => {
     return () => clearInterval(timerId);
   }, [listData, updateListData]);
 
-  const handleMultitap = useCallback(
-    (touches: number) => {
-      setListData((prevListData) =>
-        prevListData.map((item) => {
-          if (item.calculatedValue > 0) {
-            const increment =
-              calculateNewItemSecond(item.multitap, levelBot) * touches;
-            const updatedValue = Math.max(item.calculatedValue - increment, 0);
-
-            localStorage.setItem(
-              `calculatedValue_${item.resource_name}`,
-              updatedValue.toString()
-            );
-
-            localStorage.setItem(
-              `lastUpdate_${item.resource_name}`,
-              new Date().toISOString()
-            );
-
-            return {
-              ...item,
-              calculatedValue: updatedValue,
-              floatingText: `+${increment.toFixed(2)}`,
-            };
-          }
-          return item;
-        })
-      );
-
-      const miningValues: { [key: string]: number } = {};
-
-      listData.forEach((item) => {
+  const handleClick = useCallback(() => {
+    setListData((prevListData) =>
+      prevListData.map((item) => {
         if (item.calculatedValue > 0) {
-          miningValues[item.resource_name] = item.multitap * touches;
+          const increment = calculateNewItemSecond(item.multitap, levelBot);
+          const updatedValue = Math.max(item.calculatedValue - increment, 0);
+
+          localStorage.setItem(
+            `calculatedValue_${item.resource_name}`,
+            updatedValue.toString()
+          );
+
+          localStorage.setItem(
+            `lastUpdate_${item.resource_name}`,
+            new Date().toISOString()
+          );
+
+          return {
+            ...item,
+            calculatedValue: updatedValue,
+            floatingText: `+${increment.toFixed(2)}`,
+          };
         }
-      });
+        return item;
+      })
+    );
 
-      if (Object.keys(miningValues).length > 0) {
-        const data = {
-          telegram_id:
-            Number(user?.id) || Number(process.env.NEXT_PUBLIC_API_ID_TELEGRAM),
-          mining_values: miningValues,
-        };
-        emit("update_mining", data);
-      } else {
-        console.log("No valid resources to update.");
+    const miningValues: { [key: string]: number } = {};
+
+    listData.forEach((item) => {
+      if (item.calculatedValue > 0) {
+        miningValues[item.resource_name] = item.multitap;
       }
+    });
 
-      setTimeout(() => {
-        setListData((prevListData) =>
-          prevListData.map((item) => ({ ...item, floatingText: undefined }))
-        );
-      }, 1000);
-    },
-    [listData, levelBot, emit, user]
-  );
+    if (Object.keys(miningValues).length > 0) {
+      const data = {
+        telegram_id:
+          Number(user?.id) || Number(process.env.NEXT_PUBLIC_API_ID_TELEGRAM),
+        mining_values: miningValues,
+      };
+      emit("update_mining", data);
+    } else {
+      console.log("No valid resources to update.");
+    }
 
-  const handleTouchStart = useCallback(
-    (event: React.TouchEvent) => {
-      const touches = event.touches.length;
-      handleMultitap(touches);
-    },
-    [handleMultitap]
-  );
+    setTimeout(() => {
+      setListData((prevListData) =>
+        prevListData.map((item) => ({ ...item, floatingText: undefined }))
+      );
+    }, 1000);
+  }, [listData, levelBot, emit, user]);
 
   const clickVariants = {
     click: {
@@ -216,6 +210,10 @@ const InfoMint: React.FC<InfoMintProps> = ({ data, refetch }) => {
       transition: { duration: 0.05, ease: "easeInOut" },
     },
   };
+
+  const [tonConnectUI, setOptions] = useTonConnectUI();
+  const userFriendlyAddress = useTonAddress();
+  const rawAddress = useTonAddress(false);
 
   return (
     <>
@@ -232,6 +230,9 @@ const InfoMint: React.FC<InfoMintProps> = ({ data, refetch }) => {
             <MemoizedMintItem key={item.resource_name} item={item} />
           ))}
         </HStack>
+        <Text>{userFriendlyAddress}</Text>
+        {<Text>{rawAddress}</Text>}
+
         <Stack
           py={3}
           flex="1"
@@ -241,7 +242,7 @@ const InfoMint: React.FC<InfoMintProps> = ({ data, refetch }) => {
           pb={24}
         >
           <motion.div
-            onTouchStart={handleTouchStart}
+            onClick={handleClick}
             initial="normal"
             variants={clickVariants}
             whileTap="click"
@@ -270,6 +271,29 @@ const InfoMint: React.FC<InfoMintProps> = ({ data, refetch }) => {
           </motion.div>
         </Stack>
       </VStack>
+
+      <Button
+        py={5}
+        onClick={() => {
+          tonConnectUI.openModal();
+        }}
+        px={2}
+        position={"absolute"}
+        bottom={"150px"}
+        right={4}
+        borderWidth={1}
+        borderBottom={"2px"}
+        borderColor={"rgba(255, 255, 255, 0.15)"}
+        bg={"rgba(255, 255, 255, 0.15)"}
+        rounded={"xl"}
+        fontSize={"sm"}
+        display={"flex"}
+        alignItems={"center"}
+      >
+        <HStack align={"center"}>
+          <IconWallet />
+        </HStack>
+      </Button>
 
       <PopupDailyRewards data={data} />
       <PopupClaimBitcoin data={data} />

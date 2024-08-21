@@ -26,8 +26,15 @@ import React from "react";
 import { FaVolumeOff } from "react-icons/fa";
 import { IoReload } from "react-icons/io5";
 import { PiMusicNotesFill } from "react-icons/pi";
-import { BarMenu, IconBitcoin, IconClose } from "../Icons";
+import {
+  BarMenu,
+  IconBitcoin,
+  IconClose,
+  IconWallet,
+  LogoTapSpace,
+} from "../Icons";
 import Leaderboard from "../Leaderboard";
+import { TonConnectButton, useTonConnectUI } from "@tonconnect/ui-react";
 
 const Header = React.memo(function HeaderComponent() {
   const { user } = useTelegram();
@@ -67,6 +74,8 @@ const Header = React.memo(function HeaderComponent() {
         borderColor={"#34384B"}
         px={2}
       >
+        {/* <TonConnectButton /> */}
+
         <HStack>
           <Button
             borderWidth={1}
@@ -102,14 +111,8 @@ const Header = React.memo(function HeaderComponent() {
                   onOpen();
                 }}
               >
-                <Image
-                  src="/assets/Trophy.png"
-                  alt="Trophy Icon"
-                  w={"14px"}
-                  h={"14px"}
-                />
                 <Text fontSize={"10px"} textColor={"#DADFF4"} fontWeight={600}>
-                  #{data?.rank || "-"}
+                  Level {data?.rank || "-"}
                 </Text>
               </HStack>
             </Stack>
@@ -141,6 +144,8 @@ const Header = React.memo(function HeaderComponent() {
 });
 
 const Navbar = React.memo(function NavbarComponent({ isOpen, onClose }: any) {
+  const [tonConnectUI, setOptions] = useTonConnectUI();
+
   return (
     <Drawer isOpen={isOpen} placement="left" size={"full"} onClose={onClose}>
       <DrawerOverlay />
@@ -188,7 +193,7 @@ const Navbar = React.memo(function NavbarComponent({ isOpen, onClose }: any) {
               </HStack>
             </Stack>
 
-            <Button
+            {/* <Button
               rounded={"xl"}
               ml={"auto"}
               borderBottomWidth={3}
@@ -210,9 +215,44 @@ const Navbar = React.memo(function NavbarComponent({ isOpen, onClose }: any) {
               >
                 Refresh
               </Text>
-            </Button>
+            </Button> */}
           </VStack>
         </DrawerBody>
+
+        <HStack w={"full"} py={10} justifyContent={"center"}>
+          <LogoTapSpace />
+        </HStack>
+        <Button
+          py={5}
+          mx={6}
+          onClick={() => {
+            tonConnectUI.openModal(), onClose();
+          }}
+          background={"#1EA2ED"}
+          borderWidth={1}
+          borderBottomWidth={3}
+          borderColor={"#0F7ABD"}
+          rounded={"xl"}
+          fontSize={"sm"}
+          display={"flex"}
+          alignItems={"center"}
+        >
+          <HStack align={"center"}>
+            <IconWallet />
+            <Text mt={0.5} fontWeight={800}>
+              Connect Wallet
+            </Text>
+          </HStack>
+        </Button>
+        <Text
+          textColor={"#6C7293"}
+          fontWeight={700}
+          pt={6}
+          pb={2}
+          textAlign={"center"}
+        >
+          Version 0.1.1
+        </Text>
       </DrawerContent>
     </Drawer>
   );

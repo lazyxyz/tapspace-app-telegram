@@ -1,6 +1,7 @@
 import ChakraProviderWrapper from "@/components/Wrapper/ChakraProvider";
 import Layout from "@/components/Wrapper/Layout";
 import ClientProvider from "@/components/Wrapper/QueryClientProvider";
+import TonConnectProvider from "@/components/Wrapper/TonConnectProvider";
 import { TelegramProvider } from "@/lib/TelegramProvider";
 import type { Metadata } from "next";
 
@@ -14,13 +15,16 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  console.log(ClientProvider);
   return (
     <html lang="en">
       <body>
         <ChakraProviderWrapper>
           <TelegramProvider>
             <ClientProvider>
-              <Layout>{children}</Layout>
+              <TonConnectProvider>
+                <Layout>{children}</Layout>
+              </TonConnectProvider>
             </ClientProvider>
           </TelegramProvider>
         </ChakraProviderWrapper>

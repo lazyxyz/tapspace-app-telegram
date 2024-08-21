@@ -152,7 +152,7 @@ const Footer = React.memo(function FooterComponent() {
 
       {selectedTabIndex === 0 && (
         <Box
-          w={"44px"}
+          w={"44x"}
           h={"44px"}
           position={"absolute"}
           bottom={24}
